@@ -1,1 +1,20 @@
-{"version":"7","dialect":"postgresql","entries":[]}
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794259545935,
+      "tag": "20261109212545_cheerful_marvel_zombies",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794262534878,
+      "tag": "20261109221534_grant_profiles",
+      "breakpoints": true
+    }
+  ]
+}

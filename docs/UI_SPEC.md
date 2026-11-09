@@ -28,7 +28,7 @@ Landing ── Log in / Sign up ── Connect Strava ── Import progress ─
 
 | Screen | Content | Req |
 |---|---|---|
-| **Landing** | What Stramin is, in one line. "Get started" button. Link to the privacy policy. | – |
+| **Landing** | A **preview of the web app**: what Stramin is, plus a look at the real screens (e.g. the weekly overview). Clear **Log in** and **Sign up** buttons. Links to the guide and the privacy policy. | – |
 | **Log in / Sign up** | Login buttons (the methods are decided in ARCHITECTURE). | ACC-1 |
 | **Connect** | "Connect with Strava" button (Strava's official design). Garmin is shown as "coming soon". | CON-1, NFR-5 |
 | **Import progress** | Progress bar ("Imported 412 of ~1,300 activities"). The user can continue to Home while it runs. | CON-3 |

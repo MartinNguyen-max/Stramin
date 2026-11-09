@@ -3,15 +3,16 @@
     "description": "A free, privacy-first training dashboard for triathletes. Your training, finally clear."
   },
   "Common": {
-    "language": "Language"
+    "language": "Language",
+    "login": "Log in"
   },
   "Landing": {
     "hero": {
       "badge": "In development",
       "title": "Your training, finally clear.",
       "subtitle": "Connect Garmin or Strava and see your swim, bike, run and strength training the way it should be shown. Free, and only for your eyes.",
-      "cta": "Coming soon",
-      "github": "Follow on GitHub"
+      "signup": "Sign up free",
+      "login": "Log in"
     },
     "features": {
       "title": "Everything that matters, on one screen",
@@ -82,5 +83,125 @@
       }
     },
     "note": "You only need to do this once. After that, new activities arrive automatically through the Garmin connection."
+  },
+  "Auth": {
+    "email": "Email",
+    "password": "Password",
+    "newPassword": "Password",
+    "passwordHint": "At least {min} characters.",
+    "pleaseWait": "Please wait…",
+    "or": "or",
+    "continueWithGoogle": "Continue with Google",
+    "login": {
+      "title": "Log in",
+      "submit": "Log in",
+      "forgotPassword": "Forgot your password?",
+      "noAccount": "No account yet?"
+    },
+    "signup": {
+      "title": "Sign up",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "consent": "By signing up you accept our <privacy>privacy policy</privacy>."
+    },
+    "forgot": {
+      "title": "Reset password",
+      "intro": "Enter your email and we will send you a link to choose a new password.",
+      "submit": "Send reset link",
+      "back": "Back to log in"
+    },
+    "reset": {
+      "title": "Choose a new password",
+      "submit": "Save new password"
+    },
+    "success": {
+      "checkEmail": "Almost there! Check your email and click the link to confirm your account.",
+      "resetSent": "If an account exists for that email, we have sent a link to reset your password."
+    },
+    "errors": {
+      "invalidEmail": "Please enter a valid email address.",
+      "passwordTooShort": "The password must be at least 8 characters.",
+      "passwordTooLong": "The password is too long (max 72 characters).",
+      "passwordRequired": "Please enter your password.",
+      "invalidCredentials": "Wrong email or password.",
+      "emailNotConfirmed": "Please confirm your email first. Check your inbox.",
+      "emailTaken": "An account with this email already exists.",
+      "rateLimited": "Too many attempts. Please wait a moment and try again.",
+      "notConfigured": "Login is not available yet. Please try again later.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "App": {
+    "nav": {
+      "home": "Home",
+      "settings": "Settings"
+    },
+    "logout": "Log out"
+  },
+  "Home": {
+    "title": "Home",
+    "greeting": "Welcome, {email}",
+    "connect": {
+      "title": "Connect your training data",
+      "text": "Connect Strava to see your full training history. Garmin users can also import their history with a one-time download.",
+      "strava": "Connect Strava",
+      "garminGuide": "Garmin history guide"
+    }
+  },
+  "Activities": {
+    "thisWeek": "This week",
+    "weeks": "Last 12 weeks",
+    "averageWeek": "Your average week",
+    "period": "Period",
+    "hours": "h",
+    "noTrainingYet": "No training this week yet.",
+    "averageNote": "Average over the last {weeks, plural, one {# week} other {# weeks}}, rest weeks included. The current week is not counted.",
+    "periods": {
+      "4w": "4 weeks",
+      "3m": "3 months",
+      "6m": "6 months",
+      "1y": "1 year",
+      "all": "All time"
+    },
+    "sports": {
+      "swim": "Swim",
+      "bike": "Bike",
+      "run": "Run",
+      "strength": "Strength",
+      "other": "Other"
+    }
+  },
+  "Settings": {
+    "title": "Settings",
+    "preferences": "Preferences",
+    "save": "Save",
+    "saved": "Saved.",
+    "error": "Could not save. Please try again.",
+    "databaseUnavailable": "Your settings cannot be loaded right now. Please try again later.",
+    "units": {
+      "label": "Units",
+      "metric": "Metric (km)",
+      "imperial": "Imperial (miles)"
+    },
+    "weekStart": {
+      "label": "Week starts on",
+      "monday": "Monday",
+      "sunday": "Sunday"
+    },
+    "language": {
+      "label": "Language",
+      "en": "English",
+      "da": "Dansk"
+    },
+    "connections": {
+      "title": "Connections",
+      "connect": "Connect",
+      "comingSoon": "Coming soon",
+      "note": "For now, the Strava connection lasts 6 hours. Permanent connections are coming next."
+    },
+    "account": {
+      "title": "Account",
+      "email": "Email"
+    }
   }
 }

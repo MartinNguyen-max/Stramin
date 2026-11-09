@@ -2,16 +2,24 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
 
-const databaseUrl = process.env.DATABASE_URL;
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL is not set. See .env.example.");
+function createDb() {
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    throw new Error("DATABASE_URL is not set. See .env.example.");
+  }
+  // prepare: false is required by Supabase's connection pooler (transaction mode) in production.
+  const client = postgres(databaseUrl, { prepare: false });
+  return drizzle({ client, schema });
 }
 
-// prepare: false is required by Supabase's connection pooler (transaction mode) in production.
-const client = postgres(databaseUrl, { prepare: false });
+let db: ReturnType<typeof createDb> | undefined;
 
 /**
  * Privileged database client: bypasses Row Level Security.
- * Only for the job runner and webhooks. User requests get an RLS-aware client in M2 (ADR 0003).
+ * Use it only for the job runner, webhooks and as the base for `withRls` (ADR 0003).
+ * Created lazily, so importing this module never fails at build time.
  */
-export const adminDb = drizzle({ client, schema });
+export function getAdminDb() {
+  db ??= createDb();
+  return db;
+}

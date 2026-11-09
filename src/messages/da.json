@@ -3,15 +3,16 @@
     "description": "Et gratis træningsoverblik til triatleter, med fokus på privatliv. Din træning, endelig overskuelig."
   },
   "Common": {
-    "language": "Sprog"
+    "language": "Sprog",
+    "login": "Log ind"
   },
   "Landing": {
     "hero": {
       "badge": "Under udvikling",
       "title": "Din træning, endelig overskuelig.",
       "subtitle": "Forbind Garmin eller Strava, og se din svømning, cykling, løb og styrketræning, som den burde vises. Gratis, og kun for dine øjne.",
-      "cta": "Kommer snart",
-      "github": "Følg på GitHub"
+      "signup": "Opret gratis konto",
+      "login": "Log ind"
     },
     "features": {
       "title": "Alt det vigtige, på én skærm",
@@ -82,5 +83,125 @@
       }
     },
     "note": "Du skal kun gøre det én gang. Derefter kommer nye aktiviteter automatisk via Garmin-forbindelsen."
+  },
+  "Auth": {
+    "email": "E-mail",
+    "password": "Adgangskode",
+    "newPassword": "Adgangskode",
+    "passwordHint": "Mindst {min} tegn.",
+    "pleaseWait": "Vent venligst…",
+    "or": "eller",
+    "continueWithGoogle": "Fortsæt med Google",
+    "login": {
+      "title": "Log ind",
+      "submit": "Log ind",
+      "forgotPassword": "Glemt din adgangskode?",
+      "noAccount": "Har du ikke en konto?"
+    },
+    "signup": {
+      "title": "Opret konto",
+      "submit": "Opret konto",
+      "haveAccount": "Har du allerede en konto?",
+      "consent": "Ved at oprette en konto accepterer du vores <privacy>privatlivspolitik</privacy>."
+    },
+    "forgot": {
+      "title": "Nulstil adgangskode",
+      "intro": "Skriv din e-mail, så sender vi dig et link, hvor du kan vælge en ny adgangskode.",
+      "submit": "Send link",
+      "back": "Tilbage til log ind"
+    },
+    "reset": {
+      "title": "Vælg en ny adgangskode",
+      "submit": "Gem ny adgangskode"
+    },
+    "success": {
+      "checkEmail": "Næsten færdig! Tjek din e-mail og klik på linket for at bekræfte din konto.",
+      "resetSent": "Hvis der findes en konto med den e-mail, har vi sendt et link til at nulstille din adgangskode."
+    },
+    "errors": {
+      "invalidEmail": "Skriv en gyldig e-mailadresse.",
+      "passwordTooShort": "Adgangskoden skal være mindst 8 tegn.",
+      "passwordTooLong": "Adgangskoden er for lang (maks. 72 tegn).",
+      "passwordRequired": "Skriv din adgangskode.",
+      "invalidCredentials": "Forkert e-mail eller adgangskode.",
+      "emailNotConfirmed": "Bekræft først din e-mail. Tjek din indbakke.",
+      "emailTaken": "Der findes allerede en konto med denne e-mail.",
+      "rateLimited": "For mange forsøg. Vent lidt og prøv igen.",
+      "notConfigured": "Login er ikke tilgængeligt endnu. Prøv igen senere.",
+      "generic": "Noget gik galt. Prøv igen."
+    }
+  },
+  "App": {
+    "nav": {
+      "home": "Hjem",
+      "settings": "Indstillinger"
+    },
+    "logout": "Log ud"
+  },
+  "Home": {
+    "title": "Hjem",
+    "greeting": "Velkommen, {email}",
+    "connect": {
+      "title": "Forbind dine træningsdata",
+      "text": "Forbind Strava for at se hele din træningshistorik. Garmin-brugere kan også importere deres historik med en engangs-download.",
+      "strava": "Forbind Strava",
+      "garminGuide": "Guide til Garmin-historik"
+    }
+  },
+  "Activities": {
+    "thisWeek": "Denne uge",
+    "weeks": "Sidste 12 uger",
+    "averageWeek": "Din gennemsnitlige uge",
+    "period": "Periode",
+    "hours": "t",
+    "noTrainingYet": "Ingen træning i denne uge endnu.",
+    "averageNote": "Gennemsnit over de sidste {weeks, plural, one {# uge} other {# uger}}, inklusive hvileuger. Den nuværende uge tæller ikke med.",
+    "periods": {
+      "4w": "4 uger",
+      "3m": "3 måneder",
+      "6m": "6 måneder",
+      "1y": "1 år",
+      "all": "Hele tiden"
+    },
+    "sports": {
+      "swim": "Svøm",
+      "bike": "Cykel",
+      "run": "Løb",
+      "strength": "Styrke",
+      "other": "Andet"
+    }
+  },
+  "Settings": {
+    "title": "Indstillinger",
+    "preferences": "Præferencer",
+    "save": "Gem",
+    "saved": "Gemt.",
+    "error": "Kunne ikke gemme. Prøv igen.",
+    "databaseUnavailable": "Dine indstillinger kan ikke hentes lige nu. Prøv igen senere.",
+    "units": {
+      "label": "Enheder",
+      "metric": "Metrisk (km)",
+      "imperial": "Imperial (miles)"
+    },
+    "weekStart": {
+      "label": "Ugen starter",
+      "monday": "Mandag",
+      "sunday": "Søndag"
+    },
+    "language": {
+      "label": "Sprog",
+      "en": "English",
+      "da": "Dansk"
+    },
+    "connections": {
+      "title": "Forbindelser",
+      "connect": "Forbind",
+      "comingSoon": "Kommer snart",
+      "note": "Indtil videre varer Strava-forbindelsen 6 timer. Permanente forbindelser kommer som det næste."
+    },
+    "account": {
+      "title": "Konto",
+      "email": "E-mail"
+    }
   }
 }
