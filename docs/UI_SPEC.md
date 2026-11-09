@@ -133,7 +133,12 @@ Inspired by how Garmin Connect groups activities by week.
 
 ## Brand
 
-- **Logo:** the heart-rate gauge icon followed by the "stramin" wordmark (Rubik Black) with the five zone bars. Files are in `public/brand/`, and the component is `src/components/brand/logo.tsx`.
+- **Logo:** the heart-rate gauge icon followed by the "stramin" wordmark (Rubik Black) with the five zone bars. The component is `src/components/brand/logo.tsx`.
+- **Logo files** (`public/brand/`): the **light** version is the **official** logo, and the dark version is for dark backgrounds.
+  - `stramin-logo-light-300.png` / `-dark-300.png`: the full logo as PNG (300 × 95). Use it wherever an image URL is needed (e.g. Garmin).
+  - `stramin-logo-*.svg`: the full logo as SVG.
+  - `stramin-icon-*.svg` and `stramin-text-*.svg`: the icon and the wordmark separately (extras).
+  - Note: the SVGs load the Rubik font from Google, which browsers block when an SVG is used as an image. Use the PNGs for external use.
 - **Colors:** a neutral UI (ink `#14141A` / white) with the five **heart-rate zone colors** as accents and chart colors: Z1 `#4FC3F7` · Z2 `#3DDC84` · Z3 `#FFD54F` · Z4 `#FF8A3D` · Z5 `#FF3D5A`. Defined as tokens in `src/app/globals.css` (`bg-zone-1` … `bg-zone-5`).
 - **Style:** clean and simple for now. The full visual design comes later.
 
