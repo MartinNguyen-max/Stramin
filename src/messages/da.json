@@ -49,9 +49,38 @@
   },
   "Footer": {
     "privacy": "Privatlivspolitik",
+    "guide": "Importér din Garmin-historik",
     "disclaimer": "Stramin er et uafhængigt projekt og er ikke tilknyttet, godkendt eller sponsoreret af Garmin eller Strava."
   },
   "Privacy": {
     "title": "Privatlivspolitik"
+  },
+  "Guide": {
+    "title": "Importér din Garmin-historik",
+    "intro": "Garmin sender kun nye aktiviteter til Stramin. For at se hele din historik skal du én gang hente en kopi af dine data fra Garmin og uploade den til Stramin.",
+    "openLink": "Åbn Garmins datastyring",
+    "steps": {
+      "open": {
+        "title": "Åbn din Garmin-konto",
+        "text": "Log ind på din Garmin-konto og gå til datastyring."
+      },
+      "request": {
+        "title": "Anmod om dine data",
+        "text": "Klik på \"Eksporter dine data\" og derefter \"Anmod om dataeksport\"."
+      },
+      "wait": {
+        "title": "Vent på e-mailen",
+        "text": "Garmin sender dig en e-mail med et downloadlink. Det tager typisk omkring 48 timer, men kan tage op til 30 dage."
+      },
+      "download": {
+        "title": "Hent filen",
+        "text": "Åbn linket i e-mailen og hent ZIP-filen. Du skal ikke pakke den ud."
+      },
+      "upload": {
+        "title": "Upload den til Stramin",
+        "text": "Upload hele ZIP-filen til Stramin. Kommer snart."
+      }
+    },
+    "note": "Du skal kun gøre det én gang. Derefter kommer nye aktiviteter automatisk via Garmin-forbindelsen."
   }
 }

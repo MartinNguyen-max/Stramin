@@ -29,6 +29,7 @@ Each requirement has an ID (e.g. `ACC-1`), so the plan, code and tests can refer
 | CON-6 | The data model supports more than one provider per user, so Garmin can be added without a redesign. | Must |
 | CON-7 | A user can connect Garmin. | Must |
 | CON-8 | Strava data is never kept for more than 7 days without being re-fetched ([ADR 0009](decisions/0009-strava-rolling-cache.md)). | Must |
+| CON-10 | **One-time history import:** a guide page that links to Garmin's (and Strava's) "export my data", and an upload where the user drops the whole export ZIP. Stramin finds and imports the activities. For users without Strava history. | Should |
 | CON-9 | **Duplicate detection:** when the same workout arrives from both Strava and Garmin, it is shown and counted **once**. Two activities match when sport, start time, duration and distance are close (within tolerances, not exactly equal). | Must |
 
 ## 3. Sports (SPT)
