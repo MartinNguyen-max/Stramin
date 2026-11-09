@@ -2,6 +2,8 @@
 
 Guidance for Claude (and any contributor) working on Stramin.
 
+@AGENTS.md
+
 ## How we work
 
 - **Short and clear.** Keep answers concise and easy to follow. The owner asks for more detail when needed.
@@ -25,7 +27,17 @@ Guidance for Claude (and any contributor) working on Stramin.
 | `docs/research/` | Research notes (Strava terms, Garmin API) |
 | `docs/PLAN.md` | Milestones and tasks |
 
+## Commands
+
+| Command | What it does |
+|---|---|
+| `pnpm dev` | Start the dev server on http://localhost:3000 |
+| `pnpm build` | Production build |
+| `pnpm lint` | Biome check (lint + format) |
+| `pnpm format` | Format all files with Biome |
+
 ## Git
 
+- Commits are authored as **Martin Nguyen**, never a uni or work account. Check `git config user.email` before committing.
 - Conventional Commits, kept short (e.g. `docs: add plan`).
 - One branch + pull request per task. `main` is always deployable.
