@@ -72,16 +72,22 @@ Every technical choice is documented as an [Architecture Decision Record](docs/d
 | [UI spec](docs/UI_SPEC.md) | Screens and navigation |
 | [Architecture](docs/ARCHITECTURE.md) | System design, data model and security |
 | [Decisions](docs/decisions/) | The reasoning behind each technical choice |
+| [Plan](docs/PLAN.md) | Milestones and tasks |
 
 ## Roadmap
 
 1. ✅ Vision, requirements and architecture
 2. ⬜ Project setup, landing page and privacy policy
-3. ⬜ Accounts and Garmin/Strava connections
-4. ⬜ Activity sync and weekly overview
-5. ⬜ Best efforts, goals and event countdowns
-6. ⬜ Training library with personal paces
-7. ⬜ PWA install and public release
+3. ⬜ Accounts and Strava connection
+4. ⬜ Activity sync and activity log
+5. ⬜ Home: weekly overview and averages
+6. ⬜ Best efforts and records
+7. ⬜ Events, goals and feedback
+8. ⬜ Training library with personal paces
+9. ⬜ Garmin connection
+10. ⬜ Privacy tools, PWA install and public release
+
+See the full [plan](docs/PLAN.md).
 
 ## About
 

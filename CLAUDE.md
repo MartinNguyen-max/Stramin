@@ -23,4 +23,9 @@ Guidance for Claude (and any contributor) working on Stramin.
 | `docs/ARCHITECTURE.md` | Tech stack and system design |
 | `docs/decisions/` | Architecture Decision Records (ADRs) |
 | `docs/research/` | Research notes (Strava terms, Garmin API) |
-| `docs/PLAN.md` | *(planned)* Milestones and tasks |
+| `docs/PLAN.md` | Milestones and tasks |
+
+## Git
+
+- Conventional Commits, kept short (e.g. `docs: add plan`).
+- One branch + pull request per task. `main` is always deployable.
