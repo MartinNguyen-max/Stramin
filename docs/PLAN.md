@@ -33,11 +33,14 @@
 
 ### Garmin test (spike, before M2)
 Goal: prove that Garmin works before building more. Throwaway code, no database.
-- [ ] Garmin keys in `.env.local` and Vercel
-- [ ] "Connect Garmin" → Garmin login → back to Stramin showing the Garmin user ID and permissions
-- [ ] Webhook receives a real activity (seen in Vercel logs)
+- [x] Garmin keys in `.env.local` and Vercel
+- [x] "Connect Garmin" → Garmin login → back to Stramin showing the Garmin user ID and permissions
+- [x] Webhook receives a real activity (seen in Vercel logs) *(2026-11-09: summary + details with ~1 sample/s)*
 
 ✅ **Done when:** a real activity from your Garmin arrives at Stramin.
+
+### Strava data test (spike, before M2)
+- [x] Connect Strava → fetch the full history → hours per week per sport on `/strava-test` *(2026-11-09: 863 activities back to 2023-06, 154 weeks, 364 indoor)*
 
 ### M2 – Accounts
 - [ ] Supabase Auth: Google + email & password, verification, password reset (ACC-1..3)
@@ -115,7 +118,7 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
 - [ ] PWA: manifest, icons, Serwist service worker (NFR-1)
 - [ ] Accessibility pass (NFR-7)
 - [ ] Redesign the landing page with real screenshots of the app (the M1 version is a placeholder)
-- [ ] Upgrade the Strava app to 10 athletes
+- [x] Upgrade the Strava app to 10 athletes *(done 2026-11-09)*
 - [ ] **Garmin release checklist** (details in the private notes, `docs/research/garmin/NOTES.md`):
   - [ ] Garmin attribution on every screen that shows Garmin data (NFR-5b)
   - [ ] Send screenshots/mockups of those screens to Garmin **at least 30 days before release**
