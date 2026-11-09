@@ -43,10 +43,13 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
 - [x] Connect Strava → fetch the full history → hours per week per sport on `/strava-test` *(2026-11-09: 863 activities back to 2023-06, 154 weeks, 364 indoor)*
 
 ### M2 – Accounts
-- [ ] Supabase Auth: Google + email & password, verification, password reset (ACC-1..3)
-- [ ] `profiles` table with RLS, and the RLS-aware Drizzle client (PRIV-3)
-- [ ] Protected app area + log out
-- [ ] Settings: units, week start, language (SET-1..3)
+- [~] Supabase Auth: Google + email & password, verification, password reset (ACC-1..3) *(code done; local login hangs, see open issue below; Google needs setup)*
+- [x] `profiles` table with RLS, and the RLS-aware Drizzle client (PRIV-3)
+- [x] Protected app area + log out
+- [x] Landing page: **Log in** and **Sign up** buttons (replacing "Coming soon")
+- [ ] **Open issue:** login/sign-up hangs against local Supabase (server action waits for an answer). Investigate next.
+- [ ] Supabase cloud project + Vercel env vars, so login works on stramin.vercel.app
+- [x] Settings: units, week start, language (SET-1..3) *(not yet verified end-to-end)*
 
 ✅ **Done when:** you can sign up, log in, change settings and log out.
 
@@ -117,7 +120,7 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
 - [ ] Data export (PRIV-1) and account deletion (ACC-4, PRIV-2)
 - [ ] PWA: manifest, icons, Serwist service worker (NFR-1)
 - [ ] Accessibility pass (NFR-7)
-- [ ] Redesign the landing page with real screenshots of the app (the M1 version is a placeholder)
+- [ ] Redesign the landing page as a **preview of the web app**, with real screens (the M1 version is a placeholder)
 - [x] Upgrade the Strava app to 10 athletes *(done 2026-11-09)*
 - [ ] **Garmin release checklist** (details in the private notes, `docs/research/garmin/NOTES.md`):
   - [ ] Garmin attribution on every screen that shows Garmin data (NFR-5b)

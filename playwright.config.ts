@@ -1,4 +1,10 @@
+import { existsSync } from "node:fs";
 import { defineConfig, devices } from "@playwright/test";
+
+// Same settings as the app, so tests know whether Supabase is available (Node built-in).
+if (existsSync(".env.local")) {
+  process.loadEnvFile(".env.local");
+}
 
 const isCI = !!process.env.CI;
 const baseURL = "http://localhost:3000";

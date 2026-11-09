@@ -8,9 +8,10 @@ import {
   Trophy,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { GITHUB_URL, SiteFooter } from "@/components/site-footer";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 const FEATURES = [
@@ -45,20 +46,21 @@ export default function LandingPage() {
             {t("hero.subtitle")}
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button size="lg" className="px-5" disabled>
-              {t("hero.cta")}
-            </Button>
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/signup"
+              className={cn(buttonVariants({ size: "lg" }), "px-5")}
+            >
+              {t("hero.signup")}
+            </Link>
+            <Link
+              href="/login"
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
                 "px-5",
               )}
             >
-              {t("hero.github")}
-            </a>
+              {t("hero.login")}
+            </Link>
           </div>
         </section>
 

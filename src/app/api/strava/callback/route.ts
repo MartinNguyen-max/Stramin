@@ -6,15 +6,21 @@ import {
 } from "@/lib/strava/client";
 
 /**
- * SPIKE – Strava data test.
- * Strava redirects here after consent. The access token is kept in a short-lived, httpOnly cookie
- * (no database yet), then the user is sent to the test page.
+ * Strava redirects here after consent.
+ * SPIKE: the access token is kept in a short-lived, httpOnly cookie (no database yet).
+ * M3 replaces this with encrypted tokens in the database.
  */
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const code = params.get("code");
   const state = params.get("state");
-  const savedState = request.cookies.get(STRAVA_STATE_COOKIE)?.value;
+
+  let saved: { state?: string; next?: string } = {};
+  try {
+    saved = JSON.parse(request.cookies.get(STRAVA_STATE_COOKIE)?.value ?? "{}");
+  } catch {
+    // Invalid cookie: handled as a state mismatch below.
+  }
 
   if (params.get("error")) {
     return NextResponse.json(
@@ -22,7 +28,7 @@ export async function GET(request: NextRequest) {
       { status: 400 },
     );
   }
-  if (!code || !state || state !== savedState) {
+  if (!code || !state || state !== saved.state) {
     return NextResponse.json(
       { ok: false, error: "Missing code or state mismatch. Start again." },
       { status: 400 },
@@ -32,7 +38,7 @@ export async function GET(request: NextRequest) {
   try {
     const tokens = await exchangeCode(code);
     const response = NextResponse.redirect(
-      new URL("/strava-test", request.nextUrl.origin),
+      new URL(saved.next ?? "/home", request.nextUrl.origin),
     );
     response.cookies.set(STRAVA_TOKEN_COOKIE, tokens.access_token, {
       httpOnly: true,
@@ -45,7 +51,7 @@ export async function GET(request: NextRequest) {
     response.cookies.delete({ name: STRAVA_STATE_COOKIE, path: "/api/strava" });
     return response;
   } catch (error) {
-    console.error("[strava-spike] callback failed", error);
+    console.error("[strava] callback failed", error);
     return NextResponse.json(
       { ok: false, error: "Strava connection failed. See logs." },
       { status: 502 },

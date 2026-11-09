@@ -53,7 +53,7 @@ async function StravaData() {
   if (!token) {
     return (
       <a
-        href="/api/strava/connect"
+        href="/api/strava/connect?next=/strava-test"
         className={cn(buttonVariants({ size: "lg" }), "mt-6")}
       >
         Connect Strava
