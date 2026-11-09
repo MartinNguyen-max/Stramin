@@ -161,6 +161,7 @@ Strava webhooks need a public URL. Locally we use the manual Refresh, or a tunne
 - `src/proxy.ts` redirects visitors to their language (browser setting, later also the user's saved setting).
 - Texts live in `src/messages/en.json` and `da.json`. Keys are type-checked against `en.json`.
 - Always use `Link`, `redirect` and `useRouter` from `@/i18n/navigation`, never directly from Next.
+- **Considered:** `localePrefix: "never"` (no language in the URL, language remembered in a cookie). It keeps the caching, and is a one-line change if the `/da` URLs ever become a problem.
 
 ## CI
 

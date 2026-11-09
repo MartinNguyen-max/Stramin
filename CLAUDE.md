@@ -14,7 +14,7 @@ Guidance for Claude (and any contributor) working on Stramin.
 - **Docs before code.** Big decisions are written down in `docs/` before they are implemented.
 - **Keep docs in sync.** When a decision is made or changed, update the affected docs in the same step and mention it.
 - **Keep the owner on track.** Every update says what was just done, what comes next, and where we are in `docs/PLAN.md`.
-- **Ask before running commands.** List the exact commands and run them only after a "yes".
+- **Ask before running commands.** List the exact commands and run them only after a "yes". Exception: checks (`pnpm check`, `lint`, `format`, `typecheck`, `test`, `build`, `test:e2e`) run without asking.
 - **Language:** all code and docs are in English. Conversation may be in Danish or English.
 
 ## Project docs

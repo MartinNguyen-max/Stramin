@@ -26,7 +26,7 @@
 - [x] next-intl with English and Danish
 - [x] Supabase local (CLI + Docker) and Drizzle setup
 - [x] GitHub Actions CI
-- [ ] Landing page + privacy policy page (PRIV-5)
+- [x] Landing page + privacy policy page (PRIV-5)
 - [ ] Deploy to Vercel
 
 ✅ **Done when:** the landing page is live on a Vercel URL, and CI is green.
@@ -105,6 +105,7 @@
 - [ ] Data export (PRIV-1) and account deletion (ACC-4, PRIV-2)
 - [ ] PWA: manifest, icons, Serwist service worker (NFR-1)
 - [ ] Accessibility pass (NFR-7)
+- [ ] Redesign the landing page with real screenshots of the app (the M1 version is a placeholder)
 - [ ] Upgrade the Strava app to 10 athletes
 - [ ] 🎉 Release
 
