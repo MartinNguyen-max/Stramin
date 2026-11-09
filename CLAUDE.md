@@ -41,6 +41,12 @@ Guidance for Claude (and any contributor) working on Stramin.
 | `pnpm test` | Unit tests (Vitest, once) · `pnpm test:watch` to watch |
 | `pnpm test:e2e` | End-to-end tests (Playwright, desktop + iPhone) |
 
+| `pnpm db:start` / `db:stop` | Start/stop local Supabase (Docker Desktop must run). Studio: http://127.0.0.1:55323 |
+| `pnpm db:generate` | Generate a SQL migration from the Drizzle schema into `supabase/migrations/` |
+| `pnpm db:reset` | Recreate the local database and apply all migrations (deletes local data) |
+
+**Local Supabase** uses ports **553xx** (not the default 543xx), so it can run next to other local Supabase projects. Run Supabase CLI commands from PowerShell. In Git Bash they fail on the temp folder.
+
 **Tests:** unit tests sit next to the code (`foo.ts` → `foo.test.ts`). E2E tests live in `tests/e2e/`.
 
 ## Git

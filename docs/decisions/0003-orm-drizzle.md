@@ -15,6 +15,8 @@ We want type-safe database access, a schema defined in code, versioned migration
 **Drizzle ORM** for the schema, migrations (drizzle-kit) and queries.
 User-facing queries run inside a transaction with the user's JWT claims and the `authenticated` role, so **RLS is enforced**. A privileged connection is used only for the job runner and webhooks.
 
+**Migrations:** drizzle-kit writes SQL migrations into `supabase/migrations/`, and the Supabase CLI applies them (locally with `db reset`, to the cloud with `db push`). This gives one migration history instead of two competing systems.
+
 ## Consequences
 - One source of truth for the schema, in TypeScript.
 - Complex SQL (window functions, weekly aggregation) is easy to write.

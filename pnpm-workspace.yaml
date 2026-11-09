@@ -4,3 +4,5 @@ allowBuilds:
   # Used only by next-intl's optional message extractor, which we don't use.
   "@parcel/watcher": false
   "@swc/core": false
+  # Build tool used by drizzle-kit. Its script installs the native binary for the platform.
+  esbuild: true
