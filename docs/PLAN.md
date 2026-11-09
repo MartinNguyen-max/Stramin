@@ -43,13 +43,15 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
 - [x] Connect Strava → fetch the full history → hours per week per sport on `/strava-test` *(2026-11-09: 863 activities back to 2023-06, 154 weeks, 364 indoor)*
 
 ### M2 – Accounts
-- [~] Supabase Auth: Google + email & password, verification, password reset (ACC-1..3) *(code done; local login hangs, see open issue below; Google needs setup)*
+- [x] Supabase Auth: email & password, verification, password reset (ACC-1..3) *(works online, 2026-11-09)*
+- [ ] Google login (needs a Google login key, ADR 0004)
 - [x] `profiles` table with RLS, and the RLS-aware Drizzle client (PRIV-3)
 - [x] Protected app area + log out
 - [x] Landing page: **Log in** and **Sign up** buttons (replacing "Coming soon")
-- [ ] **Open issue:** login/sign-up hangs against local Supabase (server action waits for an answer). Investigate next.
-- [ ] Supabase cloud project + Vercel env vars, so login works on stramin.vercel.app
-- [x] Settings: units, week start, language (SET-1..3) *(not yet verified end-to-end)*
+- [ ] Check local login (it hung on the PC, probably old dev servers still running; works online)
+- [x] Supabase cloud project (EU) + Vercel env vars: login works on stramin.vercel.app
+- [x] Settings: units, week start, language (SET-1..3)
+- [x] Zone spinner as loading indicator; Strava data cached in the browser for 6 h (until M4)
 
 ✅ **Done when:** you can sign up, log in, change settings and log out.
 
