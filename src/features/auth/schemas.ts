@@ -40,7 +40,8 @@ export type AuthErrorKey =
 
 export type AuthFormState =
   | { status: "idle" }
-  | { status: "error"; error: AuthErrorKey }
+  /** `email` is sent back so the form can keep it after a failed attempt. */
+  | { status: "error"; error: AuthErrorKey; email?: string }
   | { status: "success"; message: "checkEmail" | "resetSent" };
 
 export const initialAuthState: AuthFormState = { status: "idle" };

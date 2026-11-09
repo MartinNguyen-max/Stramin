@@ -146,7 +146,8 @@
       "text": "Forbind Strava for at se hele din træningshistorik. Garmin-brugere kan også importere deres historik med en engangs-download.",
       "strava": "Forbind Strava",
       "garminGuide": "Guide til Garmin-historik"
-    }
+    },
+    "loading": "Henter din træning…"
   },
   "Activities": {
     "thisWeek": "Denne uge",

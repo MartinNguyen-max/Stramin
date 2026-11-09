@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { ZoneSpinner } from "@/components/brand/zone-spinner";
 import { buttonVariants } from "@/components/ui/button";
 import { AverageWeek } from "@/features/activities/components/average-week";
 import {
@@ -141,12 +142,12 @@ function ConnectCard() {
   );
 }
 
+/** Shown while the session and the training data load. */
 function HomeSkeleton() {
+  const t = useTranslations("Home");
   return (
-    <div className="flex flex-col gap-6" aria-busy="true">
-      <div className="h-8 w-64 animate-pulse rounded-lg bg-muted" />
-      <div className="h-32 animate-pulse rounded-2xl bg-muted" />
-      <div className="h-72 animate-pulse rounded-2xl bg-muted" />
+    <div className="flex flex-1 items-center justify-center py-24">
+      <ZoneSpinner size={72} label={t("loading")} />
     </div>
   );
 }

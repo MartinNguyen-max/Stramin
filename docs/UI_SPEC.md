@@ -147,7 +147,7 @@ Inspired by how Garmin Connect groups activities by week.
 - **Sport colors:** one fixed color per sport (Swim, Bike, Run, Strength, Other), used everywhere.
 - **Dark and light mode**, following the system setting.
 - **Empty states:** every screen explains what to do when there is no data yet.
-- **Loading states:** skeletons instead of spinners.
+- **Loading states:** the **zone spinner** (`src/components/brand/zone-spinner.tsx`): the logo gauge with the needle sweeping from zone 1 to zone 5. Still image when the OS has "reduce motion" on.
 - **All text translatable** (English/Danish) from day one.
 
 ## Open questions

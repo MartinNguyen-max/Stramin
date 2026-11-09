@@ -129,6 +129,128 @@
   --sidebar-ring: #4fc3f7;
 }
 
+/*
+ * Zone spinner (src/components/brand/zone-spinner.tsx).
+ * One 2.4 s cycle: the needle sweeps from zone 1 to zone 5 (0–75 %), each zone lights up as the needle
+ * passes it, then everything drops back to zone 1 (75–100 %) and starts over.
+ */
+.zone-spinner-needle {
+  transform-box: view-box;
+  transform-origin: 256px 300px;
+  animation: zone-needle 2.4s ease-in-out infinite;
+}
+.zone-spinner-arc {
+  opacity: 0.2;
+  animation: 2.4s ease-in-out infinite;
+}
+.zone-spinner-arc:nth-of-type(1) {
+  animation-name: zone-arc-1;
+}
+.zone-spinner-arc:nth-of-type(2) {
+  animation-name: zone-arc-2;
+}
+.zone-spinner-arc:nth-of-type(3) {
+  animation-name: zone-arc-3;
+}
+.zone-spinner-arc:nth-of-type(4) {
+  animation-name: zone-arc-4;
+}
+.zone-spinner-arc:nth-of-type(5) {
+  animation-name: zone-arc-5;
+}
+
+/* The needle in the logo points at zone 4. -116° turns it to zone 1, +44° to zone 5. */
+@keyframes zone-needle {
+  0% {
+    transform: rotate(-116deg);
+  }
+  75% {
+    transform: rotate(44deg);
+  }
+  100% {
+    transform: rotate(-116deg);
+  }
+}
+@keyframes zone-arc-1 {
+  0%,
+  3% {
+    opacity: 0.2;
+  }
+  8%,
+  78% {
+    opacity: 1;
+  }
+  92%,
+  100% {
+    opacity: 0.2;
+  }
+}
+@keyframes zone-arc-2 {
+  0%,
+  18% {
+    opacity: 0.2;
+  }
+  23%,
+  78% {
+    opacity: 1;
+  }
+  92%,
+  100% {
+    opacity: 0.2;
+  }
+}
+@keyframes zone-arc-3 {
+  0%,
+  33% {
+    opacity: 0.2;
+  }
+  38%,
+  78% {
+    opacity: 1;
+  }
+  92%,
+  100% {
+    opacity: 0.2;
+  }
+}
+@keyframes zone-arc-4 {
+  0%,
+  48% {
+    opacity: 0.2;
+  }
+  53%,
+  78% {
+    opacity: 1;
+  }
+  92%,
+  100% {
+    opacity: 0.2;
+  }
+}
+@keyframes zone-arc-5 {
+  0%,
+  63% {
+    opacity: 0.2;
+  }
+  68%,
+  78% {
+    opacity: 1;
+  }
+  92%,
+  100% {
+    opacity: 0.2;
+  }
+}
+
+/* Respect "reduce motion": show a still, fully lit gauge. */
+@media (prefers-reduced-motion: reduce) {
+  .zone-spinner-needle,
+  .zone-spinner-arc {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
