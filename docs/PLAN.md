@@ -17,7 +17,7 @@
 - [x] Install Node.js (LTS), pnpm and Docker Desktop
 - [ ] Create accounts: Supabase, Vercel (log in with GitHub)
 - [ ] Get a Strava subscription and create a Strava API app
-- [ ] Garmin Starter application *(sent 2026-11-09, waiting for an answer)*
+- [x] Garmin Starter application *(sent and **accepted** 2026-11-09)*
 
 ### M1 – Project setup
 - [x] Scaffold Next.js (TypeScript strict, App Router, `src/`)
@@ -27,7 +27,7 @@
 - [x] Supabase local (CLI + Docker) and Drizzle setup
 - [x] GitHub Actions CI
 - [x] Landing page + privacy policy page (PRIV-5)
-- [ ] Deploy to Vercel
+- [x] Deploy to Vercel: **https://stramin.vercel.app**
 
 ✅ **Done when:** the landing page is live on a Vercel URL, and CI is green.
 

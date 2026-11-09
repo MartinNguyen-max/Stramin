@@ -13,6 +13,13 @@
 
 Starter includes the **Activity API** (JSON and `.FIT` files) and the **Health API**.
 
+## Status (2026-11-09)
+
+✅ **Accepted into the program, Starter tier.** Confirmed in the developer portal:
+- Activity API (JSON and `.FIT`), Health, Women's Health, Training and Courses APIs
+- **Push only**, **no historical data**, **up to 1,000 connected users**
+- Still to verify in the API license agreement: the rules on **storing data** and **attribution** ("Works with Garmin"). Strava's policy also says apps showing Garmin-sourced data must credit Garmin.
+
 ## Key points
 
 - **Individuals can now apply.** The program is no longer for businesses only.
