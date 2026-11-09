@@ -46,6 +46,7 @@ export function AuthForm({ action, fields, submitLabel }: AuthFormProps) {
             name="email"
             type="email"
             autoComplete="email"
+            defaultValue={state.status === "error" ? state.email : undefined}
             required
           />
         </div>

@@ -25,6 +25,12 @@ async function getOrigin() {
   return `${proto}://${host}`;
 }
 
+/** The submitted email, returned on errors so the form keeps it. */
+function emailOf(formData: FormData) {
+  const value = formData.get("email");
+  return typeof value === "string" ? value : undefined;
+}
+
 /** Translates Supabase's error codes into our own error keys. */
 function mapSupabaseError(code: string | undefined): AuthErrorKey {
   switch (code) {
@@ -56,14 +62,22 @@ export async function signIn(
 ): Promise<AuthFormState> {
   const parsed = loginSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
-    return { status: "error", error: firstErrorKey(parsed.error) };
+    return {
+      status: "error",
+      error: firstErrorKey(parsed.error),
+      email: emailOf(formData),
+    };
   }
   if (!supabaseConfig()) return notConfigured;
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) {
-    return { status: "error", error: mapSupabaseError(error.code) };
+    return {
+      status: "error",
+      error: mapSupabaseError(error.code),
+      email: emailOf(formData),
+    };
   }
 
   redirect({ href: "/home", locale: localeFromForm(formData) });
@@ -76,7 +90,11 @@ export async function signUp(
 ): Promise<AuthFormState> {
   const parsed = signupSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
-    return { status: "error", error: firstErrorKey(parsed.error) };
+    return {
+      status: "error",
+      error: firstErrorKey(parsed.error),
+      email: emailOf(formData),
+    };
   }
   if (!supabaseConfig()) return notConfigured;
 
@@ -90,7 +108,11 @@ export async function signUp(
     },
   });
   if (error) {
-    return { status: "error", error: mapSupabaseError(error.code) };
+    return {
+      status: "error",
+      error: mapSupabaseError(error.code),
+      email: emailOf(formData),
+    };
   }
 
   // With email confirmation off (local dev), Supabase logs the user in right away.
@@ -106,7 +128,11 @@ export async function requestPasswordReset(
 ): Promise<AuthFormState> {
   const parsed = forgotPasswordSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
-    return { status: "error", error: firstErrorKey(parsed.error) };
+    return {
+      status: "error",
+      error: firstErrorKey(parsed.error),
+      email: emailOf(formData),
+    };
   }
   if (!supabaseConfig()) return notConfigured;
 
@@ -120,7 +146,7 @@ export async function requestPasswordReset(
   );
   // Don't reveal whether the email exists. Only rate limits are reported.
   if (error && mapSupabaseError(error.code) === "rateLimited") {
-    return { status: "error", error: "rateLimited" };
+    return { status: "error", error: "rateLimited", email: emailOf(formData) };
   }
   return { status: "success", message: "resetSent" };
 }
@@ -131,7 +157,11 @@ export async function updatePassword(
 ): Promise<AuthFormState> {
   const parsed = resetPasswordSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
-    return { status: "error", error: firstErrorKey(parsed.error) };
+    return {
+      status: "error",
+      error: firstErrorKey(parsed.error),
+      email: emailOf(formData),
+    };
   }
   if (!supabaseConfig()) return notConfigured;
 
@@ -140,7 +170,11 @@ export async function updatePassword(
     password: parsed.data.password,
   });
   if (error) {
-    return { status: "error", error: mapSupabaseError(error.code) };
+    return {
+      status: "error",
+      error: mapSupabaseError(error.code),
+      email: emailOf(formData),
+    };
   }
 
   redirect({ href: "/home", locale: localeFromForm(formData) });

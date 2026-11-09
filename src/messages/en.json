@@ -146,7 +146,8 @@
       "text": "Connect Strava to see your full training history. Garmin users can also import their history with a one-time download.",
       "strava": "Connect Strava",
       "garminGuide": "Garmin history guide"
-    }
+    },
+    "loading": "Fetching your training…"
   },
   "Activities": {
     "thisWeek": "This week",
