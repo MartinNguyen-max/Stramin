@@ -56,6 +56,13 @@ export function PrivacyEn() {
         sold, rented or shared for advertising, never used to train AI or
         machine-learning models, and never used for analytics across users.
       </p>
+      <p>
+        <strong>No AI processing.</strong> No AI system processes your data,
+        including data from Garmin and Strava. All statistics (weekly totals,
+        best efforts, paces) are calculated with plain, deterministic formulas.
+        If this ever changes, we will ask for your explicit consent first, and
+        you can withdraw it at any time.
+      </p>
 
       <h2>Legal basis</h2>
       <p>
@@ -178,6 +185,13 @@ export function PrivacyDa() {
         udlejes eller deles aldrig til reklame, bruges aldrig til at træne AI-
         eller machine learning-modeller, og bruges aldrig til analyser på tværs
         af brugere.
+      </p>
+      <p>
+        <strong>Ingen AI-behandling.</strong> Intet AI-system behandler dine
+        data, heller ikke data fra Garmin og Strava. Al statistik (ugetotaler,
+        bedste præstationer, tempo) beregnes med almindelige, faste formler.
+        Hvis det nogensinde ændres, beder vi først om dit udtrykkelige samtykke,
+        og du kan til enhver tid trække det tilbage.
       </p>
 
       <h2>Retsgrundlag</h2>

@@ -4,7 +4,7 @@
 
 Stramin is a free, privacy-first training dashboard for triathletes. Connect your Garmin or Strava account and see your swim, bike, run and strength training the way it should be shown: how much you train, what the time goes to, where your level is right now, and how many days are left until race day.
 
-> 🚧 **Status: in design.** Stramin is being planned and built in the open. See the [docs](docs/) for the full vision, requirements and architecture.
+> 🚧 **Status: in development.** Stramin is being built in the open. See it at **[stramin.vercel.app](https://stramin.vercel.app)**, and read the [docs](docs/) for the full vision, requirements and architecture.
 
 ---
 
@@ -41,7 +41,7 @@ Your health data belongs to you.
 - Export or permanently delete everything at any time.
 - Data is protected with row-level security, and access tokens are encrypted.
 
-Read the full [Privacy Policy](PRIVACY.md).
+Read the full [Privacy Policy](https://stramin.vercel.app/privacy).
 
 ## Data sources
 
@@ -77,7 +77,7 @@ Every technical choice is documented as an [Architecture Decision Record](docs/d
 ## Roadmap
 
 1. ✅ Vision, requirements and architecture
-2. ⬜ Project setup, landing page and privacy policy
+2. ✅ Project setup, landing page and privacy policy
 3. ⬜ Accounts and Strava connection
 4. ⬜ Activity sync and activity log
 5. ⬜ Home: weekly overview and averages

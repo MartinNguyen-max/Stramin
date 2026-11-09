@@ -29,6 +29,8 @@ Your data is used **only** to show **you** your own training statistics. It is:
 - **never** used to train AI or machine-learning models;
 - **never** used for analytics across users.
 
+**No AI processing.** No AI system processes your data, including data from Garmin and Strava. All statistics (weekly totals, best efforts, paces) are calculated with plain, deterministic formulas. If this ever changes, we will ask for your explicit consent first, and you can withdraw it at any time.
+
 ## Legal basis
 
 We process your data based on your **consent** (GDPR Art. 6(1)(a)). Activity data such as heart rate is health data, so we ask for your **explicit consent** (GDPR Art. 9(2)(a)) when you connect Garmin or Strava. You can withdraw your consent at any time by disconnecting a service or deleting your account.
