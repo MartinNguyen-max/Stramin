@@ -37,10 +37,15 @@ export async function GET(request: NextRequest) {
 
   try {
     const tokens = await exchangeCode(code, verifier);
-    const [{ userId }, { permissions }] = await Promise.all([
-      fetchUserId(tokens.access_token),
-      fetchPermissions(tokens.access_token),
-    ]);
+    const { userId } = await fetchUserId(tokens.access_token);
+
+    // The permissions check is informational only. A failure must not fail the test.
+    const permissions = await fetchPermissions(tokens.access_token)
+      .then((result) => result.permissions)
+      .catch((error: unknown) => {
+        console.warn("[garmin-spike] permissions check failed", error);
+        return `Not available: ${error instanceof Error ? error.message : "unknown error"}`;
+      });
 
     const response = NextResponse.json({
       ok: true,
@@ -54,7 +59,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("[garmin-spike] callback failed", error);
     return NextResponse.json(
-      { ok: false, error: "Token exchange failed. See Vercel logs." },
+      { ok: false, error: "Garmin connection failed. See Vercel logs." },
       { status: 502 },
     );
   }
