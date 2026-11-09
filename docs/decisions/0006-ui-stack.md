@@ -8,11 +8,13 @@ We need a fast, consistent and accessible UI with good charts, which work in bot
 
 ## Options
 - **Styling:** Tailwind CSS (utility-first, the current standard) · CSS Modules · CSS-in-JS (declining with Server Components).
-- **Components:** shadcn/ui (accessible components copied into our code, built on Radix, fully customizable) · Mantine / MUI (full libraries, harder to make look unique).
+- **Components:** shadcn/ui (accessible components copied into our code, fully customizable) · Mantine / MUI (full libraries, harder to make look unique).
+- **shadcn base:** Radix UI (mature, development has slowed) · **Base UI** (newer, actively developed, by the creators of Radix and Material UI).
 - **Charts:** Recharts (simple, React-native, used by shadcn charts) · visx (low-level, maximum control) · ECharts (powerful, heavier) · Observable Plot (great for exploration, less interactive).
 
 ## Decision
-**Tailwind CSS** + **shadcn/ui** + **Recharts** (via shadcn's chart components).
+**Tailwind CSS** + **shadcn/ui** (style "Nova", on **Base UI**) + **Recharts** (via shadcn's chart components).
+Light/dark mode with **next-themes**, following the system setting by default.
 
 ## Consequences
 - We own the component code, so the look can be fully custom.

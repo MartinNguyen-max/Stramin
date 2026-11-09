@@ -1,0 +1,57 @@
+{
+  "Metadata": {
+    "description": "A free, privacy-first training dashboard for triathletes. Your training, finally clear."
+  },
+  "Common": {
+    "language": "Language"
+  },
+  "Landing": {
+    "hero": {
+      "badge": "In development",
+      "title": "Your training, finally clear.",
+      "subtitle": "Connect Garmin or Strava and see your swim, bike, run and strength training the way it should be shown. Free, and only for your eyes.",
+      "cta": "Coming soon",
+      "github": "Follow on GitHub"
+    },
+    "features": {
+      "title": "Everything that matters, on one screen",
+      "weekly": {
+        "title": "Weekly overview",
+        "text": "Training hours split by swim, bike, run and strength, compared week by week."
+      },
+      "averages": {
+        "title": "Your typical week",
+        "text": "Average volume per sport over any period, from 4 weeks to all time."
+      },
+      "bestEfforts": {
+        "title": "Best efforts",
+        "text": "Your fastest 5 km, 10 km, half and full marathon, bike records and best power."
+      },
+      "goals": {
+        "title": "Goals",
+        "text": "Set a target like 5 km in 15:00 and see how far you are and what to work on."
+      },
+      "countdowns": {
+        "title": "Race countdowns",
+        "text": "Your next race, always one glance away."
+      },
+      "activities": {
+        "title": "Activity log",
+        "text": "Every session from Garmin and Strava, grouped by week."
+      }
+    },
+    "privacy": {
+      "title": "Your data stays yours",
+      "onlyYou": "Only you can see your data. No feeds, no leaderboards, no public profiles.",
+      "noAds": "No ads, no data selling and no AI training on your data.",
+      "control": "Export or permanently delete everything at any time."
+    }
+  },
+  "Footer": {
+    "privacy": "Privacy policy",
+    "disclaimer": "Stramin is an independent project and is not affiliated with, endorsed by or sponsored by Garmin or Strava."
+  },
+  "Privacy": {
+    "title": "Privacy policy"
+  }
+}

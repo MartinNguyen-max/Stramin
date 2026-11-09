@@ -1,0 +1,57 @@
+{
+  "Metadata": {
+    "description": "Et gratis træningsoverblik til triatleter, med fokus på privatliv. Din træning, endelig overskuelig."
+  },
+  "Common": {
+    "language": "Sprog"
+  },
+  "Landing": {
+    "hero": {
+      "badge": "Under udvikling",
+      "title": "Din træning, endelig overskuelig.",
+      "subtitle": "Forbind Garmin eller Strava, og se din svømning, cykling, løb og styrketræning, som den burde vises. Gratis, og kun for dine øjne.",
+      "cta": "Kommer snart",
+      "github": "Følg på GitHub"
+    },
+    "features": {
+      "title": "Alt det vigtige, på én skærm",
+      "weekly": {
+        "title": "Ugeoverblik",
+        "text": "Træningstimer fordelt på svøm, cykel, løb og styrke, sammenlignet uge for uge."
+      },
+      "averages": {
+        "title": "Din typiske uge",
+        "text": "Gennemsnitlig mængde pr. sport over en valgfri periode, fra 4 uger til hele tiden."
+      },
+      "bestEfforts": {
+        "title": "Bedste præstationer",
+        "text": "Dine hurtigste 5 km, 10 km, halv- og helmaraton, cykelrekorder og bedste watt."
+      },
+      "goals": {
+        "title": "Mål",
+        "text": "Sæt et mål som 5 km på 15:00, og se hvor langt du er, og hvad du skal arbejde på."
+      },
+      "countdowns": {
+        "title": "Nedtælling til løb",
+        "text": "Dit næste løb, altid et blik væk."
+      },
+      "activities": {
+        "title": "Aktivitetslog",
+        "text": "Alle træningspas fra Garmin og Strava, samlet uge for uge."
+      }
+    },
+    "privacy": {
+      "title": "Dine data er dine",
+      "onlyYou": "Kun du kan se dine data. Ingen feeds, ingen ranglister, ingen offentlige profiler.",
+      "noAds": "Ingen reklamer, intet salg af data og ingen AI-træning på dine data.",
+      "control": "Eksportér eller slet alt permanent når som helst."
+    }
+  },
+  "Footer": {
+    "privacy": "Privatlivspolitik",
+    "disclaimer": "Stramin er et uafhængigt projekt og er ikke tilknyttet, godkendt eller sponsoreret af Garmin eller Strava."
+  },
+  "Privacy": {
+    "title": "Privatlivspolitik"
+  }
+}
