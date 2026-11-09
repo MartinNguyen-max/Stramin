@@ -13,7 +13,7 @@
 | Database access | Drizzle ORM + drizzle-kit migrations | [0003](decisions/0003-orm-drizzle.md) |
 | Login | Google + email & password (Supabase Auth) | [0004](decisions/0004-authentication.md) |
 | Background jobs | Supabase Queues + Supabase Cron | [0005](decisions/0005-background-sync.md) |
-| UI | Tailwind CSS, shadcn/ui, Recharts | [0006](decisions/0006-ui-stack.md) |
+| UI | Tailwind CSS, shadcn/ui (Base UI), Recharts, next-themes | [0006](decisions/0006-ui-stack.md) |
 | Tooling | pnpm, Biome, Vitest, Playwright, next-intl, Serwist | [0007](decisions/0007-tooling.md) |
 | Hosting | Vercel (app) + Supabase Cloud (data) | [0002](decisions/0002-backend-supabase.md) |
 | Stream storage | Compressed files in Supabase Storage | [0008](decisions/0008-stream-storage.md) |
