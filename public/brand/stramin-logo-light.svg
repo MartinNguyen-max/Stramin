@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1136" height="360" viewBox="0 0 1136 360" role="img" aria-label="Stramin">
+<style>@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@900&amp;display=swap');</style>
+<g transform="translate(40 40) scale(0.546875)">
+
+<rect x="0" y="0" width="512" height="512" rx="120" fill="#FFFFFF"></rect>
+<path d="M 106.2 292.1 A 150 150 0 0 1 130.2 218.3" fill="none" stroke="#4FC3F7" stroke-width="40" stroke-linecap="butt"></path>
+<path d="M 139.4 205.6 A 150 150 0 0 1 202.2 160.0" fill="none" stroke="#3DDC84" stroke-width="40" stroke-linecap="butt"></path>
+<path d="M 217.2 155.1 A 150 150 0 0 1 294.8 155.1" fill="none" stroke="#FFD54F" stroke-width="40" stroke-linecap="butt"></path>
+<path d="M 309.8 160.0 A 150 150 0 0 1 372.6 205.6" fill="none" stroke="#FF8A3D" stroke-width="40" stroke-linecap="butt"></path>
+<path d="M 381.8 218.3 A 150 150 0 0 1 405.8 292.1" fill="none" stroke="#FF3D5A" stroke-width="40" stroke-linecap="butt"></path>
+<line x1="256" y1="300" x2="325.4" y2="204.5" stroke="#14141A" stroke-width="16" stroke-linecap="round"></line>
+<circle cx="256" cy="300" r="22" fill="#14141A"></circle>
+<rect x="1" y="1" width="510" height="510" rx="119" fill="none" stroke="#E2E2E8" stroke-width="2"/>
+</g>
+<text x="376" y="196" textLength="720" lengthAdjust="spacingAndGlyphs" font-family="Rubik, Inter, system-ui, sans-serif" font-weight="900" font-size="172" fill="#14141A">stramin</text>
+<rect x="376.0" y="226" width="137.6" height="14" rx="7" fill="#4FC3F7"/><rect x="521.6" y="226" width="137.6" height="14" rx="7" fill="#3DDC84"/><rect x="667.2" y="226" width="137.6" height="14" rx="7" fill="#FFD54F"/><rect x="812.8" y="226" width="137.6" height="14" rx="7" fill="#FF8A3D"/><rect x="958.4" y="226" width="137.6" height="14" rx="7" fill="#FF3D5A"/>
+</svg>
