@@ -106,6 +106,7 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
 - [ ] Garmin OAuth + push webhook (CON-7)
 - [ ] Map Garmin activities into the same model
 - [ ] Duplicate detection: match on sport, start time, duration and distance within tolerances (CON-9)
+- [ ] One-time history import from a Garmin/Strava export ZIP, with a guide page (CON-10). Garmin's API gives no history, so this is the history option for Garmin-only users.
 
 ✅ **Done when:** a Garmin-only user gets the same experience as a Strava user.
 

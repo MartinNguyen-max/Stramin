@@ -10,6 +10,9 @@ export function SiteFooter() {
     <footer className="border-t">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-8 text-sm text-muted-foreground sm:px-6">
         <nav className="flex flex-wrap gap-x-6 gap-y-2">
+          <Link href="/guide" className="hover:text-foreground">
+            {t("guide")}
+          </Link>
           <Link href="/privacy" className="hover:text-foreground">
             {t("privacy")}
           </Link>

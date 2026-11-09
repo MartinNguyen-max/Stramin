@@ -49,9 +49,38 @@
   },
   "Footer": {
     "privacy": "Privacy policy",
+    "guide": "Import your Garmin history",
     "disclaimer": "Stramin is an independent project and is not affiliated with, endorsed by or sponsored by Garmin or Strava."
   },
   "Privacy": {
     "title": "Privacy policy"
+  },
+  "Guide": {
+    "title": "Import your Garmin history",
+    "intro": "Garmin only sends new activities to Stramin. To see your full history, download a copy of your data from Garmin once and upload it to Stramin.",
+    "openLink": "Open Garmin data management",
+    "steps": {
+      "open": {
+        "title": "Open your Garmin account",
+        "text": "Log in to your Garmin account and go to data management."
+      },
+      "request": {
+        "title": "Request your data",
+        "text": "Click \"Export Your Data\" and then \"Request Data Export\"."
+      },
+      "wait": {
+        "title": "Wait for the email",
+        "text": "Garmin sends you an email with a download link. It usually takes about 48 hours, but can take up to 30 days."
+      },
+      "download": {
+        "title": "Download the file",
+        "text": "Open the link in the email and download the ZIP file. Don't unzip it."
+      },
+      "upload": {
+        "title": "Upload it to Stramin",
+        "text": "Upload the whole ZIP file to Stramin. Coming soon."
+      }
+    },
+    "note": "You only need to do this once. After that, new activities arrive automatically through the Garmin connection."
   }
 }
