@@ -118,6 +118,7 @@ A goal is a performance target, e.g. "5 km in 15:00". Goals have their own page.
 | PRIV-3 | A user can only ever access their own data, which is enforced in the database. | Must |
 | PRIV-4 | OAuth tokens are encrypted at rest and never sent to the browser. | Must |
 | PRIV-5 | A simple privacy policy page. | Must |
+| PRIV-6 | A **Terms of Service** page that users accept, including a way to report abuse. | Must |
 
 ## 11. Non-functional (NFR)
 
@@ -128,6 +129,7 @@ A goal is a performance target, e.g. "5 km in 15:00". Goals have their own page.
 | NFR-3 | Home loads fast: data is read from our database, never from Strava on page view. | Must |
 | NFR-4 | Stays within Strava's API rate limits. | Must |
 | NFR-5 | Follows Strava's API terms and brand guidelines (e.g. "Connect with Strava" button). | Must |
+| NFR-5b | Follows Garmin's API terms and brand guidelines: Garmin data is always shown **with Garmin attribution**. | Must |
 | NFR-6 | Runs on free tiers. | Must |
 | NFR-7 | Accessible: readable contrast and works with screen readers. | Should |
 

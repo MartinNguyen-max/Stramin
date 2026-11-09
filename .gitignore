@@ -45,5 +45,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Garmin developer documentation (confidential, never commit to the public repo)
+/docs/research/garmin/
+
 # claude code (personal settings)
 .claude/settings.local.json

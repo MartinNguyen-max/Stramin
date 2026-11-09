@@ -31,6 +31,14 @@
 
 ✅ **Done when:** the landing page is live on a Vercel URL, and CI is green.
 
+### Garmin test (spike, before M2)
+Goal: prove that Garmin works before building more. Throwaway code, no database.
+- [ ] Garmin keys in `.env.local` and Vercel
+- [ ] "Connect Garmin" → Garmin login → back to Stramin showing the Garmin user ID and permissions
+- [ ] Webhook receives a real activity (seen in Vercel logs)
+
+✅ **Done when:** a real activity from your Garmin arrives at Stramin.
+
 ### M2 – Accounts
 - [ ] Supabase Auth: Google + email & password, verification, password reset (ACC-1..3)
 - [ ] `profiles` table with RLS, and the RLS-aware Drizzle client (PRIV-3)
@@ -107,6 +115,10 @@
 - [ ] Accessibility pass (NFR-7)
 - [ ] Redesign the landing page with real screenshots of the app (the M1 version is a placeholder)
 - [ ] Upgrade the Strava app to 10 athletes
+- [ ] **Garmin release checklist** (details in the private notes, `docs/research/garmin/NOTES.md`):
+  - [ ] Garmin attribution on every screen that shows Garmin data (NFR-5b)
+  - [ ] Send screenshots/mockups of those screens to Garmin **at least 30 days before release**
+  - [ ] Terms of Service page (PRIV-6)
 - [ ] 🎉 Release
 
 ## Open items
