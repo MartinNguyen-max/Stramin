@@ -35,6 +35,7 @@ Guidance for Claude (and any contributor) working on Stramin.
 |---|---|
 | `pnpm dev` | Start the dev server on http://localhost:3000 |
 | `pnpm build` | Production build |
+| `pnpm check` | **All quick checks in one:** format + lint fixes, typecheck, unit tests |
 | `pnpm lint` | Biome check (lint + format) |
 | `pnpm format` | Format all files with Biome |
 | `pnpm typecheck` | TypeScript type check |

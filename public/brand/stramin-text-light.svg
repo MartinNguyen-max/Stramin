@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="260" viewBox="0 0 800 260" role="img" aria-label="Stramin">
+<style>@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@900&amp;display=swap');</style>
+<text x="40" y="176" textLength="720" lengthAdjust="spacingAndGlyphs" font-family="Rubik, Inter, system-ui, sans-serif" font-weight="900" font-size="172" letter-spacing="-6" fill="#14141A">stramin</text>
+<rect x="40.0" y="206" width="137.6" height="14" rx="7" fill="#4FC3F7"/><rect x="185.6" y="206" width="137.6" height="14" rx="7" fill="#3DDC84"/><rect x="331.2" y="206" width="137.6" height="14" rx="7" fill="#FFD54F"/><rect x="476.8" y="206" width="137.6" height="14" rx="7" fill="#FF8A3D"/><rect x="622.4" y="206" width="137.6" height="14" rx="7" fill="#FF3D5A"/>
+</svg>
