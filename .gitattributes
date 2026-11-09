@@ -1,0 +1,8 @@
+# Store all text files with LF line endings in the repo (consistent across Windows/macOS/Linux and with Biome).
+* text=auto eol=lf
+
+# Binary files
+*.ico binary
+*.png binary
+*.jpg binary
+*.webp binary
