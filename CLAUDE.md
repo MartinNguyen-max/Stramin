@@ -35,6 +35,11 @@ Guidance for Claude (and any contributor) working on Stramin.
 | `pnpm build` | Production build |
 | `pnpm lint` | Biome check (lint + format) |
 | `pnpm format` | Format all files with Biome |
+| `pnpm typecheck` | TypeScript type check |
+| `pnpm test` | Unit tests (Vitest, once) · `pnpm test:watch` to watch |
+| `pnpm test:e2e` | End-to-end tests (Playwright, desktop + iPhone) |
+
+**Tests:** unit tests sit next to the code (`foo.ts` → `foo.test.ts`). E2E tests live in `tests/e2e/`.
 
 ## Git
 
