@@ -147,9 +147,11 @@ stramin/
 
 | Environment | App | Database |
 |---|---|---|
-| Local | `pnpm dev` on localhost:3000 | Supabase CLI (local Docker, ports 553xx) |
-| Preview | Vercel preview per pull request | Supabase dev project |
-| Production | Vercel | Supabase production project |
+| Preview | Vercel preview per pull request (this is where we test) | Supabase cloud project (shared with production) |
+| Production | Vercel | Supabase cloud project |
+| Local *(optional, not used)* | `pnpm dev` on localhost:3000 | Supabase CLI (local Docker, ports 553xx) |
+
+We test on previews instead of a local Docker database, because it is faster to work with. Preview and production share one database while the owner is the only user. Before other users join, we add a separate dev project for previews.
 
 Strava webhooks need a public URL. Locally we use the manual Refresh, or a tunnel when testing webhooks.
 
