@@ -3,6 +3,7 @@ import {
   AthleteTakenError,
   saveStravaConnection,
 } from "@/features/strava/connection";
+import { fetchDetails } from "@/features/strava/details";
 import { syncAll } from "@/features/strava/sync";
 import {
   exchangeCode,
@@ -13,8 +14,11 @@ import {
 import { supabaseConfig } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
-/** The history import runs after the response, so give it time. */
+/** The history import may continue after the response, so give it time. */
 export const maxDuration = 60;
+
+/** How long the user waits for the import before Home opens. */
+const IMPORT_WAIT_MS = 8000;
 
 /**
  * Strava redirects here after the user approved (CON-1). Stores the encrypted tokens, sends the user on
@@ -60,12 +64,27 @@ export async function GET(request: NextRequest) {
   try {
     const tokens = await exchangeCode(code);
     const connection = await saveStravaConnection(userId, tokens, scopes);
+    const importing = syncAll(connection, new RateTracker(), {
+      isImport: true,
+    }).catch((error) => {
+      // The hourly job retries an unfinished import.
+      console.error("[strava] import failed", error);
+    });
+    // Wait a few seconds, so Home opens with the workouts already there (owner feedback H3).
+    // A long history continues in the background.
+    const done = await Promise.race([
+      importing.then(() => true),
+      new Promise<false>((resolve) =>
+        setTimeout(() => resolve(false), IMPORT_WAIT_MS),
+      ),
+    ]);
+    // Then (or while Home is already open) fetch Strava's exact best efforts and power (ADR 0013).
     after(async () => {
+      await importing;
       try {
-        await syncAll(connection, new RateTracker(), { isImport: true });
+        await fetchDetails(connection, new RateTracker(), 15);
       } catch (error) {
-        // The hourly job retries an unfinished import.
-        console.error("[strava] import failed", error);
+        console.error("[strava] details failed", error);
       }
     });
   } catch (error) {

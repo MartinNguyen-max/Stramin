@@ -124,11 +124,7 @@ function stepTotal(step: Step, sport: Workout["sport"], paces: PersonalPaces) {
 
 /** About how long the workout takes, with the user's paces (or default paces without best efforts). */
 export function workoutSeconds(workout: Workout, paces: PersonalPaces): number {
-  const usable: PersonalPaces = {
-    ...paces,
-    run: paces.run ?? DEFAULT_PACES.run,
-    swimPer100: paces.swimPer100 ?? DEFAULT_PACES.swimPer100,
-  };
+  const usable = withDefaults(paces);
   return workout.steps.reduce(
     (total, step) => total + stepTotal(step, workout.sport, usable),
     0,
@@ -149,4 +145,68 @@ export function maxZone(workout: Workout): Zone {
     }
   }
   return zone;
+}
+
+/** One block of the workout graph (owner feedback T1): how long and how hard. */
+export type Segment = { seconds: number; zone: Zone };
+
+/** The workout as blocks in order, repeats expanded (with the user's paces, or defaults). */
+export function workoutSegments(
+  workout: Workout,
+  paces: PersonalPaces,
+): Segment[] {
+  const usable = withDefaults(paces);
+  const segments: Segment[] = [];
+  const push = (amount: Amount, target: Target) => {
+    const seconds = stepSeconds(workout.sport, amount, target, usable) ?? 0;
+    if (seconds > 0) segments.push({ seconds, zone: zoneOf(target) });
+  };
+  for (const step of workout.steps) {
+    if (step.type !== "repeat") {
+      push(step.amount, step.target);
+      continue;
+    }
+    for (let i = 0; i < step.reps; i++) {
+      push(step.work.amount, step.work.target);
+      if (step.rest && i < step.reps - 1)
+        push(step.rest.amount, step.rest.target);
+    }
+  }
+  return segments;
+}
+
+/** About how far the workout goes, in meters (owner feedback T3). Null for bike (no speeds yet). */
+export function workoutMeters(
+  workout: Workout,
+  paces: PersonalPaces,
+): number | null {
+  if (workout.sport === "bike") return null;
+  const usable = withDefaults(paces);
+  const meters = (amount: Amount, target: Target): number => {
+    if ("meters" in amount) return amount.meters;
+    // Swim rests are standing still; running time is turned into distance with the pace.
+    if (workout.sport === "swim") return 0;
+    const pace = stepPace(workout.sport, target, usable);
+    return pace ? (amount.seconds / pace) * 1000 : 0;
+  };
+  let total = 0;
+  for (const step of workout.steps) {
+    if (step.type !== "repeat") {
+      total += meters(step.amount, step.target);
+    } else {
+      total += step.reps * meters(step.work.amount, step.work.target);
+      if (step.rest) {
+        total += (step.reps - 1) * meters(step.rest.amount, step.rest.target);
+      }
+    }
+  }
+  return total;
+}
+
+function withDefaults(paces: PersonalPaces): PersonalPaces {
+  return {
+    ...paces,
+    run: paces.run ?? DEFAULT_PACES.run,
+    swimPer100: paces.swimPer100 ?? DEFAULT_PACES.swimPer100,
+  };
 }

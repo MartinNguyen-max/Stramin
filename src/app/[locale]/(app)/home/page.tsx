@@ -58,6 +58,9 @@ async function HomeContent({
   const params = await searchParams;
   const request = await readCalendarRequest(params);
   const strava = await getStravaStatus(user.id);
+  const importing =
+    strava.connected &&
+    (strava.importState === "pending" || strava.importState === "running");
 
   return (
     <>
@@ -67,15 +70,32 @@ async function HomeContent({
       <StravaNotice code={params.strava} />
       <EventsSection user={user} />
       {strava.connected && <StravaStatusBar status={strava} />}
-      <CalendarSection
-        base="/home"
-        request={request}
-        units={units}
-        weekStart={weekStart}
-        load={(range) => loadActivitiesIfConnected(user, range)}
-        notConnected={<ConnectCard />}
-      />
+      {!strava.connected && strava.unavailable ? (
+        <p className="rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">
+          {t("unavailable")}
+        </p>
+      ) : (
+        <CalendarSection
+          base="/home"
+          request={request}
+          units={units}
+          weekStart={weekStart}
+          load={(range) => loadActivitiesIfConnected(user, range)}
+          notConnected={<ConnectCard />}
+          whenEmpty={importing ? <ImportWaiting /> : undefined}
+        />
+      )}
     </>
+  );
+}
+
+/** Instead of an empty calendar while the first Strava import runs (owner feedback H3). */
+function ImportWaiting() {
+  const t = useTranslations("Calendar");
+  return (
+    <div className="flex justify-center rounded-2xl border bg-card py-20">
+      <ZoneSpinner size={72} label={t("importWaiting")} />
+    </div>
   );
 }
 

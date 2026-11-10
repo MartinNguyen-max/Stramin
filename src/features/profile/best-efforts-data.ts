@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { loadActivitiesIfConnected } from "@/features/activities/data";
+import { getStravaStatus, loadEffortData } from "@/features/activities/data";
 import type { CurrentUser } from "@/features/auth/current-user";
 import {
   type BestEffort,
@@ -9,6 +9,7 @@ import {
   mergeBestEfforts,
 } from "@/lib/analytics/best-efforts";
 import type { CalendarActivity } from "@/lib/analytics/calendar";
+import { bestPowerAcross, type PowerBest } from "@/lib/analytics/power";
 import { withRls } from "@/lib/db/rls";
 import { personalBests } from "@/lib/db/schema";
 
@@ -18,17 +19,21 @@ export type BestEffortsResult = {
   activities: CalendarActivity[] | null;
   /** False when the manual values can't be read (the table doesn't exist yet). */
   manualAvailable: boolean;
+  /** Best bike power per duration (BE-3), from rides with a power meter. */
+  power: PowerBest[];
 };
 
 /**
- * The user's best efforts: estimates from their Strava history plus their own values, which win
- * (BE-6, BE-7, ADR 0011). Used by Profile, Goals and Training.
+ * The user's best efforts: Strava's own best efforts and estimates from their history, plus their own
+ * values, which win (BE-6, BE-7, ADR 0011, ADR 0013). Also the best bike power. Used by Profile, Goals
+ * and Training.
  */
 export async function loadBestEfforts(
   user: CurrentUser,
 ): Promise<BestEffortsResult> {
-  const [activities, manual] = await Promise.all([
-    loadActivitiesIfConnected(user),
+  const status = await getStravaStatus(user.id);
+  const [data, manual] = await Promise.all([
+    status.connected ? loadEffortData(user) : null,
     listManualEfforts(user).catch((error) => {
       console.error("[best efforts] manual values unavailable", error);
       return null;
@@ -36,11 +41,12 @@ export async function loadBestEfforts(
   ]);
   return {
     efforts: mergeBestEfforts(
-      activities ? estimateBestEfforts(activities) : [],
+      data ? estimateBestEfforts(data.activities) : [],
       manual ?? [],
     ),
-    activities,
+    activities: data?.activities ?? null,
     manualAvailable: manual !== null,
+    power: data ? bestPowerAcross(data.rides) : [],
   };
 }
 

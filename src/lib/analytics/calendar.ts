@@ -112,17 +112,17 @@ export function resolvePeriod(
   };
 }
 
-/** The request for the previous (-1) or next (+1) window, or null when the view can't move or it's in the future. */
+/**
+ * The request for the window one month earlier (-1) or later (+1), or null when the view can't move or
+ * would end in the future. All presets move by one month (owner feedback 2026-11-10, H9).
+ */
 export function shiftPeriod(
   period: CalendarPeriod,
   direction: -1 | 1,
   todayDate: string,
 ): CalendarRequest | null {
   if (!isPreset(period.view) || !period.endMonth) return null;
-  const month = addMonths(
-    period.endMonth,
-    direction * VIEW_MONTHS[period.view],
-  );
+  const month = addMonths(period.endMonth, direction);
   if (month > monthOf(todayDate)) return null;
   return { view: period.view, month };
 }
@@ -164,13 +164,14 @@ export function weekNumber(
   return daysBetween(week1, weekStart) / 7 + 1;
 }
 
-/** How much detail each workout gets (HOME-7). */
-export type Density = "detailed" | "compact" | "mini";
+/**
+ * How the period is shown (HOME-7): the full calendar up to ~3 months, a week-by-week overview for
+ * longer periods (owner feedback 2026-11-10, H7/H8).
+ */
+export type Density = "detailed" | "weeks";
 
 export function densityFor(weekCount: number): Density {
-  if (weekCount <= 6) return "detailed";
-  if (weekCount <= 15) return "compact";
-  return "mini";
+  return weekCount <= 15 ? "detailed" : "weeks";
 }
 
 export type Totals = {
@@ -214,15 +215,44 @@ export type CalendarWeek = {
   months: string[];
 };
 
+export type MonthTotals = { month: string; totals: Totals };
+
 export type Calendar = {
   period: CalendarPeriod;
   weeks: CalendarWeek[];
   /** Only days inside the period (HOME-5). */
   totals: Totals;
-  /** Length of the period in weeks, for "average per week". */
-  periodWeeks: number;
+  /** Per month, only days inside the period (for the week overview). */
+  months: MonthTotals[];
+  /** Weeks shown that are over (the current week isn't finished, H6). */
+  finishedWeeks: number;
+  /** The average of the finished weeks, or null when none is finished (H5, H6). */
+  weeklyAverage: Totals | null;
   density: Density;
 };
+
+/** Average of week totals: every number divided by the number of weeks. */
+export function averageTotals(weeks: Totals[]): Totals | null {
+  if (weeks.length === 0) return null;
+  const sum = emptyCalendarTotals();
+  for (const week of weeks) {
+    for (const sport of Object.keys(
+      sum.seconds,
+    ) as (keyof Totals["seconds"])[]) {
+      sum.seconds[sport] += week.seconds[sport];
+      sum.meters[sport] += week.meters[sport];
+    }
+    sum.totalSeconds += week.totalSeconds;
+    sum.count += week.count;
+  }
+  for (const sport of Object.keys(sum.seconds) as (keyof Totals["seconds"])[]) {
+    sum.seconds[sport] /= weeks.length;
+    sum.meters[sport] /= weeks.length;
+  }
+  sum.totalSeconds /= weeks.length;
+  sum.count /= weeks.length;
+  return sum;
+}
 
 /** Builds the week rows of the calendar (HOME-2..5). */
 export function buildCalendar(
@@ -246,6 +276,7 @@ export function buildCalendar(
   }
 
   const totals = emptyCalendarTotals();
+  const monthTotals = new Map<string, Totals>();
   const weeks: CalendarWeek[] = [];
 
   for (let start = range.from; start <= range.to; start = addDays(start, 7)) {
@@ -259,7 +290,13 @@ export function buildCalendar(
       const dayActivities = byDate.get(date) ?? [];
       for (const activity of dayActivities) {
         add(weekTotals, activity);
-        if (inPeriod) add(totals, activity);
+        if (inPeriod) {
+          add(totals, activity);
+          const month = monthOf(date);
+          const forMonth = monthTotals.get(month) ?? emptyCalendarTotals();
+          add(forMonth, activity);
+          monthTotals.set(month, forMonth);
+        }
       }
       if (inPeriod && (date.endsWith("-01") || date === period.from)) {
         const month = monthOf(date);
@@ -283,11 +320,27 @@ export function buildCalendar(
     });
   }
 
+  // Averages use finished weeks only: the current week isn't over yet (H6).
+  const finished = weeks.filter((week) => week.days[6].date < todayDate);
+  const months: MonthTotals[] = [];
+  for (
+    let month = monthOf(period.from);
+    month <= monthOf(period.to);
+    month = addMonths(month, 1)
+  ) {
+    months.push({
+      month,
+      totals: monthTotals.get(month) ?? emptyCalendarTotals(),
+    });
+  }
+
   return {
     period,
     weeks,
     totals,
-    periodWeeks: (daysBetween(period.from, period.to) + 1) / 7,
+    months,
+    finishedWeeks: finished.length,
+    weeklyAverage: averageTotals(finished.map((week) => week.totals)),
     density: densityFor(weeks.length),
   };
 }

@@ -197,6 +197,89 @@ export const WORKOUTS: Workout[] = [
       { type: "cooldown", amount: min(10), target: { zone: 1 } },
     ],
   },
+  {
+    id: "bike-recovery",
+    sport: "bike",
+    effort: "easy",
+    steps: [{ type: "main", amount: min(45), target: { zone: 1 } }],
+  },
+  {
+    id: "bike-sweet-spot",
+    sport: "bike",
+    effort: "moderate",
+    steps: [
+      { type: "warmup", amount: min(15), target: { zone: 2 } },
+      {
+        type: "repeat",
+        reps: 3,
+        work: { amount: min(15), target: { zone: 3 } },
+        rest: { amount: min(5), target: { zone: 1 } },
+      },
+      { type: "cooldown", amount: min(10), target: { zone: 1 } },
+    ],
+  },
+  {
+    id: "bike-long-tempo",
+    sport: "bike",
+    effort: "moderate",
+    steps: [
+      { type: "main", amount: min(60), target: { zone: 2 } },
+      { type: "main", amount: min(30), target: { zone: 3 } },
+      { type: "main", amount: min(60), target: { zone: 2 } },
+    ],
+  },
+  {
+    id: "bike-ftp-2x20",
+    sport: "bike",
+    effort: "hard",
+    steps: [
+      { type: "warmup", amount: min(15), target: { zone: 2 } },
+      {
+        type: "repeat",
+        reps: 2,
+        work: { amount: min(20), target: { zone: 4 } },
+        rest: { amount: min(5), target: { zone: 1 } },
+      },
+      { type: "cooldown", amount: min(10), target: { zone: 1 } },
+    ],
+  },
+  {
+    id: "bike-over-unders",
+    sport: "bike",
+    effort: "hard",
+    steps: [
+      { type: "warmup", amount: min(15), target: { zone: 2 } },
+      {
+        type: "repeat",
+        reps: 6,
+        work: { amount: min(3), target: { zone: 4 } },
+        rest: { amount: min(1), target: { zone: 5 } },
+      },
+      { type: "main", amount: min(5), target: { zone: 1 } },
+      {
+        type: "repeat",
+        reps: 6,
+        work: { amount: min(3), target: { zone: 4 } },
+        rest: { amount: min(1), target: { zone: 5 } },
+      },
+      { type: "cooldown", amount: min(10), target: { zone: 1 } },
+    ],
+  },
+  {
+    id: "bike-sprints",
+    sport: "bike",
+    effort: "hard",
+    steps: [
+      { type: "warmup", amount: min(20), target: { zone: 2 } },
+      {
+        type: "repeat",
+        reps: 10,
+        work: { amount: sec(30), target: { zone: 5 } },
+        rest: { amount: sec(270), target: { zone: 1 } },
+      },
+      { type: "cooldown", amount: min(10), target: { zone: 1 } },
+    ],
+  },
   // Swim (placeholders)
   {
     id: "swim-technique",
@@ -248,6 +331,47 @@ export const WORKOUTS: Workout[] = [
         rest: { amount: sec(30), target: { zone: 1 } },
       },
       { type: "cooldown", amount: m(200), target: { zone: 1 } },
+    ],
+  },
+  {
+    id: "swim-endurance",
+    sport: "swim",
+    effort: "easy",
+    steps: [
+      { type: "warmup", amount: m(400), target: { zone: 2 } },
+      { type: "main", amount: m(1500), target: { zone: 2 } },
+      { type: "cooldown", amount: m(200), target: { zone: 1 } },
+    ],
+  },
+  {
+    id: "swim-pyramid",
+    sport: "swim",
+    effort: "moderate",
+    steps: [
+      { type: "warmup", amount: m(400), target: { zone: 2 } },
+      { type: "main", amount: m(100), target: { zone: 3 } },
+      { type: "main", amount: m(200), target: { zone: 3 } },
+      { type: "main", amount: m(300), target: { zone: 3 } },
+      { type: "main", amount: m(400), target: { zone: 3 } },
+      { type: "main", amount: m(300), target: { zone: 3 } },
+      { type: "main", amount: m(200), target: { zone: 3 } },
+      { type: "main", amount: m(100), target: { zone: 4 } },
+      { type: "cooldown", amount: m(200), target: { zone: 1 } },
+    ],
+  },
+  {
+    id: "swim-sprints",
+    sport: "swim",
+    effort: "hard",
+    steps: [
+      { type: "warmup", amount: m(400), target: { zone: 2 } },
+      {
+        type: "repeat",
+        reps: 12,
+        work: { amount: m(50), target: { zone: 5 } },
+        rest: { amount: sec(30), target: { zone: 1 } },
+      },
+      { type: "cooldown", amount: m(300), target: { zone: 1 } },
     ],
   },
 ];

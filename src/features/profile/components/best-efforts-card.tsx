@@ -45,6 +45,7 @@ export function BestEffortsCard({
             date: effort.date,
             source: effort.source,
             activityId: effort.activityId,
+            exact: effort.exact,
             estimateSeconds: effort.estimate?.seconds,
           };
           return (

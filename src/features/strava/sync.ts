@@ -13,6 +13,7 @@ import {
   listStravaConnections,
   updateConnection,
 } from "./connection";
+import { fetchDetails, storeRunEfforts } from "./details";
 
 /**
  * Strava sync v1 (ADR 0012): activity summaries only. Server only (admin database connection).
@@ -51,6 +52,9 @@ export function toActivityValues(
     elapsedSeconds: Math.round(activity.elapsed_time ?? 0),
     distanceM: activity.distance ?? 0,
     elevationM: activity.total_elevation_gain ?? null,
+    avgWatts: activity.average_watts ?? null,
+    weightedAvgWatts: activity.weighted_average_watts ?? null,
+    deviceWatts: Boolean(activity.device_watts),
     fetchedAt: now,
   };
 }
@@ -82,6 +86,9 @@ async function upsertActivities(
           elapsedSeconds: sql`excluded.elapsed_seconds`,
           distanceM: sql`excluded.distance_m`,
           elevationM: sql`excluded.elevation_m`,
+          avgWatts: sql`excluded.avg_watts`,
+          weightedAvgWatts: sql`excluded.weighted_avg_watts`,
+          deviceWatts: sql`excluded.device_watts`,
           fetchedAt: sql`excluded.fetched_at`,
         },
       });
@@ -178,6 +185,8 @@ export async function syncOneActivity(
   // Someone else's public activity must never end up in this user's calendar.
   if (String(activity.athlete?.id) !== connection.providerAthleteId) return;
   await upsertActivities(connection.userId, [activity], new Date());
+  // A detailed run comes with Strava's own best efforts: keep them (ADR 0013).
+  await storeRunEfforts(connection.userId, activity);
 }
 
 async function deleteStravaActivity(
@@ -197,6 +206,16 @@ async function deleteStravaActivity(
 
 /** Deletes Strava data that couldn't be refreshed for 7 days (CON-8, ADR 0009). */
 export async function deleteExpired(now: Date): Promise<number> {
+  const expired = new Date(now.getTime() - MAX_AGE_MS);
+  await getAdminDb()
+    .update(activities)
+    .set({ bestEfforts: null, powerBests: null, detailsFetchedAt: null })
+    .where(
+      and(
+        eq(activities.provider, "strava"),
+        lt(activities.detailsFetchedAt, expired),
+      ),
+    );
   const deleted = await getAdminDb()
     .delete(activities)
     .where(
@@ -252,13 +271,25 @@ export async function runSyncJobs(deadline: number): Promise<JobReport> {
       break;
     }
     const step = nextStep(connection, now);
-    if (step === "none") continue;
     try {
-      const count =
-        step === "quick"
-          ? await quickSync(connection, tracker)
-          : await syncAll(connection, tracker, { isImport: step === "import" });
-      report.done.push({ userId: connection.userId, step, count });
+      if (step !== "none") {
+        const count =
+          step === "quick"
+            ? await quickSync(connection, tracker)
+            : await syncAll(connection, tracker, {
+                isImport: step === "import",
+              });
+        report.done.push({ userId: connection.userId, step, count });
+      }
+      // A few detail requests per hour keep the exact best efforts and power fresh (ADR 0013).
+      const details = await fetchDetails(connection, tracker, 10);
+      if (details > 0) {
+        report.done.push({
+          userId: connection.userId,
+          step: "details",
+          count: details,
+        });
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.error("[sync] connection failed", connection.id, message);

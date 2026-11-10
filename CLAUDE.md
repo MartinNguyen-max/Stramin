@@ -16,8 +16,8 @@ Guidance for Claude (and any contributor) working on Stramin.
 
 **Work mode** (the owner says "start working on …"):
 
-- Claude works on its own without asking: code, docs, checks, `git commit`, `pnpm add`, `pnpm db:generate`.
-- All work goes on **one branch**, with local commits only. **No `git push`.** The owner pushes when they are back.
+- Claude works on its own without asking: code, docs, checks, `pnpm add`, `pnpm db:generate`.
+- All work goes on **one branch** and is left **uncommitted**. **No `git add`, `git commit` or `git push`.** In the final report, Claude gives the owner the exact commands, split into a few commits with their messages, and the owner runs them.
 - When a choice comes up, Claude **makes the decision itself**, writes it down in the docs and in **`docs/REVIEW.md`** (what was decided, why, and the alternatives), and keeps going. The owner reviews the list when back, and anything can be discussed and changed.
 - Claude only stops for things only the owner can do (accounts, keys, passwords), or when the owner stops it.
 - At the end: a short report covering what was done, which choices were made, and what's next.
@@ -70,4 +70,4 @@ Guidance for Claude (and any contributor) working on Stramin.
 - Commits are authored as **Martin Nguyen**, never a uni or work account. Check `git config user.email` before committing.
 - Conventional Commits, kept short (e.g. `docs: add plan`).
 - One branch + pull request per task. `main` is always deployable.
-- **The owner runs `git push`.** Outside work mode the owner also runs `git add` and `git commit`. In work mode, Claude commits locally.
+- **The owner runs `git add`, `git commit` and `git push`**, always, also in work mode. Claude gives the exact commands. (They are blocked for Claude in `.claude/settings.local.json`.)

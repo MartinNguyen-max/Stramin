@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { demoBestEfforts } from "@/features/demo/demo-efforts";
 import { DemoSpinner } from "@/features/demo/demo-spinner";
 import { BestEffortsCard } from "@/features/profile/components/best-efforts-card";
+import { PowerCard } from "@/features/profile/components/power-card";
 import { RunningLevel } from "@/features/profile/components/running-level";
 import { EFFORT_SPORTS } from "@/lib/analytics/best-efforts";
 
@@ -25,7 +26,7 @@ export default function DemoProfilePage() {
 async function DemoProfile() {
   await connection();
   const t = await getTranslations("Profile");
-  const { efforts } = await demoBestEfforts();
+  const { efforts, power } = await demoBestEfforts();
   return (
     <>
       <section className="flex flex-col gap-3">
@@ -47,6 +48,7 @@ async function DemoProfile() {
           ))}
         </div>
       </section>
+      <PowerCard power={power} />
       <RunningLevel efforts={efforts} units="metric" />
     </>
   );

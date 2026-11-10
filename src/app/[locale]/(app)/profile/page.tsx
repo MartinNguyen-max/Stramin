@@ -6,6 +6,7 @@ import { ZoneSpinner } from "@/components/brand/zone-spinner";
 import { getCurrentUser } from "@/features/auth/current-user";
 import { loadBestEfforts } from "@/features/profile/best-efforts-data";
 import { BestEffortsCard } from "@/features/profile/components/best-efforts-card";
+import { PowerCard } from "@/features/profile/components/power-card";
 import { RunningLevel } from "@/features/profile/components/running-level";
 import { getOrCreateProfile } from "@/features/profile/data";
 import { ConnectStravaButton } from "@/features/strava/components/connect-strava-button";
@@ -37,7 +38,8 @@ async function ProfileContent() {
   } catch (error) {
     console.error("[profile] profile unavailable", error);
   }
-  const { efforts, activities, manualAvailable } = await loadBestEfforts(user);
+  const { efforts, activities, manualAvailable, power } =
+    await loadBestEfforts(user);
   const name = user.name ?? user.email ?? "";
 
   return (
@@ -98,6 +100,7 @@ async function ProfileContent() {
         </div>
       </section>
 
+      <PowerCard power={power} />
       <RunningLevel efforts={efforts} units={units} />
     </>
   );

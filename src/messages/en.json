@@ -11,42 +11,49 @@
     "hero": {
       "badge": "In development",
       "title": "Your training, finally clear.",
-      "subtitle": "Connect Garmin or Strava and see your swim, bike, run and strength training the way it should be shown. Free, and only for your eyes.",
+      "subtitle": "Connect Strava and see your swim, bike, run and strength training the way it should be shown: a clear calendar, weekly totals, your best efforts and goals. Free, and only for your eyes.",
       "signup": "Sign up free",
-      "login": "Log in"
-    },
-    "features": {
-      "title": "Everything that matters, on one screen",
-      "weekly": {
-        "title": "Weekly overview",
-        "text": "Training hours split by swim, bike, run and strength, compared week by week."
-      },
-      "averages": {
-        "title": "Your typical week",
-        "text": "Average volume per sport over any period, from 4 weeks to all time."
-      },
-      "bestEfforts": {
-        "title": "Best efforts",
-        "text": "Your fastest 5 km, 10 km, half and full marathon, bike records and best power."
-      },
-      "goals": {
-        "title": "Goals",
-        "text": "Set a target like 5 km in 15:00 and see how far you are and what to work on."
-      },
-      "countdowns": {
-        "title": "Race countdowns",
-        "text": "Your next race, always one glance away."
-      },
-      "activities": {
-        "title": "Activity log",
-        "text": "Every session from Garmin and Strava, grouped by week."
-      }
+      "login": "Log in",
+      "demo": "See the demo",
+      "haveAccount": "Already have an account?"
     },
     "privacy": {
       "title": "Your data stays yours",
       "onlyYou": "Only you can see your data. No feeds, no leaderboards, no public profiles.",
       "noAds": "No ads, no data selling and no AI training on your data.",
       "control": "Export or permanently delete everything at any time."
+    },
+    "showcase": {
+      "sample": "Example data",
+      "calendar": {
+        "eyebrow": "Calendar",
+        "title": "Every workout, month by month",
+        "text": "Each workout on its day with distance, pace and time. Week totals on the right, the average week at the bottom, and from one month to all time."
+      },
+      "events": {
+        "eyebrow": "Countdowns",
+        "title": "Always know how long until race day",
+        "text": "Add your races with a photo and count down to them right at the top."
+      },
+      "level": {
+        "eyebrow": "Your level",
+        "title": "Best efforts, predictions and power",
+        "text": "Your fastest times from Strava, what you can run in a race, your bike power and FTP, and the paces to train at."
+      },
+      "training": {
+        "eyebrow": "Training",
+        "title": "Workouts with your own paces",
+        "text": "Pick easy, moderate or hard. Every block shows the pace or zone that fits you. Tap a workout to see the steps."
+      },
+      "goals": {
+        "eyebrow": "Goals",
+        "title": "Goals that start where you are",
+        "text": "Set a target faster than your best, and get simple tips and the workouts that help you get there."
+      }
+    },
+    "cta": {
+      "title": "See your own training like this",
+      "text": "Free, private and made for triathletes. Connecting Strava takes a minute."
     }
   },
   "Footer": {
@@ -155,10 +162,10 @@
     "connect": {
       "title": "Connect your training data",
       "text": "Connect Strava to see your full training history. Garmin users can also import their history with a one-time download.",
-      "garminGuide": "Garmin history guide",
-      "demo": "See an example"
+      "garminGuide": "Garmin history guide"
     },
-    "loading": "Fetching your training…"
+    "loading": "Fetching your training…",
+    "unavailable": "Your training couldn't be loaded right now. Reload the page to try again."
   },
   "Activities": {
     "hours": "h",
@@ -228,7 +235,14 @@
     "workouts": "{count, plural, =0 {No workouts} one {# workout} other {# workouts}}",
     "perWeek": "{value} per week",
     "allTimeSince": "All time (since {date})",
-    "viewOnStrava": "View on Strava"
+    "viewOnStrava": "View on Strava",
+    "total": "Total",
+    "averageWeek": "Average week",
+    "workoutsPerWeek": "{count} workouts per week",
+    "averageNote": "Averages use the {count, plural, one {# finished week} other {# finished weeks}} shown. The current week isn't counted until it's over.",
+    "noFinishedWeek": "No week in this period is over yet, so there's no weekly average.",
+    "restDay": "No training this day.",
+    "importWaiting": "Getting your workouts from Strava…"
   },
   "Events": {
     "title": "Events",
@@ -236,7 +250,6 @@
     "emptyHint": "Add your next race and count down to it",
     "today": "Today!",
     "tomorrow": "Tomorrow",
-    "daysLeft": "{count, plural, one {# day} other {# days}}",
     "editEvent": "Edit {title}",
     "addTitle": "New event",
     "editTitle": "Edit event",
@@ -262,7 +275,7 @@
     "saving": "Saving…",
     "delete": "Delete",
     "confirmDelete": "Really delete?",
-    "unavailable": "Events are coming soon: the database needs an update first.",
+    "unavailable": "Events couldn't be loaded right now. Reload the page to try again.",
     "errors": {
       "titleRequired": "Please give the event a title.",
       "titleTooLong": "The title is too long (max 60 characters).",
@@ -271,7 +284,8 @@
       "imageUpload": "The image couldn't be uploaded. Try another one, or save without an image.",
       "unavailable": "Events can't be saved right now. Please try again later.",
       "generic": "Something went wrong. Please try again."
-    }
+    },
+    "daysLeftLabel": "{count, plural, one {day left} other {days left}}"
   },
   "Demo": {
     "title": "Example data",
@@ -300,7 +314,7 @@
     "loading": "Looking for your best efforts…",
     "bestEfforts": {
       "title": "Best efforts",
-      "note": "Strava values are estimates from your activities' average pace: exact for races, a bit slow when your fastest effort was inside a longer workout. Tap ✎ to enter your real time.",
+      "note": "Strava values come from Strava's own best efforts where possible; otherwise they're estimated from your activities (pauses count, like on Strava). Tap ✎ to enter your own time.",
       "distance": "Distance",
       "time": "Time",
       "pace": "Pace",
@@ -321,7 +335,8 @@
         "dateInvalid": "Pick a date that isn't in the future.",
         "unavailable": "It can't be saved right now. Please try again later.",
         "generic": "Something went wrong. Please try again."
-      }
+      },
+      "estimate": "Estimate"
     },
     "level": {
       "title": "Your running level",
@@ -337,6 +352,23 @@
         "threshold": "Threshold",
         "interval": "Interval",
         "repetition": "Repetition"
+      },
+      "predictions": "Predicted race times",
+      "predictionsNote": "What your level predicts with the right training. Longer races also need the weekly volume to match.",
+      "yourBest": "Your best: {time}",
+      "pacesTitle": "Training paces"
+    },
+    "power": {
+      "title": "Bike power",
+      "ftp": "FTP ≈ {watts} W",
+      "ftpNote": "95 % of your best 20 minutes",
+      "none": "Your best power shows up here after the next sync, for rides with a power meter.",
+      "viewRide": "View the ride on Strava",
+      "durations": {
+        "60": "1 min",
+        "300": "5 min",
+        "1200": "20 min",
+        "3600": "60 min"
       }
     }
   },
@@ -429,8 +461,48 @@
       "swim-threshold": {
         "name": "Threshold 10 × 100 m",
         "description": "Repeats at threshold pace, with a fast finish."
+      },
+      "bike-recovery": {
+        "name": "Recovery spin",
+        "description": "Very easy pedalling to loosen the legs after a hard day."
+      },
+      "bike-sweet-spot": {
+        "name": "Sweet spot 3 × 15 min",
+        "description": "Just below threshold: a lot of fitness for the time spent."
+      },
+      "bike-long-tempo": {
+        "name": "Long ride with tempo",
+        "description": "Endurance with a tempo block in the middle, like a race simulation."
+      },
+      "bike-ftp-2x20": {
+        "name": "FTP builder 2 × 20 min",
+        "description": "The classic threshold session that raises your FTP."
+      },
+      "bike-over-unders": {
+        "name": "Over-unders",
+        "description": "Threshold with short surges above it: teaches you to recover while working."
+      },
+      "bike-sprints": {
+        "name": "Sprints 10 × 30 s",
+        "description": "Short, all-out efforts with long recoveries, for top-end power."
+      },
+      "swim-endurance": {
+        "name": "Endurance 1500 m",
+        "description": "One long, steady swim to build your base."
+      },
+      "swim-pyramid": {
+        "name": "Pyramid 100–400–100",
+        "description": "Up and down the ladder at a steady, strong pace."
+      },
+      "swim-sprints": {
+        "name": "Sprints 12 × 50 m",
+        "description": "Fast 50s with full rest, for speed and a strong stroke."
       }
-    }
+    },
+    "showSteps": "Show the steps",
+    "hideSteps": "Hide the steps",
+    "distance": "about {distance}",
+    "profileLabel": "The workout's blocks: the higher, the harder"
   },
   "Goals": {
     "title": "Goals",

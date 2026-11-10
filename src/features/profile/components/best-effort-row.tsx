@@ -23,6 +23,8 @@ export type EffortRowData = {
   seconds: number;
   date: string | null;
   source: "strava" | "manual";
+  /** Strava's own best effort (true) or an estimate from the average pace (false). */
+  exact?: boolean;
   activityId?: string;
   /** The Strava estimate behind a manual value. */
   estimateSeconds?: number;
@@ -124,7 +126,7 @@ export function BestEffortRow({
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 font-medium text-[#FC4C02] hover:underline"
             >
-              {t("strava")}
+              {effort.exact ? t("strava") : t("estimate")}
               <ExternalLink className="size-3" />
             </a>
           ) : (

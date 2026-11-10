@@ -93,15 +93,15 @@ describe("resolvePeriod", () => {
 });
 
 describe("shiftPeriod", () => {
-  test("moves by the window size and stops at the current month", () => {
-    const period = resolvePeriod({ view: "3m", month: "2026-08" }, TODAY);
+  test("moves one month at a time and stops at the current month", () => {
+    const period = resolvePeriod({ view: "6m", month: "2026-08" }, TODAY);
     expect(shiftPeriod(period, -1, TODAY)).toEqual({
-      view: "3m",
-      month: "2026-05",
+      view: "6m",
+      month: "2026-07",
     });
     expect(shiftPeriod(period, 1, TODAY)).toEqual({
-      view: "3m",
-      month: "2026-11",
+      view: "6m",
+      month: "2026-09",
     });
     const current = resolvePeriod({ view: "3m" }, TODAY);
     expect(shiftPeriod(current, 1, TODAY)).toBeNull();
@@ -199,7 +199,34 @@ describe("buildCalendar", () => {
     expect(calendar.totals.count).toBe(3);
     expect(calendar.totals.meters.run).toBe(10_000);
     expect(calendar.totals.seconds.strength).toBe(3600);
-    expect(calendar.periodWeeks).toBeCloseTo(30 / 7);
+  });
+
+  test("averages only finished weeks, and totals per month", () => {
+    const activities = [
+      activity({ startLocal: "2026-10-27T07:00:00Z", movingSeconds: 3600 }),
+      activity({ startLocal: "2026-11-03T07:00:00Z", movingSeconds: 7200 }),
+      // This week (10 Nov) isn't finished: not in the average.
+      activity({ startLocal: "2026-11-10T07:00:00Z", movingSeconds: 36_000 }),
+    ];
+    const calendar = buildCalendar(activities, november, "monday", TODAY);
+    expect(calendar.finishedWeeks).toBe(2);
+    expect(calendar.weeklyAverage?.totalSeconds).toBe((3600 + 7200) / 2);
+    expect(calendar.weeklyAverage?.meters.run).toBe(10_000);
+    expect(calendar.months).toHaveLength(1);
+    expect(calendar.months[0].totals.totalSeconds).toBe(7200 + 36_000);
+  });
+
+  test("no average before a week has finished", () => {
+    const calendar = buildCalendar(
+      [],
+      resolvePeriod(
+        { view: "custom", from: "2026-11-09", to: "2026-11-10" },
+        TODAY,
+      ),
+      "monday",
+      TODAY,
+    );
+    expect(calendar.weeklyAverage).toBeNull();
   });
 
   test("marks today and future days", () => {
@@ -214,15 +241,15 @@ describe("buildCalendar", () => {
     const calendar = buildCalendar([], period, "monday", TODAY);
     const labels = calendar.weeks.flatMap((week) => week.months);
     expect(labels).toEqual(["2026-09", "2026-10", "2026-11"]);
-    expect(calendar.density).toBe("compact");
+    expect(calendar.density).toBe("detailed");
   });
 });
 
 describe("densityFor", () => {
-  test("more weeks, less detail", () => {
+  test("the full calendar up to ~3 months, then the week overview", () => {
     expect(densityFor(6)).toBe("detailed");
-    expect(densityFor(14)).toBe("compact");
-    expect(densityFor(27)).toBe("mini");
+    expect(densityFor(14)).toBe("detailed");
+    expect(densityFor(27)).toBe("weeks");
   });
 });
 

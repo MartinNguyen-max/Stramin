@@ -110,48 +110,6 @@ export function DetailedChip({ activity, units, className }: ChipProps) {
   );
 }
 
-/** 3-month view: icon + the main number (distance, or time without distance). Title on hover (HOME-7). */
-export function CompactChip({ activity, units, className }: ChipProps) {
-  const Icon = SPORT_ICON[activity.sport];
-  const { distance, time } = activityStats(activity, units);
-  return (
-    <StravaLink
-      activity={activity}
-      units={units}
-      className={cn(
-        "flex min-w-0 items-center gap-1 rounded border-l-2 px-1 py-0.5 text-[10px] leading-tight tabular-nums",
-        SPORT_BORDER[activity.sport],
-        SPORT_TINT[activity.sport],
-        className,
-      )}
-    >
-      <Icon
-        aria-hidden
-        className={cn("size-2.5 shrink-0", SPORT_TEXT[activity.sport])}
-      />
-      <span className="truncate">{distance ?? time}</span>
-    </StravaLink>
-  );
-}
-
-/** 6 months and longer: one small bar per workout, its height grows with the duration (HOME-7). */
-export function MiniBar({ activity, units }: ChipProps) {
-  const height = Math.min(100, 25 + (activity.movingSeconds / 7200) * 75);
-  return (
-    <StravaLink
-      activity={activity}
-      units={units}
-      style={{ height: `${height}%` }}
-      className={cn(
-        "block w-1.5 shrink-0 rounded-sm hover:opacity-80",
-        SPORT_BG[activity.sport],
-      )}
-    >
-      <span className="sr-only">{activity.name}</span>
-    </StravaLink>
-  );
-}
-
 /** Phone list row: icon, title and the numbers on one line. */
 export function ActivityRow({ activity, units, className }: ChipProps) {
   const Icon = SPORT_ICON[activity.sport];

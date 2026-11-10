@@ -1,89 +1,78 @@
-import {
-  Activity,
-  CalendarRange,
-  ChartColumn,
-  ShieldCheck,
-  Target,
-  Timer,
-  Trophy,
-} from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Suspense } from "react";
+import { ZoneSpinner } from "@/components/brand/zone-spinner";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { buttonVariants } from "@/components/ui/button";
+import { HeroPhone, Showcase } from "@/features/landing/showcase";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
-const FEATURES = [
-  { key: "weekly", icon: ChartColumn, color: "text-zone-1" },
-  { key: "averages", icon: CalendarRange, color: "text-zone-2" },
-  { key: "bestEfforts", icon: Trophy, color: "text-zone-3" },
-  { key: "goals", icon: Target, color: "text-zone-4" },
-  { key: "countdowns", icon: Timer, color: "text-zone-5" },
-  { key: "activities", icon: Activity, color: "text-zone-1" },
-] as const;
-
 const PRIVACY_POINTS = ["onlyYou", "noAds", "control"] as const;
 
-/** Public landing page (UI_SPEC §1). */
+/**
+ * Public landing page (UI_SPEC §1): what Stramin is, shown with the real app and example data
+ * (owner feedback L1). The text is static; the example screens stream in.
+ */
 export default function LandingPage() {
   const t = useTranslations("Landing");
 
   return (
     <>
-      <SiteHeader />
+      <SiteHeader wide />
 
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-20 px-4 pt-12 pb-20 sm:px-6 sm:pt-20">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-24 px-4 pt-10 pb-24 sm:px-6 sm:pt-16">
         {/* Hero */}
-        <section className="flex flex-col items-start gap-6">
-          <span className="rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground">
-            {t("hero.badge")}
-          </span>
-          <h1 className="max-w-2xl text-4xl font-bold tracking-tight sm:text-6xl">
-            {t("hero.title")}
-          </h1>
-          <p className="max-w-xl text-lg text-muted-foreground">
-            {t("hero.subtitle")}
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/signup"
-              className={cn(buttonVariants({ size: "lg" }), "px-5")}
-            >
-              {t("hero.signup")}
-            </Link>
-            <Link
-              href="/login"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "px-5",
-              )}
-            >
-              {t("hero.login")}
-            </Link>
+        <section className="grid items-center gap-12 lg:grid-cols-[1.2fr_1fr]">
+          <div className="flex flex-col items-start gap-6">
+            <span className="rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground">
+              {t("hero.badge")}
+            </span>
+            <h1 className="max-w-2xl text-4xl font-bold tracking-tight sm:text-6xl">
+              {t("hero.title")}
+            </h1>
+            <p className="max-w-xl text-lg text-muted-foreground">
+              {t("hero.subtitle")}
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/signup"
+                className={cn(buttonVariants({ size: "lg" }), "px-5")}
+              >
+                {t("hero.signup")}
+              </Link>
+              <Link
+                href="/demo"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "lg" }),
+                  "px-5",
+                )}
+              >
+                {t("hero.demo")}
+              </Link>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {t("hero.haveAccount")}{" "}
+              <Link
+                href="/login"
+                className="font-medium text-foreground underline underline-offset-4"
+              >
+                {t("hero.login")}
+              </Link>
+            </p>
+          </div>
+          {/* On phones the calendar section right below shows the same screen. */}
+          <div className="hidden lg:block">
+            <Suspense fallback={<ShowcaseSpinner />}>
+              <HeroPhone />
+            </Suspense>
           </div>
         </section>
 
-        {/* Features */}
-        <section className="flex flex-col gap-8">
-          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            {t("features.title")}
-          </h2>
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map(({ key, icon: Icon, color }) => (
-              <li
-                key={key}
-                className="flex flex-col gap-3 rounded-2xl border bg-card p-5"
-              >
-                <Icon className={cn("size-6", color)} aria-hidden />
-                <h3 className="font-semibold">{t(`features.${key}.title`)}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {t(`features.${key}.text`)}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <Suspense fallback={<ShowcaseSpinner />}>
+          <Showcase />
+        </Suspense>
 
         {/* Privacy */}
         <section className="flex flex-col gap-6 rounded-2xl border bg-card p-6 sm:p-10">
@@ -97,9 +86,32 @@ export default function LandingPage() {
             ))}
           </ul>
         </section>
+
+        {/* Call to action */}
+        <section className="flex flex-col items-center gap-5 text-center">
+          <h2 className="max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl">
+            {t("cta.title")}
+          </h2>
+          <p className="max-w-xl text-muted-foreground">{t("cta.text")}</p>
+          <Link
+            href="/signup"
+            className={cn(buttonVariants({ size: "lg" }), "px-6")}
+          >
+            {t("hero.signup")}
+          </Link>
+        </section>
       </main>
 
-      <SiteFooter />
+      <SiteFooter wide />
     </>
+  );
+}
+
+function ShowcaseSpinner() {
+  const t = useTranslations("Demo");
+  return (
+    <div className="flex justify-center py-16">
+      <ZoneSpinner size={64} label={t("loading")} />
+    </div>
   );
 }
