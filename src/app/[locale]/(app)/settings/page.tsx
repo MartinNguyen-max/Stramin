@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { buttonVariants } from "@/components/ui/button";
+import { signOut } from "@/features/auth/actions";
 import { NameForm } from "@/features/auth/components/name-form";
 import { getCurrentUser } from "@/features/auth/current-user";
 import { SettingsForm } from "@/features/profile/components/settings-form";
@@ -26,6 +27,7 @@ export default function SettingsPage() {
 
 async function SettingsContent() {
   const t = await getTranslations("Settings");
+  const tApp = await getTranslations("App");
   const user = await getCurrentUser();
   const locale = (await getLocale()) as Settings["locale"];
 
@@ -44,7 +46,7 @@ async function SettingsContent() {
   }
 
   return (
-    <>
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
 
       <section className="flex flex-col gap-4 rounded-2xl border bg-card p-6">
@@ -84,7 +86,16 @@ async function SettingsContent() {
         <p className="text-muted-foreground">
           {t("account.email")}: {user.email}
         </p>
+        <form action={signOut} className="border-t pt-4">
+          <input type="hidden" name="locale" value={locale} />
+          <button
+            type="submit"
+            className={buttonVariants({ variant: "outline", size: "lg" })}
+          >
+            {tApp("logout")}
+          </button>
+        </form>
       </section>
-    </>
+    </div>
   );
 }

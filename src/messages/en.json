@@ -4,7 +4,8 @@
   },
   "Common": {
     "language": "Language",
-    "login": "Log in"
+    "login": "Log in",
+    "close": "Close"
   },
   "Landing": {
     "hero": {
@@ -140,7 +141,11 @@
   "App": {
     "nav": {
       "home": "Home",
-      "settings": "Settings"
+      "settings": "Settings",
+      "goals": "Goals",
+      "training": "Training",
+      "profile": "Profile",
+      "label": "Main menu"
     },
     "logout": "Log out"
   },
@@ -151,25 +156,13 @@
       "title": "Connect your training data",
       "text": "Connect Strava to see your full training history. Garmin users can also import their history with a one-time download.",
       "strava": "Connect Strava",
-      "garminGuide": "Garmin history guide"
+      "garminGuide": "Garmin history guide",
+      "demo": "See an example"
     },
     "loading": "Fetching your training…"
   },
   "Activities": {
-    "thisWeek": "This week",
-    "weeks": "Last 12 weeks",
-    "averageWeek": "Your average week",
-    "period": "Period",
     "hours": "h",
-    "noTrainingYet": "No training this week yet.",
-    "averageNote": "Average over the last {weeks, plural, one {# week} other {# weeks}}, rest weeks included. The current week is not counted.",
-    "periods": {
-      "4w": "4 weeks",
-      "3m": "3 months",
-      "6m": "6 months",
-      "1y": "1 year",
-      "all": "All time"
-    },
     "sports": {
       "swim": "Swim",
       "bike": "Bike",
@@ -210,5 +203,83 @@
       "title": "Account",
       "email": "Email"
     }
+  },
+  "Calendar": {
+    "title": "Training calendar",
+    "loading": "Loading your training…",
+    "previous": "Previous period",
+    "next": "Next period",
+    "today": "Today",
+    "periodType": "Period",
+    "views": {
+      "1m": "1M",
+      "3m": "3M",
+      "6m": "6M",
+      "1y": "1Y",
+      "custom": "Custom",
+      "all": "All"
+    },
+    "from": "From",
+    "to": "To",
+    "show": "Show",
+    "week": "Wk",
+    "weekTotal": "Week total",
+    "weekNumber": "Week {number}",
+    "openMonth": "Open this month",
+    "hoursShort": "h",
+    "periodTotal": "Total for the period",
+    "workouts": "{count, plural, =0 {No workouts} one {# workout} other {# workouts}}",
+    "perWeek": "{value} per week",
+    "allTimeSince": "All time (since {date})",
+    "viewOnStrava": "View on Strava"
+  },
+  "Events": {
+    "title": "Events",
+    "add": "Add event",
+    "emptyHint": "Add your next race and count down to it",
+    "today": "Today!",
+    "tomorrow": "Tomorrow",
+    "daysLeft": "{count, plural, one {# day} other {# days}}",
+    "editEvent": "Edit {title}",
+    "addTitle": "New event",
+    "editTitle": "Edit event",
+    "fields": {
+      "title": "Title",
+      "titlePlaceholder": "e.g. Ironman Copenhagen",
+      "date": "Date",
+      "type": "Type",
+      "image": "Background image (optional)"
+    },
+    "types": {
+      "triathlon": "Triathlon",
+      "run": "Run",
+      "bike": "Bike",
+      "swim": "Swim",
+      "other": "Other"
+    },
+    "addImage": "Add image",
+    "changeImage": "Change image",
+    "removeImage": "Remove image",
+    "imageHint": "JPEG, PNG or WebP. It's resized before upload.",
+    "save": "Save",
+    "saving": "Saving…",
+    "delete": "Delete",
+    "confirmDelete": "Really delete?",
+    "unavailable": "Events are coming soon: the database needs an update first.",
+    "errors": {
+      "titleRequired": "Please give the event a title.",
+      "titleTooLong": "The title is too long (max 60 characters).",
+      "dateInvalid": "Please pick a valid date.",
+      "imageInvalid": "That image can't be used.",
+      "imageUpload": "The image couldn't be uploaded. Try another one, or save without an image.",
+      "unavailable": "Events can't be saved right now. Please try again later.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "Demo": {
+    "title": "Example data",
+    "text": "This is Stramin with made-up training. Sign up to see your own.",
+    "signup": "Sign up free",
+    "loading": "Loading the example…"
   }
 }

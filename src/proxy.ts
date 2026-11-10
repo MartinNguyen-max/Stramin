@@ -6,7 +6,13 @@ import { updateSession } from "./lib/supabase/session";
 const handleI18n = createMiddleware(routing);
 
 /** Pages that require login (the app). */
-const PROTECTED_PATHS = ["/home", "/settings"];
+const PROTECTED_PATHS = [
+  "/home",
+  "/goals",
+  "/training",
+  "/profile",
+  "/settings",
+];
 /**
  * Pages only for logged-out visitors. Logged-in users are sent to /home.
  * /login is not here: with a saved login it shows "Continue as …" (ACC-3).

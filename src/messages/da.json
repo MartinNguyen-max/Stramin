@@ -4,7 +4,8 @@
   },
   "Common": {
     "language": "Sprog",
-    "login": "Log ind"
+    "login": "Log ind",
+    "close": "Luk"
   },
   "Landing": {
     "hero": {
@@ -140,7 +141,11 @@
   "App": {
     "nav": {
       "home": "Hjem",
-      "settings": "Indstillinger"
+      "settings": "Indstillinger",
+      "goals": "Mål",
+      "training": "Træning",
+      "profile": "Profil",
+      "label": "Hovedmenu"
     },
     "logout": "Log ud"
   },
@@ -151,25 +156,13 @@
       "title": "Forbind dine træningsdata",
       "text": "Forbind Strava for at se hele din træningshistorik. Garmin-brugere kan også importere deres historik med en engangs-download.",
       "strava": "Forbind Strava",
-      "garminGuide": "Guide til Garmin-historik"
+      "garminGuide": "Guide til Garmin-historik",
+      "demo": "Se et eksempel"
     },
     "loading": "Henter din træning…"
   },
   "Activities": {
-    "thisWeek": "Denne uge",
-    "weeks": "Sidste 12 uger",
-    "averageWeek": "Din gennemsnitlige uge",
-    "period": "Periode",
     "hours": "t",
-    "noTrainingYet": "Ingen træning i denne uge endnu.",
-    "averageNote": "Gennemsnit over de sidste {weeks, plural, one {# uge} other {# uger}}, inklusive hvileuger. Den nuværende uge tæller ikke med.",
-    "periods": {
-      "4w": "4 uger",
-      "3m": "3 måneder",
-      "6m": "6 måneder",
-      "1y": "1 år",
-      "all": "Hele tiden"
-    },
     "sports": {
       "swim": "Svøm",
       "bike": "Cykel",
@@ -210,5 +203,83 @@
       "title": "Konto",
       "email": "E-mail"
     }
+  },
+  "Calendar": {
+    "title": "Træningskalender",
+    "loading": "Henter din træning…",
+    "previous": "Forrige periode",
+    "next": "Næste periode",
+    "today": "I dag",
+    "periodType": "Periode",
+    "views": {
+      "1m": "1M",
+      "3m": "3M",
+      "6m": "6M",
+      "1y": "1Å",
+      "custom": "Valgfri",
+      "all": "Alt"
+    },
+    "from": "Fra",
+    "to": "Til",
+    "show": "Vis",
+    "week": "Uge",
+    "weekTotal": "Ugens total",
+    "weekNumber": "Uge {number}",
+    "openMonth": "Åbn denne måned",
+    "hoursShort": "t",
+    "periodTotal": "Total for perioden",
+    "workouts": "{count, plural, =0 {Ingen træninger} one {# træning} other {# træninger}}",
+    "perWeek": "{value} pr. uge",
+    "allTimeSince": "Alt (siden {date})",
+    "viewOnStrava": "View on Strava"
+  },
+  "Events": {
+    "title": "Events",
+    "add": "Tilføj event",
+    "emptyHint": "Tilføj dit næste løb, og tæl ned til det",
+    "today": "I dag!",
+    "tomorrow": "I morgen",
+    "daysLeft": "{count, plural, one {# dag} other {# dage}}",
+    "editEvent": "Rediger {title}",
+    "addTitle": "Nyt event",
+    "editTitle": "Rediger event",
+    "fields": {
+      "title": "Titel",
+      "titlePlaceholder": "fx Ironman Copenhagen",
+      "date": "Dato",
+      "type": "Type",
+      "image": "Baggrundsbillede (valgfrit)"
+    },
+    "types": {
+      "triathlon": "Triatlon",
+      "run": "Løb",
+      "bike": "Cykling",
+      "swim": "Svømning",
+      "other": "Andet"
+    },
+    "addImage": "Tilføj billede",
+    "changeImage": "Skift billede",
+    "removeImage": "Fjern billede",
+    "imageHint": "JPEG, PNG eller WebP. Det gøres mindre før upload.",
+    "save": "Gem",
+    "saving": "Gemmer…",
+    "delete": "Slet",
+    "confirmDelete": "Vil du slette det?",
+    "unavailable": "Events kommer snart: databasen skal opdateres først.",
+    "errors": {
+      "titleRequired": "Giv eventet en titel.",
+      "titleTooLong": "Titlen er for lang (maks. 60 tegn).",
+      "dateInvalid": "Vælg en gyldig dato.",
+      "imageInvalid": "Det billede kan ikke bruges.",
+      "imageUpload": "Billedet kunne ikke uploades. Prøv et andet, eller gem uden billede.",
+      "unavailable": "Events kan ikke gemmes lige nu. Prøv igen senere.",
+      "generic": "Noget gik galt. Prøv igen."
+    }
+  },
+  "Demo": {
+    "title": "Eksempeldata",
+    "text": "Sådan ser Stramin ud med opdigtet træning. Opret en konto for at se din egen.",
+    "signup": "Opret gratis konto",
+    "loading": "Henter eksemplet…"
   }
 }

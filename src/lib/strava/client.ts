@@ -70,15 +70,28 @@ export type StravaActivity = {
 };
 
 /** Fetches the athlete's full activity history, 200 per page (Strava's maximum). */
-export async function fetchAllActivities(
+export function fetchAllActivities(
   accessToken: string,
+): Promise<StravaActivity[]> {
+  return fetchActivities(accessToken);
+}
+
+/**
+ * Fetches the athlete's activities, 200 per page (Strava's maximum).
+ * `after` / `before` are Unix timestamps (seconds) on the UTC start time; without them, the full history.
+ */
+export async function fetchActivities(
+  accessToken: string,
+  { after, before }: { after?: number; before?: number } = {},
 ): Promise<StravaActivity[]> {
   const all: StravaActivity[] = [];
   for (let page = 1; ; page++) {
-    const response = await fetch(
-      `${API_BASE}/athlete/activities?per_page=200&page=${page}`,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
-    );
+    const query = new URLSearchParams({ per_page: "200", page: String(page) });
+    if (after !== undefined) query.set("after", String(Math.floor(after)));
+    if (before !== undefined) query.set("before", String(Math.floor(before)));
+    const response = await fetch(`${API_BASE}/athlete/activities?${query}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
     if (!response.ok) {
       throw new Error(
         `Strava activities page ${page} failed: ${response.status}`,
