@@ -36,7 +36,7 @@
 
 ### Things only you can do
 
-- [ ] **Apply the database changes** (new tables `events`, `goals`, `personal_bests` and the `event-images` bucket). Until then, events, goals and manual best efforts show "not available yet". In PowerShell, in the project folder:
+- [x] **Apply the database changes** *(done 2026-11-10)* (new tables `events`, `goals`, `personal_bests` and the `event-images` bucket). Until then, events, goals and manual best efforts show "not available yet". In PowerShell, in the project folder:
   ```
   pnpm exec supabase login
   pnpm exec supabase link --project-ref <your project ref>

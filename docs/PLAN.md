@@ -71,7 +71,7 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 - [x] Goals: suggestions, gap, equivalent performances, feedback, workouts (GOAL-1, GOAL-3..6) *(needs the migrations)*
 - [x] Database: `events`, `goals`, `personal_bests`, `event-images` bucket (migrations written) *(owner applies them: see REVIEW.md)*
 - [x] Demo pages with example data (`/demo`, `/demo/goals`, `/demo/training`, `/demo/profile`), also used for screenshots
-- [ ] Owner: apply the migrations, push, review on a preview
+- [ ] Owner: push and review on a preview *(migrations applied 2026-11-10)*
 
 ✅ **Done when:** the owner has reviewed the new Home and pages on a preview, and the migrations are applied.
 
