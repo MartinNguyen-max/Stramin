@@ -41,12 +41,11 @@ Guidance for Claude (and any contributor) working on Stramin.
 | `pnpm typecheck` | TypeScript type check |
 | `pnpm test` | Unit tests (Vitest, once) · `pnpm test:watch` to watch |
 | `pnpm test:e2e` | End-to-end tests (Playwright, desktop + iPhone) |
-
-| `pnpm db:start` / `db:stop` | Start/stop local Supabase (Docker Desktop must run). Studio: http://127.0.0.1:55323 |
 | `pnpm db:generate` | Generate a SQL migration from the Drizzle schema into `supabase/migrations/` |
-| `pnpm db:reset` | Recreate the local database and apply all migrations (deletes local data) |
 
-**Local Supabase** uses ports **553xx** (not the default 543xx), so it can run next to other local Supabase projects. Run Supabase CLI commands from PowerShell. In Git Bash they fail on the temp folder.
+**No local database.** We don't run Supabase in Docker. Changes are tested on the **Vercel preview link** of each pull request, against the Supabase cloud project. Migrations are applied to the cloud database with the Supabase CLI (`supabase db push`, no Docker needed). Only the owner uses the app for now, so a broken preview or database is acceptable. Run Supabase CLI commands from PowerShell. In Git Bash they fail on the temp folder.
+
+*Optional:* `pnpm db:start` / `db:stop` / `db:reset` still work for a local Docker database (ports 553xx), but we don't use them.
 
 **Tests:** unit tests sit next to the code (`foo.ts` → `foo.test.ts`). E2E tests live in `tests/e2e/`.
 

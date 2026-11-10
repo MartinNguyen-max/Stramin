@@ -44,11 +44,11 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
 
 ### M2 – Accounts
 - [x] Supabase Auth: email & password, verification, password reset (ACC-1..3) *(works online, 2026-11-09)*
-- [ ] Google login (needs a Google login key, ADR 0004)
+- [ ] Google login (ADR 0004): Google key set up in Supabase *(2026-11-10)*; turn on `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED` in Vercel and test
 - [x] `profiles` table with RLS, and the RLS-aware Drizzle client (PRIV-3)
 - [x] Protected app area + log out
 - [x] Landing page: **Log in** and **Sign up** buttons (replacing "Coming soon")
-- [ ] Check local login (it hung on the PC, probably old dev servers still running; works online)
+- [x] ~~Check local login~~ *(dropped 2026-11-10: no local Docker database, we test on Vercel previews)*
 - [x] Supabase cloud project (EU) + Vercel env vars: login works on stramin.vercel.app
 - [x] Settings: units, week start, language (SET-1..3)
 - [x] Zone spinner as loading indicator; Strava data cached in the browser for 6 h (until M4)
@@ -131,5 +131,9 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
 - [ ] 🎉 Release
 
 ## Open items
+
+- [ ] **Fast first load (M4):** don't make the user wait for the full history. To be decided before M4. Options:
+  - **A. Recent first, rest in the background.** Fetch the last 3 months first (1 Strava request), show Home right away, then import the older history in the background. If the user picks a longer period before that is done, fetch that range first. *Recommendation:* records (M7) and "all time" averages still get the full history.
+  - **B. Only on demand.** Fetch older data only when the user picks a longer period. Fewer requests, but records and averages would be incomplete, and every first look at an old period waits for Strava.
 
 - [ ] **Duplicates (M10):** exact tolerances (e.g. start ±5 min, duration/distance ±5 %), and which version is shown. *Recommendation: Garmin, because it is the original device data and isn't limited to 7 days.* To be decided before M10.
