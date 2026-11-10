@@ -4,7 +4,10 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { ZoneSpinner } from "@/components/brand/zone-spinner";
 import { ConnectCard } from "@/features/activities/components/connect-card";
-import { loadStravaActivities } from "@/features/activities/strava-source";
+import {
+  getStravaStatus,
+  loadActivitiesIfConnected,
+} from "@/features/activities/data";
 import { getCurrentUser } from "@/features/auth/current-user";
 import {
   CalendarSection,
@@ -12,6 +15,8 @@ import {
 } from "@/features/calendar/components/calendar-section";
 import { EventsSection } from "@/features/events/components/events-section";
 import { getOrCreateProfile } from "@/features/profile/data";
+import { StravaNotice } from "@/features/strava/components/strava-notice";
+import { StravaStatusBar } from "@/features/strava/components/strava-status-bar";
 import type { Units, WeekStart } from "@/lib/preferences";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -50,20 +55,24 @@ async function HomeContent({
     console.error("[home] profile unavailable", error);
   }
 
-  const request = await readCalendarRequest(await searchParams);
+  const params = await searchParams;
+  const request = await readCalendarRequest(params);
+  const strava = await getStravaStatus(user.id);
 
   return (
     <>
       <h1 className="text-xl font-semibold tracking-tight">
         {t("greeting", { name: user.name ?? user.email ?? "" })}
       </h1>
+      <StravaNotice code={params.strava} />
       <EventsSection user={user} />
+      {strava.connected && <StravaStatusBar status={strava} />}
       <CalendarSection
         base="/home"
         request={request}
         units={units}
         weekStart={weekStart}
-        load={loadStravaActivities}
+        load={(range) => loadActivitiesIfConnected(user, range)}
         notConnected={<ConnectCard />}
       />
     </>

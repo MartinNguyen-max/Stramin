@@ -17,11 +17,14 @@ const ZONE_ARCS = [
 export function ZoneSpinner({
   size = 48,
   label,
+  hideLabel = false,
   className,
 }: {
   size?: number;
   /** Text shown below the gauge and read out by screen readers. */
   label: string;
+  /** Only for screen readers, e.g. in a button. */
+  hideLabel?: boolean;
   className?: string;
 }) {
   return (
@@ -58,7 +61,9 @@ export function ZoneSpinner({
           <circle cx="256" cy="300" r="22" fill="currentColor" />
         </g>
       </svg>
-      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className={hideLabel ? "sr-only" : "text-sm text-muted-foreground"}>
+        {label}
+      </span>
     </output>
   );
 }

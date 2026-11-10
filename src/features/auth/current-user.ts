@@ -1,4 +1,5 @@
 import { getLocale } from "next-intl/server";
+import { cache } from "react";
 import { redirect } from "@/i18n/navigation";
 import type { AuthClaims } from "@/lib/db/rls";
 import { supabaseConfig } from "@/lib/supabase/config";
@@ -51,8 +52,9 @@ export async function getSavedLogin(): Promise<{
   return { name: displayName(claims.user_metadata) ?? email ?? "", email };
 }
 
-async function readClaims() {
+/** Validates the session once per request, however many components ask for the user. */
+const readClaims = cache(async () => {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   return data?.claims;
-}
+});

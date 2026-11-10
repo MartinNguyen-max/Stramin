@@ -3,12 +3,12 @@ import { useTranslations } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { ZoneSpinner } from "@/components/brand/zone-spinner";
-import { buttonVariants } from "@/components/ui/button";
 import { getCurrentUser } from "@/features/auth/current-user";
 import { loadBestEfforts } from "@/features/profile/best-efforts-data";
 import { BestEffortsCard } from "@/features/profile/components/best-efforts-card";
 import { RunningLevel } from "@/features/profile/components/running-level";
 import { getOrCreateProfile } from "@/features/profile/data";
+import { ConnectStravaButton } from "@/features/strava/components/connect-strava-button";
 import { EFFORT_SPORTS } from "@/lib/analytics/best-efforts";
 import type { Units } from "@/lib/preferences";
 
@@ -64,12 +64,7 @@ async function ProfileContent() {
               {t("stravaConnected")}
             </span>
           ) : (
-            <a
-              href="/api/strava/connect?next=/profile"
-              className={buttonVariants({ size: "sm" })}
-            >
-              {t("connect")}
-            </a>
+            <ConnectStravaButton next="/profile" />
           )}
         </div>
       </section>

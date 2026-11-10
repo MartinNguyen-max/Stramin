@@ -75,20 +75,22 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 
 ✅ **Done when:** the owner has reviewed the new Home and pages on a preview, and the migrations are applied.
 
-### M3 – Strava connection
-- [ ] Strava OAuth with "Connect with Strava" button (CON-1, NFR-5)
-- [ ] Token encryption + `connections` table (PRIV-4)
-- [ ] Disconnect + deauthorize + delete data (CON-2)
+### M3 – Strava connection *(built 2026-11-10, work mode; to test on the live site)*
+- [x] Strava OAuth with "Connect with Strava" button (CON-1, NFR-5) *(Strava's official button artwork still to swap in before release)*
+- [x] Token encryption (AES-256-GCM) + `connections` table (PRIV-4)
+- [x] Disconnect + deauthorize + delete data (CON-2)
+- [x] Speed: Vercel functions in Dublin next to the database; one round trip for RLS; one session check per request
 
 ✅ **Done when:** you can connect and disconnect your Strava account.
 
-### M4 – Sync engine
-- [ ] `activities` table, sport mapping and indoor flag (SPT-1..3)
-- [ ] Supabase Queues + Cron → `/api/jobs/run`, with rate-limit tracking (NFR-4)
-- [ ] History import with progress (CON-3)
-- [ ] Strava webhook: create/update/delete/deauthorize (CON-4)
-- [ ] Refresh button (CON-5)
-- [ ] Rolling 7-day cache: refresh and cleanup jobs (CON-8)
+### M4 – Sync engine *(built 2026-11-10 as [ADR 0012](decisions/0012-strava-sync-v1.md); to test on the live site)*
+- [x] `activities` table, sport mapping and indoor flag (SPT-1..3)
+- [x] Hourly Supabase Cron → `/api/jobs/run`, with rate-limit checks (NFR-4) *(no queue yet, ADR 0012)*
+- [x] History import with progress (CON-3)
+- [x] Strava webhook: create/update/delete/deauthorize (CON-4) *(subscription registered after deploy: `node scripts/strava-webhook.mjs create`)*
+- [x] Refresh button (CON-5)
+- [x] Rolling 7-day cache: daily full refresh and cleanup (CON-8)
+- [ ] Owner: apply the migrations (`pnpm exec supabase db push --remote`), push, connect Strava once, check that Home fills up
 
 ✅ **Done when:** your full Strava history is in the database and new activities appear automatically.
 
@@ -100,7 +102,7 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 
 ### M6 – Home
 - [x] ~~This week, week chart, average week~~ *(replaced by the calendar, M2.5)*
-- [ ] Switch the calendar to the `activities` table once M4 is done (NFR-3)
+- [x] Switch the calendar (and Profile, Goals, Training) to the `activities` table (NFR-3) *(2026-11-10)*
 
 ✅ **Done when:** Home shows correct numbers, checked against Strava.
 

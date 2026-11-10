@@ -155,7 +155,6 @@
     "connect": {
       "title": "Connect your training data",
       "text": "Connect Strava to see your full training history. Garmin users can also import their history with a one-time download.",
-      "strava": "Connect Strava",
       "garminGuide": "Garmin history guide",
       "demo": "See an example"
     },
@@ -195,9 +194,7 @@
     },
     "connections": {
       "title": "Connections",
-      "connect": "Connect",
-      "comingSoon": "Coming soon",
-      "note": "For now, the Strava connection lasts 6 hours. Permanent connections are coming next."
+      "comingSoon": "Coming soon"
     },
     "account": {
       "title": "Account",
@@ -300,7 +297,6 @@
     "title": "Profile",
     "stravaConnected": "Strava connected",
     "stravaNotConnected": "Connect Strava to estimate your best efforts from your activities.",
-    "connect": "Connect Strava",
     "loading": "Looking for your best efforts…",
     "bestEfforts": {
       "title": "Best efforts",
@@ -485,5 +481,32 @@
     "empty": "No goals yet. Set your first one.",
     "unavailable": "Goals are coming soon: the database needs an update first.",
     "connectHint": "Connect Strava to compare with your best efforts and weekly volume."
+  },
+  "Strava": {
+    "connect": "Connect with Strava",
+    "connected": "Connected",
+    "connectedAs": "Connected as {name}",
+    "lastSync": "Last synced {time}",
+    "synced": "Synced {time}",
+    "importing": "Importing your Strava history…",
+    "importedSoFar": "{count, plural, =0 {Starting…} one {# workout so far} other {# workouts so far}}",
+    "importFailed": "The import stopped. It continues by itself within an hour, or press Refresh.",
+    "refresh": "Refresh",
+    "refreshing": "Refreshing…",
+    "disconnect": "Disconnect",
+    "confirmDisconnect": "Really disconnect?",
+    "disconnecting": "Disconnecting…",
+    "disconnectHint": "Stramin loses access to Strava and deletes your Strava workouts here. Your own best efforts, goals and events stay.",
+    "errors": {
+      "notConnected": "Strava isn't connected.",
+      "tooSoon": "Synced less than a minute ago. Try again in a moment.",
+      "failed": "Strava didn't answer. Please try again later."
+    },
+    "notice": {
+      "denied": "You didn't give Stramin access on Strava, so nothing was connected.",
+      "failed": "Connecting Strava didn't work. Please try again.",
+      "scope": "Stramin needs access to all your activities. Connect again and keep \"View data about your private activities\" ticked.",
+      "taken": "This Strava account is already connected to another Stramin account."
+    }
   }
 }

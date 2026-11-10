@@ -2,12 +2,15 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { buttonVariants } from "@/components/ui/button";
+import { getStravaStatus } from "@/features/activities/data";
 import { signOut } from "@/features/auth/actions";
 import { NameForm } from "@/features/auth/components/name-form";
 import { getCurrentUser } from "@/features/auth/current-user";
 import { SettingsForm } from "@/features/profile/components/settings-form";
 import { getOrCreateProfile } from "@/features/profile/data";
 import type { Settings } from "@/features/profile/schemas";
+import { ConnectStravaButton } from "@/features/strava/components/connect-strava-button";
+import { StravaSettings } from "@/features/strava/components/strava-settings";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Settings");
@@ -29,6 +32,7 @@ async function SettingsContent() {
   const t = await getTranslations("Settings");
   const tApp = await getTranslations("App");
   const user = await getCurrentUser();
+  const strava = await getStravaStatus(user.id);
   const locale = (await getLocale()) as Settings["locale"];
 
   let initial: Settings = { units: "metric", weekStart: "monday", locale };
@@ -61,14 +65,13 @@ async function SettingsContent() {
       <section className="flex flex-col gap-4 rounded-2xl border bg-card p-6">
         <h2 className="font-semibold">{t("connections.title")}</h2>
         <ul className="flex flex-col gap-3 text-sm">
-          <li className="flex items-center justify-between gap-4">
-            <span>Strava</span>
-            <a
-              href="/api/strava/connect?next=/settings"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              {t("connections.connect")}
-            </a>
+          <li className="flex flex-col gap-2">
+            <span className="font-medium">Strava</span>
+            {strava.connected ? (
+              <StravaSettings status={strava} />
+            ) : (
+              <ConnectStravaButton next="/settings" className="self-start" />
+            )}
           </li>
           <li className="flex items-center justify-between gap-4">
             <span>Garmin</span>
@@ -77,7 +80,6 @@ async function SettingsContent() {
             </span>
           </li>
         </ul>
-        <p className="text-xs text-muted-foreground">{t("connections.note")}</p>
       </section>
 
       <section className="flex flex-col gap-4 rounded-2xl border bg-card p-6 text-sm">

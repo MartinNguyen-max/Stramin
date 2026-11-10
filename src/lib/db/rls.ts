@@ -18,13 +18,11 @@ export async function withRls<T>(
   fn: (tx: Transaction) => Promise<T>,
 ): Promise<T> {
   return getAdminDb().transaction(async (tx) => {
+    // One round trip instead of three: set the claims and switch to the authenticated role
+    // (set_config('role', …, true) is what SET LOCAL ROLE does; PostgREST does the same).
     await tx.execute(
-      sql`select set_config('request.jwt.claims', ${JSON.stringify(claims)}, true)`,
+      sql`select set_config('request.jwt.claims', ${JSON.stringify(claims)}, true), set_config('request.jwt.claim.sub', ${claims.sub}, true), set_config('role', 'authenticated', true)`,
     );
-    await tx.execute(
-      sql`select set_config('request.jwt.claim.sub', ${claims.sub}, true)`,
-    );
-    await tx.execute(sql`set local role authenticated`);
     return fn(tx);
   });
 }

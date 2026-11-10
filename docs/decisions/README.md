@@ -16,6 +16,7 @@ ADRs are never rewritten. If a decision changes, write a new ADR that *supersede
 | [0009](0009-strava-rolling-cache.md) | Strava data as a rolling 7-day cache | Accepted |
 | [0010](0010-pace-model-vdot.md) | VDOT as the running pace model | Accepted (to review) |
 | [0011](0011-best-efforts-v1.md) | Best efforts v1: estimated from activity summaries, plus manual values | Accepted (to review) |
+| [0012](0012-strava-sync-v1.md) | Strava sync v1: summaries, webhook + hourly job, no queue yet | Accepted (to review) |
 
 ## Template
 
