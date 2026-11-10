@@ -92,6 +92,9 @@
     "pleaseWait": "Vent venligst…",
     "or": "eller",
     "continueWithGoogle": "Fortsæt med Google",
+    "name": "Hvad skal vi kalde dig?",
+    "continueAs": "Fortsæt som {name}",
+    "useAnotherAccount": "Brug en anden konto",
     "login": {
       "title": "Log ind",
       "submit": "Log ind",
@@ -123,6 +126,9 @@
       "passwordTooShort": "Adgangskoden skal være mindst 8 tegn.",
       "passwordTooLong": "Adgangskoden er for lang (maks. 72 tegn).",
       "passwordRequired": "Skriv din adgangskode.",
+      "nameRequired": "Skriv hvad vi skal kalde dig.",
+      "nameTooLong": "Navnet er for langt (maks. 30 tegn).",
+      "nameInvalid": "Brug kun bogstaver, mellemrum, bindestreg, apostrof og punktum, og start med et bogstav.",
       "invalidCredentials": "Forkert e-mail eller adgangskode.",
       "emailNotConfirmed": "Bekræft først din e-mail. Tjek din indbakke.",
       "emailTaken": "Der findes allerede en konto med denne e-mail.",
@@ -140,7 +146,7 @@
   },
   "Home": {
     "title": "Hjem",
-    "greeting": "Velkommen, {email}",
+    "greeting": "Velkommen, {name}",
     "connect": {
       "title": "Forbind dine træningsdata",
       "text": "Forbind Strava for at se hele din træningshistorik. Garmin-brugere kan også importere deres historik med en engangs-download.",

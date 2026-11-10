@@ -6,6 +6,14 @@ Guidance for Claude (and any contributor) working on Stramin.
 
 ## How we work
 
+**The owner leads. These rules come first:**
+
+- **Always follow the owner's instructions.** Do exactly what was asked, nothing more.
+- **Simple and clear answers**, until the owner asks for more context.
+- **Don't go ahead.** Wait for the owner. A question is not a go-ahead to start work.
+- **One task at a time.** Never several tasks at once.
+- **Explain the plan.** Every update says what we have done and what we will do next, so the owner understands the plan.
+
 - **Short and clear.** Keep answers concise and easy to follow. The owner asks for more detail when needed.
 - **Never assume silently.** When something is unclear or a choice has to be made, raise it and discuss it. Explain *why*, not just *what*.
 - **Show alternatives.** For every meaningful choice (library, pattern, structure), name the realistic options and recommend one.
@@ -54,3 +62,4 @@ Guidance for Claude (and any contributor) working on Stramin.
 - Commits are authored as **Martin Nguyen**, never a uni or work account. Check `git config user.email` before committing.
 - Conventional Commits, kept short (e.g. `docs: add plan`).
 - One branch + pull request per task. `main` is always deployable.
+- **The owner runs `git add`, `git commit` and `git push`.** Claude gives the ready-to-paste commands and doesn't run them itself.

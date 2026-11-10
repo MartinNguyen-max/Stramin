@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { buttonVariants } from "@/components/ui/button";
+import { NameForm } from "@/features/auth/components/name-form";
 import { getCurrentUser } from "@/features/auth/current-user";
 import { SettingsForm } from "@/features/profile/components/settings-form";
 import { getOrCreateProfile } from "@/features/profile/data";
@@ -77,8 +78,9 @@ async function SettingsContent() {
         <p className="text-xs text-muted-foreground">{t("connections.note")}</p>
       </section>
 
-      <section className="flex flex-col gap-2 rounded-2xl border bg-card p-6 text-sm">
+      <section className="flex flex-col gap-4 rounded-2xl border bg-card p-6 text-sm">
         <h2 className="font-semibold">{t("account.title")}</h2>
+        <NameForm initial={user.name} />
         <p className="text-muted-foreground">
           {t("account.email")}: {user.email}
         </p>

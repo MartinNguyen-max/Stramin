@@ -14,7 +14,8 @@ Each requirement has an ID (e.g. `ACC-1`), so the plan, code and tests can refer
 |---|---|---|
 | ACC-1 | A user can sign up and log in with a Stramin account using **Google** or **email & password** (with email verification and password reset). See [ADR 0004](decisions/0004-authentication.md). | Must |
 | ACC-2 | A user can log out. | Must |
-| ACC-3 | A user stays logged in across visits until they log out. | Must |
+| ACC-3 | A user stays logged in across visits until they log out (the login is kept for 400 days and renewed on every visit). When a saved login exists, **Log in** shows "Continue as {name}" and "Use another account" instead of logging in silently. | Must |
+| ACC-5 | **Name:** at sign up the user answers "What should we call you?" (1–30 characters; letters from any language, plus space, `-`, `'` and `.`; must start with a letter; no digits, emojis or links). With Google, the first name is taken from the Google account. The name can be changed in Settings. Validated in the browser **and** on the server. | Must |
 | ACC-4 | A user can delete their account, which removes all their data (see PRIV-2). | Must |
 
 ## 2. Connections (CON)

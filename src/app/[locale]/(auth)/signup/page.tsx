@@ -51,7 +51,7 @@ export default function SignupPage() {
       )}
       <AuthForm
         action={signUp}
-        fields={["email", "newPassword"]}
+        fields={["name", "email", "newPassword"]}
         submitLabel={t("signup.submit")}
       />
     </AuthCard>

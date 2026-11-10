@@ -73,7 +73,7 @@ async function HomeContent({
   return (
     <>
       <h1 className="text-2xl font-bold tracking-tight">
-        {t("greeting", { email: user.email ?? "" })}
+        {t("greeting", { name: user.name ?? user.email ?? "" })}
       </h1>
 
       {activities ? (

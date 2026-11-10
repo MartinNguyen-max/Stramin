@@ -17,6 +17,7 @@ test("landing page links to sign up and log in", async ({ page }) => {
 
 test("sign-up form validates the password length", async ({ page }) => {
   await page.goto("/signup");
+  await page.getByLabel("What should we call you?").fill("Martin");
   await page.getByLabel("Email").fill("someone@example.com");
   // Bypass the browser's own minlength check to test the server-side validation.
   await page
@@ -44,11 +45,19 @@ test.describe("account flow", () => {
 
     // Sign up (local Supabase has email confirmation off, so this logs in directly).
     await page.goto("/signup");
+    await page.getByLabel("What should we call you?").fill("Martin");
     await page.getByLabel("Email").fill(email);
     await page.getByLabel("Password").fill(password);
     await page.getByRole("button", { name: "Create account" }).click();
     await expect(page).toHaveURL(/\/home$/);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(email);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(
+      "Martin",
+    );
+
+    // With a saved login, Log in offers "Continue as …" instead of logging in silently.
+    await page.goto("/login");
+    await page.getByRole("button", { name: "Continue as Martin" }).click();
+    await expect(page).toHaveURL(/\/home$/);
 
     // Change and persist a setting (stored in `profiles`, protected by RLS).
     await page.getByRole("link", { name: "Settings" }).click();

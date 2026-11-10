@@ -29,7 +29,7 @@ Landing ── Log in / Sign up ── Connect Strava ── Import progress ─
 | Screen | Content | Req |
 |---|---|---|
 | **Landing** | A **preview of the web app**: what Stramin is, plus a look at the real screens (e.g. the weekly overview). Clear **Log in** and **Sign up** buttons. Links to the guide and the privacy policy. | – |
-| **Log in / Sign up** | Login buttons (the methods are decided in ARCHITECTURE). | ACC-1 |
+| **Log in / Sign up** | "Continue with Google" button (Google's guideline: white with gray border, dark in dark mode, official colored G logo), then email & password. Sign up also asks "What should we call you?". If a saved login exists, Log in shows **"Continue as {name}"** (zone spinner while loading) and **"Use another account"**. No age check. | ACC-1, ACC-3, ACC-5 |
 | **Connect** | "Connect with Strava" button (Strava's official design). Garmin is shown as "coming soon". | CON-1, NFR-5 |
 | **Import progress** | Progress bar ("Imported 412 of ~1,300 activities"). The user can continue to Home while it runs. | CON-3 |
 
@@ -127,7 +127,7 @@ Inspired by how Garmin Connect groups activities by week.
 | **Preferences** | Units · Week start · Language · Indoor/outdoor | SET-1..4 |
 | **Connections** | Strava: connected/disconnect. Garmin: coming soon. | SET-5, CON-2 |
 | **Privacy** | Export data · Delete account · Privacy policy | PRIV-1, PRIV-2, PRIV-5 |
-| **Account** | Log out | ACC-2 |
+| **Account** | Name · Log out | ACC-5, ACC-2 |
 
 ---
 

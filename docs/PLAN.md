@@ -44,7 +44,10 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
 
 ### M2 – Accounts
 - [x] Supabase Auth: email & password, verification, password reset (ACC-1..3) *(works online, 2026-11-09)*
-- [ ] Google login (ADR 0004): Google key set up in Supabase *(2026-11-10)*; turn on `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED` in Vercel and test
+- [x] Google login (ADR 0004) *(works online, 2026-11-10)*
+- [ ] Log in with a saved login: show "Continue as {name}" / "Use another account" instead of logging in silently (ACC-3)
+- [ ] Name: "What should we call you?" at sign up, from Google, editable in Settings (ACC-5)
+- [ ] Google button styled after Google's guideline, with the official G logo
 - [x] `profiles` table with RLS, and the RLS-aware Drizzle client (PRIV-3)
 - [x] Protected app area + log out
 - [x] Landing page: **Log in** and **Sign up** buttons (replacing "Coming soon")
@@ -129,6 +132,10 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
   - [ ] Send screenshots/mockups of those screens to Garmin **at least 30 days before release**
   - [ ] Terms of Service page (PRIV-6)
 - [ ] 🎉 Release
+
+## Later (small polish)
+
+- [ ] Use the zone spinner everywhere something loads (no other spinners)
 
 ## Open items
 
