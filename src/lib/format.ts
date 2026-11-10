@@ -1,6 +1,7 @@
+import type { Sport } from "./analytics/sports";
 import type { Units } from "./preferences";
 
-/** Formats seconds as "h:mm" (e.g. 5400 → "1:30"). */
+/** Formats seconds as "h:mm" (e.g. 5400 → "1:30"). Used for totals. */
 export function formatDuration(seconds: number): string {
   const totalMinutes = Math.round(seconds / 60);
   const hours = Math.floor(totalMinutes / 60);
@@ -8,7 +9,32 @@ export function formatDuration(seconds: number): string {
   return `${hours}:${String(minutes).padStart(2, "0")}`;
 }
 
+/** Formats seconds as a clock time: "1:10:40", "45:58" or "0:42". Used for workouts and best efforts. */
+export function formatClock(seconds: number): string {
+  const total = Math.round(seconds);
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const secs = total % 60;
+  const ss = String(secs).padStart(2, "0");
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${ss}`;
+  }
+  return `${minutes}:${ss}`;
+}
+
+/** Parses "1:10:40", "45:58" or "58" (seconds) into seconds. Returns null for invalid input. */
+export function parseClock(value: string): number | null {
+  const parts = value.trim().split(":");
+  if (parts.length === 0 || parts.length > 3) return null;
+  if (!parts.every((part) => /^\d{1,3}$/.test(part))) return null;
+  const numbers = parts.map(Number);
+  // Minutes and seconds after the first part must be below 60.
+  if (numbers.slice(1).some((n) => n >= 60)) return null;
+  return numbers.reduce((total, n) => total * 60 + n, 0);
+}
+
 const METERS_PER_MILE = 1609.344;
+const METERS_PER_YARD = 0.9144;
 
 /**
  * Formats a distance in the user's units (SET-1). Data is always stored in meters.
@@ -22,4 +48,73 @@ export function formatDistance(
   const value = units === "imperial" ? meters / METERS_PER_MILE : meters / 1000;
   const unit = units === "imperial" ? "mi" : "km";
   return `${value.toFixed(precise ? 2 : 1)} ${unit}`;
+}
+
+/** A distance as it's best read for the sport: swims in meters (yards) up to 10 km, the rest in km (miles). */
+export function formatSportDistance(
+  sport: Sport,
+  meters: number,
+  units: Units,
+): string {
+  if (sport === "swim" && meters < 10_000) {
+    return units === "imperial"
+      ? `${Math.round(meters / METERS_PER_YARD).toLocaleString("en")} yd`
+      : `${Math.round(meters).toLocaleString("en")} m`;
+  }
+  return formatDistance(meters, units);
+}
+
+/** Pace per km (mi) for a distance and time, e.g. "5:21 /km". */
+export function formatPacePerKm(
+  meters: number,
+  seconds: number,
+  units: Units,
+): string {
+  const unitMeters = units === "imperial" ? METERS_PER_MILE : 1000;
+  return `${formatClock((seconds / meters) * unitMeters)} /${units === "imperial" ? "mi" : "km"}`;
+}
+
+/** Pace per 100 m (100 yd), e.g. "2:07 /100m". */
+export function formatPacePer100(
+  meters: number,
+  seconds: number,
+  units: Units,
+): string {
+  const unitMeters = units === "imperial" ? 100 * METERS_PER_YARD : 100;
+  return `${formatClock((seconds / meters) * unitMeters)} /100${units === "imperial" ? "yd" : "m"}`;
+}
+
+/** Speed in km/h (mph), e.g. "28.9 km/h". */
+export function formatSpeed(
+  meters: number,
+  seconds: number,
+  units: Units,
+): string {
+  const perHour = (meters / seconds) * 3600;
+  return units === "imperial"
+    ? `${(perHour / METERS_PER_MILE).toFixed(1)} mph`
+    : `${(perHour / 1000).toFixed(1)} km/h`;
+}
+
+/**
+ * The pace or speed that fits the sport (HOME-3): run min/km, bike km/h, swim min/100 m.
+ * Null when there is no distance or the sport has no pace (strength, other).
+ */
+export function formatSportPace(
+  sport: Sport,
+  meters: number,
+  seconds: number,
+  units: Units,
+): string | null {
+  if (meters <= 0 || seconds <= 0) return null;
+  switch (sport) {
+    case "run":
+      return formatPacePerKm(meters, seconds, units);
+    case "bike":
+      return formatSpeed(meters, seconds, units);
+    case "swim":
+      return formatPacePer100(meters, seconds, units);
+    default:
+      return null;
+  }
 }

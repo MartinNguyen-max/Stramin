@@ -4,7 +4,8 @@
   },
   "Common": {
     "language": "Sprog",
-    "login": "Log ind"
+    "login": "Log ind",
+    "close": "Luk"
   },
   "Landing": {
     "hero": {
@@ -140,7 +141,11 @@
   "App": {
     "nav": {
       "home": "Hjem",
-      "settings": "Indstillinger"
+      "settings": "Indstillinger",
+      "goals": "Mål",
+      "training": "Træning",
+      "profile": "Profil",
+      "label": "Hovedmenu"
     },
     "logout": "Log ud"
   },
@@ -151,25 +156,13 @@
       "title": "Forbind dine træningsdata",
       "text": "Forbind Strava for at se hele din træningshistorik. Garmin-brugere kan også importere deres historik med en engangs-download.",
       "strava": "Forbind Strava",
-      "garminGuide": "Guide til Garmin-historik"
+      "garminGuide": "Guide til Garmin-historik",
+      "demo": "Se et eksempel"
     },
     "loading": "Henter din træning…"
   },
   "Activities": {
-    "thisWeek": "Denne uge",
-    "weeks": "Sidste 12 uger",
-    "averageWeek": "Din gennemsnitlige uge",
-    "period": "Periode",
     "hours": "t",
-    "noTrainingYet": "Ingen træning i denne uge endnu.",
-    "averageNote": "Gennemsnit over de sidste {weeks, plural, one {# uge} other {# uger}}, inklusive hvileuger. Den nuværende uge tæller ikke med.",
-    "periods": {
-      "4w": "4 uger",
-      "3m": "3 måneder",
-      "6m": "6 måneder",
-      "1y": "1 år",
-      "all": "Hele tiden"
-    },
     "sports": {
       "swim": "Svøm",
       "bike": "Cykel",
@@ -210,5 +203,287 @@
       "title": "Konto",
       "email": "E-mail"
     }
+  },
+  "Calendar": {
+    "title": "Træningskalender",
+    "loading": "Henter din træning…",
+    "previous": "Forrige periode",
+    "next": "Næste periode",
+    "today": "I dag",
+    "periodType": "Periode",
+    "views": {
+      "1m": "1M",
+      "3m": "3M",
+      "6m": "6M",
+      "1y": "1Å",
+      "custom": "Valgfri",
+      "all": "Alt"
+    },
+    "from": "Fra",
+    "to": "Til",
+    "show": "Vis",
+    "week": "Uge",
+    "weekTotal": "Ugens total",
+    "weekNumber": "Uge {number}",
+    "openMonth": "Åbn denne måned",
+    "hoursShort": "t",
+    "periodTotal": "Total for perioden",
+    "workouts": "{count, plural, =0 {Ingen træninger} one {# træning} other {# træninger}}",
+    "perWeek": "{value} pr. uge",
+    "allTimeSince": "Alt (siden {date})",
+    "viewOnStrava": "View on Strava"
+  },
+  "Events": {
+    "title": "Events",
+    "add": "Tilføj event",
+    "emptyHint": "Tilføj dit næste løb, og tæl ned til det",
+    "today": "I dag!",
+    "tomorrow": "I morgen",
+    "daysLeft": "{count, plural, one {# dag} other {# dage}}",
+    "editEvent": "Rediger {title}",
+    "addTitle": "Nyt event",
+    "editTitle": "Rediger event",
+    "fields": {
+      "title": "Titel",
+      "titlePlaceholder": "fx Ironman Copenhagen",
+      "date": "Dato",
+      "type": "Type",
+      "image": "Baggrundsbillede (valgfrit)"
+    },
+    "types": {
+      "triathlon": "Triatlon",
+      "run": "Løb",
+      "bike": "Cykling",
+      "swim": "Svømning",
+      "other": "Andet"
+    },
+    "addImage": "Tilføj billede",
+    "changeImage": "Skift billede",
+    "removeImage": "Fjern billede",
+    "imageHint": "JPEG, PNG eller WebP. Det gøres mindre før upload.",
+    "save": "Gem",
+    "saving": "Gemmer…",
+    "delete": "Slet",
+    "confirmDelete": "Vil du slette det?",
+    "unavailable": "Events kommer snart: databasen skal opdateres først.",
+    "errors": {
+      "titleRequired": "Giv eventet en titel.",
+      "titleTooLong": "Titlen er for lang (maks. 60 tegn).",
+      "dateInvalid": "Vælg en gyldig dato.",
+      "imageInvalid": "Det billede kan ikke bruges.",
+      "imageUpload": "Billedet kunne ikke uploades. Prøv et andet, eller gem uden billede.",
+      "unavailable": "Events kan ikke gemmes lige nu. Prøv igen senere.",
+      "generic": "Noget gik galt. Prøv igen."
+    }
+  },
+  "Demo": {
+    "title": "Eksempeldata",
+    "text": "Sådan ser Stramin ud med opdigtet træning. Opret en konto for at se din egen.",
+    "signup": "Opret gratis konto",
+    "loading": "Henter eksemplet…"
+  },
+  "Distances": {
+    "halfMarathon": "Halvmaraton",
+    "marathon": "Maraton"
+  },
+  "Zones": {
+    "short": "Z{zone}",
+    "names": {
+      "1": "Restitution",
+      "2": "Udholdenhed",
+      "3": "Tempo",
+      "4": "Tærskel",
+      "5": "VO2max"
+    }
+  },
+  "Profile": {
+    "title": "Profil",
+    "stravaConnected": "Strava forbundet",
+    "stravaNotConnected": "Forbind Strava for at beregne dine bedste præstationer ud fra dine aktiviteter.",
+    "connect": "Forbind Strava",
+    "loading": "Finder dine bedste præstationer…",
+    "bestEfforts": {
+      "title": "Bedste præstationer",
+      "note": "Strava-værdierne er skøn ud fra aktiviteternes gennemsnitstempo: præcise for løb, lidt for langsomme, når din hurtigste indsats lå inde i en længere tur. Tryk på ✎ for at skrive din rigtige tid.",
+      "distance": "Distance",
+      "time": "Tid",
+      "pace": "Tempo",
+      "strava": "Strava",
+      "manual": "Manuel",
+      "stravaValue": "Strava: {time}",
+      "none": "Ingen værdi endnu",
+      "edit": "Rediger {distance}",
+      "save": "Gem",
+      "cancel": "Annuller",
+      "reset": "Brug Strava-værdien",
+      "remove": "Fjern",
+      "timeLabel": "Tid (t:mm:ss eller mm:ss)",
+      "dateLabel": "Dato (valgfri)",
+      "unavailable": "Dine egne værdier kan ikke gemmes endnu: databasen skal opdateres først.",
+      "errors": {
+        "timeInvalid": "Skriv en tid som 19:45 eller 1:29:30.",
+        "dateInvalid": "Vælg en dato, der ikke er i fremtiden.",
+        "unavailable": "Det kan ikke gemmes lige nu. Prøv igen senere.",
+        "generic": "Noget gik galt. Prøv igen."
+      }
+    },
+    "level": {
+      "title": "Dit løbeniveau",
+      "vdot": "VDOT {value}",
+      "basis": "Ud fra din {distance} på {time}.",
+      "explain": "VDOT er et mål for løbeform fra Jack Daniels' Running Formula. Dine træningstempoer følger af det.",
+      "per400": "{time} pr. 400 m",
+      "noRuns": "Tilføj en bedste præstation i løb for at se dit niveau og dine træningstempoer.",
+      "paces": {
+        "recovery": "Restitution",
+        "easy": "Roligt",
+        "marathon": "Maraton",
+        "threshold": "Tærskel",
+        "interval": "Interval",
+        "repetition": "Gentagelser"
+      }
+    }
+  },
+  "Training": {
+    "title": "Træningsinspiration",
+    "intro": "Idéer til din næste træning, med tempoer ud fra dine bedste præstationer.",
+    "sport": "Sport",
+    "effortLabel": "Intensitet",
+    "efforts": {
+      "all": "Alle",
+      "easy": "Roligt · Z1–Z2",
+      "moderate": "Moderat · Z3",
+      "hard": "Hårdt · Z4–Z5"
+    },
+    "basisRun": "Løbetempoer ud fra din bedste {distance} ({time}, VDOT {vdot}).",
+    "basisSwim": "Svømmetempoer ud fra din bedste {distance} ({time}).",
+    "noPaces": "Tilføj en bedste præstation på din profil for at se dine personlige tempoer.",
+    "toProfile": "Gå til profil",
+    "bikeNote": "Cykeltræninger bruger pulszoner indtil videre. Watt-mål kommer senere.",
+    "placeholder": "Træningerne er pladsholdere indtil videre.",
+    "duration": "ca. {time}",
+    "empty": "Ingen træninger her endnu.",
+    "steps": {
+      "warmup": "Opvarmning",
+      "cooldown": "Nedkøling",
+      "main": "Hoveddel",
+      "between": "imellem: {amount}"
+    },
+    "amount": {
+      "minutes": "{value} min",
+      "seconds": "{value} sek"
+    },
+    "workouts": {
+      "easy-run": {
+        "name": "Rolig løbetur",
+        "description": "Afslappet snakketempo. Fundamentet for al træning."
+      },
+      "long-run": {
+        "name": "Langtur",
+        "description": "Bygger udholdenhed. Hold det roligt: det er tiden på benene, der tæller."
+      },
+      "recovery-strides": {
+        "name": "Restitution + stigningsløb",
+        "description": "Meget roligt løb og så korte, hurtige stigningsløb, så benene holdes skarpe."
+      },
+      "marathon-pace": {
+        "name": "Maratontempo",
+        "description": "En stabil blok i maratontempo. Behageligt hårdt."
+      },
+      "progression-run": {
+        "name": "Progressivt løb",
+        "description": "Start roligt, og slut i maratontempo."
+      },
+      "long-run-mp": {
+        "name": "Langtur med maratonblokke",
+        "description": "Maratontempo på trætte ben: godt til mål på halv- og helmaraton."
+      },
+      "intervals-400": {
+        "name": "12 × 400 m",
+        "description": "Korte, hurtige gentagelser for fart og løbeøkonomi."
+      },
+      "intervals-1k": {
+        "name": "5 × 1 km",
+        "description": "Klassiske VO2max-intervaller. Hårdt, men kontrolleret."
+      },
+      "cruise-intervals": {
+        "name": "Tærskelintervaller 4 × 8 min",
+        "description": "Tærskelløb i blokke: hæver det tempo, du kan holde."
+      },
+      "bike-endurance": {
+        "name": "Udholdenhedstur",
+        "description": "To timer i zone 2. Jævnt og afslappet."
+      },
+      "bike-tempo": {
+        "name": "Tempo 3 × 12 min",
+        "description": "Lange tempoblokke, der bygger styrke til konkurrencedagen."
+      },
+      "bike-vo2": {
+        "name": "VO2max 5 × 4 min",
+        "description": "Hårde intervaller, der hæver dit loft."
+      },
+      "swim-technique": {
+        "name": "Teknik-svømning",
+        "description": "Øvelser og rolig svømning for et mere glidende tag."
+      },
+      "swim-aerobic": {
+        "name": "Aerob 5 × 300 m",
+        "description": "Jævne, længere gentagelser, der bygger svømmeudholdenhed."
+      },
+      "swim-threshold": {
+        "name": "Tærskel 10 × 100 m",
+        "description": "Gentagelser i tærskeltempo med en hurtig afslutning."
+      }
+    }
+  },
+  "Goals": {
+    "title": "Mål",
+    "intro": "Sæt et mål ud fra dine bedste præstationer, og få enkle tips til at nå det.",
+    "add": "Nyt mål",
+    "loading": "Henter dine mål…",
+    "form": {
+      "sport": "Sport",
+      "distance": "Distance",
+      "currentBest": "Din bedste: {time}",
+      "noBest": "Ingen bedste præstation endnu på denne distance, så alle mål er fine.",
+      "suggestions": "Forslag",
+      "target": "Måltid",
+      "targetPlaceholder": "fx 18:00",
+      "save": "Sæt mål",
+      "cancel": "Annuller"
+    },
+    "errors": {
+      "timeInvalid": "Skriv en tid som 18:00 eller 1:29:30.",
+      "notFaster": "Du har allerede klaret {time}. Vælg en hurtigere tid.",
+      "unavailable": "Mål kan ikke gemmes lige nu. Prøv igen senere.",
+      "generic": "Noget gik galt. Prøv igen."
+    },
+    "card": {
+      "goal": "{distance} på {time}",
+      "currentBest": "Bedste nu {time}",
+      "toGo": "{time} tilbage ({percent})",
+      "achieved": "Mål nået! Tid til et nyt.",
+      "noBest": "Ingen bedste præstation endnu på denne distance. Tilføj en på din profil.",
+      "delete": "Slet",
+      "confirmDelete": "Vil du slette det?"
+    },
+    "gap": {
+      "close": "Tæt på. Et par fokuserede uger kan gøre det.",
+      "season": "Realistisk på en sæson (8–16 ugers stabil træning).",
+      "big": "Et stort skridt. Overvej et delmål på {time}."
+    },
+    "speed": {
+      "equivalent": "{time} på {distance} ≈ {needed} på {reference}.",
+      "slower": "Din {reference} ({best}) er langsommere end det. Arbejd med farten.",
+      "supports": "Din {reference} ({best}) understøtter allerede målet. Fokuser på at holde tempoet længere."
+    },
+    "volume": {
+      "low": "Du ligger på {value} om ugen. Byg op mod {target}, højst 10 % mere pr. uge.",
+      "good": "Din mængde ({value} om ugen) er god til denne distance. Læg én kvalitetstræning ind om ugen."
+    },
+    "workouts": "Træninger, der hjælper",
+    "empty": "Ingen mål endnu. Sæt dit første.",
+    "unavailable": "Mål kommer snart: databasen skal opdateres først.",
+    "connectHint": "Forbind Strava for at sammenligne med dine bedste præstationer og din ugentlige mængde."
   }
 }

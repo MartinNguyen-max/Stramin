@@ -14,6 +14,14 @@ Guidance for Claude (and any contributor) working on Stramin.
 - **One task at a time.** Never several tasks at once.
 - **Explain the plan.** Every update says what we have done and what we will do next, so the owner understands the plan.
 
+**Work mode** (the owner says "start working on …"):
+
+- Claude works on its own without asking: code, docs, checks, `git commit`, `pnpm add`, `pnpm db:generate`.
+- All work goes on **one branch**, with local commits only. **No `git push`.** The owner pushes when they are back.
+- When a choice comes up, Claude **makes the decision itself**, writes it down in the docs and in **`docs/REVIEW.md`** (what was decided, why, and the alternatives), and keeps going. The owner reviews the list when back, and anything can be discussed and changed.
+- Claude only stops for things only the owner can do (accounts, keys, passwords), or when the owner stops it.
+- At the end: a short report covering what was done, which choices were made, and what's next.
+
 - **Short and clear.** Keep answers concise and easy to follow. The owner asks for more detail when needed.
 - **Never assume silently.** When something is unclear or a choice has to be made, raise it and discuss it. Explain *why*, not just *what*.
 - **Show alternatives.** For every meaningful choice (library, pattern, structure), name the realistic options and recommend one.
@@ -22,7 +30,7 @@ Guidance for Claude (and any contributor) working on Stramin.
 - **Docs before code.** Big decisions are written down in `docs/` before they are implemented.
 - **Keep docs in sync.** When a decision is made or changed, update the affected docs in the same step and mention it.
 - **Keep the owner on track.** Every update says what was just done, what comes next, and where we are in `docs/PLAN.md`.
-- **Ask before running commands.** List the exact commands and run them only after a "yes". Exception: checks (`pnpm check`, `lint`, `format`, `typecheck`, `test`, `build`, `test:e2e`) run without asking.
+- **Ask before running commands** (outside work mode). List the exact commands and run them only after a "yes". Exception: checks (`pnpm check`, `lint`, `format`, `typecheck`, `test`, `build`, `test:e2e`) run without asking.
 - **Language:** all code and docs are in English. Conversation may be in Danish or English.
 
 ## Project docs
@@ -62,4 +70,4 @@ Guidance for Claude (and any contributor) working on Stramin.
 - Commits are authored as **Martin Nguyen**, never a uni or work account. Check `git config user.email` before committing.
 - Conventional Commits, kept short (e.g. `docs: add plan`).
 - One branch + pull request per task. `main` is always deployable.
-- **The owner runs `git add`, `git commit` and `git push`.** Claude gives the ready-to-paste commands and doesn't run them itself.
+- **The owner runs `git push`.** Outside work mode the owner also runs `git add` and `git commit`. In work mode, Claude commits locally.

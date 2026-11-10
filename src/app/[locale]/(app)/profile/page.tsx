@@ -1,0 +1,118 @@
+import type { Metadata } from "next";
+import { useTranslations } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
+import { Suspense } from "react";
+import { ZoneSpinner } from "@/components/brand/zone-spinner";
+import { buttonVariants } from "@/components/ui/button";
+import { getCurrentUser } from "@/features/auth/current-user";
+import { loadBestEfforts } from "@/features/profile/best-efforts-data";
+import { BestEffortsCard } from "@/features/profile/components/best-efforts-card";
+import { RunningLevel } from "@/features/profile/components/running-level";
+import { getOrCreateProfile } from "@/features/profile/data";
+import { EFFORT_SPORTS } from "@/lib/analytics/best-efforts";
+import type { Units } from "@/lib/preferences";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Profile");
+  return { title: `${t("title")} · Stramin` };
+}
+
+/** Profile (UI_SPEC §6): name, best efforts and running level. */
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<ProfileSkeleton />}>
+      <ProfileContent />
+    </Suspense>
+  );
+}
+
+async function ProfileContent() {
+  const t = await getTranslations("Profile");
+  const user = await getCurrentUser();
+  const locale = (await getLocale()) as "en" | "da";
+
+  let units: Units = "metric";
+  try {
+    units = (await getOrCreateProfile(user, locale)).units;
+  } catch (error) {
+    console.error("[profile] profile unavailable", error);
+  }
+  const { efforts, activities, manualAvailable } = await loadBestEfforts(user);
+  const name = user.name ?? user.email ?? "";
+
+  return (
+    <>
+      <section className="flex flex-wrap items-center gap-4">
+        <span
+          aria-hidden
+          className="grid size-14 place-items-center rounded-full bg-linear-to-br from-zone-1 via-zone-3 to-zone-5 text-xl font-bold text-black/80"
+        >
+          {name.slice(0, 1).toUpperCase()}
+        </span>
+        <div className="flex min-w-0 flex-col">
+          <h1 className="truncate text-2xl font-bold tracking-tight">{name}</h1>
+          {user.email && user.email !== name && (
+            <p className="truncate text-sm text-muted-foreground">
+              {user.email}
+            </p>
+          )}
+        </div>
+        <div className="ml-auto text-sm">
+          {activities ? (
+            <span className="inline-flex items-center gap-2 rounded-full border px-3 py-1">
+              <span className="size-2 rounded-full bg-zone-2" />
+              {t("stravaConnected")}
+            </span>
+          ) : (
+            <a
+              href="/api/strava/connect?next=/profile"
+              className={buttonVariants({ size: "sm" })}
+            >
+              {t("connect")}
+            </a>
+          )}
+        </div>
+      </section>
+
+      {!activities && (
+        <p className="text-sm text-muted-foreground">
+          {t("stravaNotConnected")}
+        </p>
+      )}
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-lg font-semibold">{t("bestEfforts.title")}</h2>
+        <p className="max-w-3xl text-sm text-muted-foreground">
+          {t("bestEfforts.note")}
+        </p>
+        {!manualAvailable && (
+          <p className="rounded-2xl border border-dashed p-3 text-sm text-muted-foreground">
+            {t("bestEfforts.unavailable")}
+          </p>
+        )}
+        <div className="grid gap-4 lg:grid-cols-3">
+          {EFFORT_SPORTS.map((sport) => (
+            <BestEffortsCard
+              key={sport}
+              sport={sport}
+              efforts={efforts}
+              units={units}
+              editable={manualAvailable}
+            />
+          ))}
+        </div>
+      </section>
+
+      <RunningLevel efforts={efforts} units={units} />
+    </>
+  );
+}
+
+function ProfileSkeleton() {
+  const t = useTranslations("Profile");
+  return (
+    <div className="flex flex-1 items-center justify-center py-24">
+      <ZoneSpinner size={72} label={t("loading")} />
+    </div>
+  );
+}

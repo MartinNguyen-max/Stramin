@@ -1,47 +1,23 @@
-import { useLocale, useTranslations } from "next-intl";
 import { Logo } from "@/components/brand/logo";
-import { buttonVariants } from "@/components/ui/button";
-import { signOut } from "@/features/auth/actions";
 import { Link } from "@/i18n/navigation";
+import { BottomNav, HeaderNav } from "./app-nav";
 
 /**
- * Header for the logged-in app.
- * NOTE: the final navigation pattern (sidebar / tabs) is not decided yet (UI_SPEC). This is a simple placeholder.
+ * Header for the logged-in app (UI_SPEC: Navigation): logo, the sections on desktop and the settings gear.
+ * On phones the sections are in the bottom tab bar instead. Log out is in Settings → Account.
  */
 export function AppHeader() {
-  const t = useTranslations("App");
-  const locale = useLocale();
-
   return (
-    <header className="border-b">
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-        <Link href="/home" className="rounded-md">
-          <Logo size={28} />
-        </Link>
-        <nav className="flex items-center gap-1 text-sm">
-          <Link
-            href="/home"
-            className={buttonVariants({ variant: "ghost", size: "sm" })}
-          >
-            {t("nav.home")}
+    <>
+      <header className="border-b">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+          <Link href="/home" className="rounded-md">
+            <Logo size={28} />
           </Link>
-          <Link
-            href="/settings"
-            className={buttonVariants({ variant: "ghost", size: "sm" })}
-          >
-            {t("nav.settings")}
-          </Link>
-          <form action={signOut}>
-            <input type="hidden" name="locale" value={locale} />
-            <button
-              type="submit"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              {t("logout")}
-            </button>
-          </form>
-        </nav>
-      </div>
-    </header>
+          <HeaderNav />
+        </div>
+      </header>
+      <BottomNav />
+    </>
   );
 }

@@ -4,7 +4,8 @@
   },
   "Common": {
     "language": "Language",
-    "login": "Log in"
+    "login": "Log in",
+    "close": "Close"
   },
   "Landing": {
     "hero": {
@@ -140,7 +141,11 @@
   "App": {
     "nav": {
       "home": "Home",
-      "settings": "Settings"
+      "settings": "Settings",
+      "goals": "Goals",
+      "training": "Training",
+      "profile": "Profile",
+      "label": "Main menu"
     },
     "logout": "Log out"
   },
@@ -151,25 +156,13 @@
       "title": "Connect your training data",
       "text": "Connect Strava to see your full training history. Garmin users can also import their history with a one-time download.",
       "strava": "Connect Strava",
-      "garminGuide": "Garmin history guide"
+      "garminGuide": "Garmin history guide",
+      "demo": "See an example"
     },
     "loading": "Fetching your training…"
   },
   "Activities": {
-    "thisWeek": "This week",
-    "weeks": "Last 12 weeks",
-    "averageWeek": "Your average week",
-    "period": "Period",
     "hours": "h",
-    "noTrainingYet": "No training this week yet.",
-    "averageNote": "Average over the last {weeks, plural, one {# week} other {# weeks}}, rest weeks included. The current week is not counted.",
-    "periods": {
-      "4w": "4 weeks",
-      "3m": "3 months",
-      "6m": "6 months",
-      "1y": "1 year",
-      "all": "All time"
-    },
     "sports": {
       "swim": "Swim",
       "bike": "Bike",
@@ -210,5 +203,287 @@
       "title": "Account",
       "email": "Email"
     }
+  },
+  "Calendar": {
+    "title": "Training calendar",
+    "loading": "Loading your training…",
+    "previous": "Previous period",
+    "next": "Next period",
+    "today": "Today",
+    "periodType": "Period",
+    "views": {
+      "1m": "1M",
+      "3m": "3M",
+      "6m": "6M",
+      "1y": "1Y",
+      "custom": "Custom",
+      "all": "All"
+    },
+    "from": "From",
+    "to": "To",
+    "show": "Show",
+    "week": "Wk",
+    "weekTotal": "Week total",
+    "weekNumber": "Week {number}",
+    "openMonth": "Open this month",
+    "hoursShort": "h",
+    "periodTotal": "Total for the period",
+    "workouts": "{count, plural, =0 {No workouts} one {# workout} other {# workouts}}",
+    "perWeek": "{value} per week",
+    "allTimeSince": "All time (since {date})",
+    "viewOnStrava": "View on Strava"
+  },
+  "Events": {
+    "title": "Events",
+    "add": "Add event",
+    "emptyHint": "Add your next race and count down to it",
+    "today": "Today!",
+    "tomorrow": "Tomorrow",
+    "daysLeft": "{count, plural, one {# day} other {# days}}",
+    "editEvent": "Edit {title}",
+    "addTitle": "New event",
+    "editTitle": "Edit event",
+    "fields": {
+      "title": "Title",
+      "titlePlaceholder": "e.g. Ironman Copenhagen",
+      "date": "Date",
+      "type": "Type",
+      "image": "Background image (optional)"
+    },
+    "types": {
+      "triathlon": "Triathlon",
+      "run": "Run",
+      "bike": "Bike",
+      "swim": "Swim",
+      "other": "Other"
+    },
+    "addImage": "Add image",
+    "changeImage": "Change image",
+    "removeImage": "Remove image",
+    "imageHint": "JPEG, PNG or WebP. It's resized before upload.",
+    "save": "Save",
+    "saving": "Saving…",
+    "delete": "Delete",
+    "confirmDelete": "Really delete?",
+    "unavailable": "Events are coming soon: the database needs an update first.",
+    "errors": {
+      "titleRequired": "Please give the event a title.",
+      "titleTooLong": "The title is too long (max 60 characters).",
+      "dateInvalid": "Please pick a valid date.",
+      "imageInvalid": "That image can't be used.",
+      "imageUpload": "The image couldn't be uploaded. Try another one, or save without an image.",
+      "unavailable": "Events can't be saved right now. Please try again later.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "Demo": {
+    "title": "Example data",
+    "text": "This is Stramin with made-up training. Sign up to see your own.",
+    "signup": "Sign up free",
+    "loading": "Loading the example…"
+  },
+  "Distances": {
+    "halfMarathon": "Half marathon",
+    "marathon": "Marathon"
+  },
+  "Zones": {
+    "short": "Z{zone}",
+    "names": {
+      "1": "Recovery",
+      "2": "Endurance",
+      "3": "Tempo",
+      "4": "Threshold",
+      "5": "VO2max"
+    }
+  },
+  "Profile": {
+    "title": "Profile",
+    "stravaConnected": "Strava connected",
+    "stravaNotConnected": "Connect Strava to estimate your best efforts from your activities.",
+    "connect": "Connect Strava",
+    "loading": "Looking for your best efforts…",
+    "bestEfforts": {
+      "title": "Best efforts",
+      "note": "Strava values are estimates from your activities' average pace: exact for races, a bit slow when your fastest effort was inside a longer workout. Tap ✎ to enter your real time.",
+      "distance": "Distance",
+      "time": "Time",
+      "pace": "Pace",
+      "strava": "Strava",
+      "manual": "Manual",
+      "stravaValue": "Strava: {time}",
+      "none": "No value yet",
+      "edit": "Edit {distance}",
+      "save": "Save",
+      "cancel": "Cancel",
+      "reset": "Use Strava value",
+      "remove": "Remove",
+      "timeLabel": "Time (h:mm:ss or mm:ss)",
+      "dateLabel": "Date (optional)",
+      "unavailable": "Your own values can't be saved yet: the database needs an update first.",
+      "errors": {
+        "timeInvalid": "Enter a time like 19:45 or 1:29:30.",
+        "dateInvalid": "Pick a date that isn't in the future.",
+        "unavailable": "It can't be saved right now. Please try again later.",
+        "generic": "Something went wrong. Please try again."
+      }
+    },
+    "level": {
+      "title": "Your running level",
+      "vdot": "VDOT {value}",
+      "basis": "From your {distance} in {time}.",
+      "explain": "VDOT is a running fitness score from Jack Daniels' Running Formula. Your training paces follow from it.",
+      "per400": "{time} per 400 m",
+      "noRuns": "Add a running best effort to see your level and training paces.",
+      "paces": {
+        "recovery": "Recovery",
+        "easy": "Easy",
+        "marathon": "Marathon",
+        "threshold": "Threshold",
+        "interval": "Interval",
+        "repetition": "Repetition"
+      }
+    }
+  },
+  "Training": {
+    "title": "Training inspiration",
+    "intro": "Ideas for your next session, with paces from your best efforts.",
+    "sport": "Sport",
+    "effortLabel": "Effort",
+    "efforts": {
+      "all": "All",
+      "easy": "Easy · Z1–Z2",
+      "moderate": "Moderate · Z3",
+      "hard": "Hard · Z4–Z5"
+    },
+    "basisRun": "Running paces from your {distance} best ({time}, VDOT {vdot}).",
+    "basisSwim": "Swim paces from your {distance} best ({time}).",
+    "noPaces": "Add a best effort on your profile to see your personal paces.",
+    "toProfile": "Go to profile",
+    "bikeNote": "Bike workouts use heart-rate zones for now. Power targets come later.",
+    "placeholder": "These workouts are placeholders for now.",
+    "duration": "about {time}",
+    "empty": "No workouts here yet.",
+    "steps": {
+      "warmup": "Warm-up",
+      "cooldown": "Cool-down",
+      "main": "Main set",
+      "between": "between: {amount}"
+    },
+    "amount": {
+      "minutes": "{value} min",
+      "seconds": "{value} s"
+    },
+    "workouts": {
+      "easy-run": {
+        "name": "Easy run",
+        "description": "Relaxed, conversational pace. The base of all training."
+      },
+      "long-run": {
+        "name": "Long run",
+        "description": "Builds endurance. Keep it easy: time on your feet is what counts."
+      },
+      "recovery-strides": {
+        "name": "Recovery run + strides",
+        "description": "Very easy running, then short, fast strides to stay sharp."
+      },
+      "marathon-pace": {
+        "name": "Marathon-pace run",
+        "description": "A steady block at marathon pace. Comfortably hard."
+      },
+      "progression-run": {
+        "name": "Progression run",
+        "description": "Start easy and finish at marathon pace."
+      },
+      "long-run-mp": {
+        "name": "Long run with marathon blocks",
+        "description": "Marathon pace on tired legs: great for half and full marathon goals."
+      },
+      "intervals-400": {
+        "name": "12 × 400 m",
+        "description": "Short, fast repeats for speed and running economy."
+      },
+      "intervals-1k": {
+        "name": "5 × 1 km",
+        "description": "Classic VO2max intervals. Hard but controlled."
+      },
+      "cruise-intervals": {
+        "name": "Cruise intervals 4 × 8 min",
+        "description": "Threshold running in blocks: raises the pace you can hold."
+      },
+      "bike-endurance": {
+        "name": "Endurance ride",
+        "description": "Two hours in zone 2. Steady and relaxed."
+      },
+      "bike-tempo": {
+        "name": "Tempo 3 × 12 min",
+        "description": "Long tempo efforts that build race-day strength."
+      },
+      "bike-vo2": {
+        "name": "VO2max 5 × 4 min",
+        "description": "Hard efforts that raise your ceiling."
+      },
+      "swim-technique": {
+        "name": "Technique swim",
+        "description": "Drills and easy swimming for a smoother stroke."
+      },
+      "swim-aerobic": {
+        "name": "Aerobic 5 × 300 m",
+        "description": "Steady, longer repeats that build swim endurance."
+      },
+      "swim-threshold": {
+        "name": "Threshold 10 × 100 m",
+        "description": "Repeats at threshold pace, with a fast finish."
+      }
+    }
+  },
+  "Goals": {
+    "title": "Goals",
+    "intro": "Set a target based on your best efforts, and get simple tips on how to get there.",
+    "add": "New goal",
+    "loading": "Loading your goals…",
+    "form": {
+      "sport": "Sport",
+      "distance": "Distance",
+      "currentBest": "Your best: {time}",
+      "noBest": "No best effort yet at this distance, so any target is fine.",
+      "suggestions": "Suggested targets",
+      "target": "Target time",
+      "targetPlaceholder": "e.g. 18:00",
+      "save": "Set goal",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "timeInvalid": "Enter a time like 18:00 or 1:29:30.",
+      "notFaster": "You already did {time}. Pick a faster time.",
+      "unavailable": "Goals can't be saved right now. Please try again later.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "card": {
+      "goal": "{distance} in {time}",
+      "currentBest": "Current best {time}",
+      "toGo": "{time} to go ({percent})",
+      "achieved": "Goal reached! Time for a new one.",
+      "noBest": "No best effort yet at this distance. Add one on your profile.",
+      "delete": "Delete",
+      "confirmDelete": "Really delete?"
+    },
+    "gap": {
+      "close": "Close. A few focused weeks can do it.",
+      "season": "Realistic in a season (8–16 weeks of steady training).",
+      "big": "A big step. Consider an in-between goal of {time}."
+    },
+    "speed": {
+      "equivalent": "{time} on {distance} ≈ {needed} on {reference}.",
+      "slower": "Your {reference} ({best}) is slower than that. Work on speed.",
+      "supports": "Your {reference} ({best}) already supports this goal. Focus on holding the pace for longer."
+    },
+    "volume": {
+      "low": "You average {value} per week. Build towards {target}, adding at most 10 % per week.",
+      "good": "Your volume ({value} per week) is good for this distance. Add one quality session per week."
+    },
+    "workouts": "Workouts that help",
+    "empty": "No goals yet. Set your first one.",
+    "unavailable": "Goals are coming soon: the database needs an update first.",
+    "connectHint": "Connect Strava to compare with your best efforts and weekly volume."
   }
 }

@@ -94,13 +94,23 @@ All values are stored in **SI units** (meters, seconds, watts). Units are conver
 | `activities` | id, user_id, provider, provider_activity_id, sport, raw_type, is_indoor, name, start_time, start_time_local, moving_time, elapsed_time, distance, elevation_gain, avg_hr, avg_power | `sport` ∈ swim/bike/run/strength/other |
 | *(Storage)* `streams/{user_id}/{activity_id}` | time, distance, heartrate, watts, altitude | Compressed file per activity, not in Postgres ([ADR 0008](decisions/0008-stream-storage.md)) |
 | `activity_best_efforts` | activity_id, user_id, sport, kind (distance/power), target, result, start_offset | One row per activity per distance/duration |
-| `events` | id, user_id, name, date, type, image_path, hidden_on_home | EVT |
-| `goals` | id, user_id, sport, distance, target_time, event_id? | GOAL |
+| `events` | id, user_id, title, event_date, type, image_path, created_at | EVT. **Built 2026-11-10.** |
+| *(Storage)* bucket `event-images`, path `{user_id}/{file}` | Event background images (WebP, resized in the browser) | Private bucket; RLS: users only reach their own folder. Shown with short-lived signed URLs. |
+| `goals` | id, user_id, sport, distance_m, target_seconds, created_at | GOAL. **Built 2026-11-10.** |
+| `personal_bests` | user_id, sport, distance_m (together the key), seconds, achieved_on, updated_at | **Manual** best efforts only (BE-7, [ADR 0011](decisions/0011-best-efforts-v1.md)). **Built 2026-11-10.** |
 | `webhook_events` | id, payload, received_at, processed_at | Audit and debugging |
 | `api_usage` | provider, window, used, limit | Rate-limit tracking |
 
 **Weeks** are grouped by `start_time_local` (the athlete's local time), using the user's week-start setting.
 **Training workouts** (TRN) are static content stored as typed TypeScript/JSON in the codebase, not in the database.
+
+### Until M3/M4: reading Strava directly (temporary)
+- The Strava token is still the 6-hour cookie from the Strava test. Pages read activities **directly from Strava**, but only for the range they show (HOME-10): the calendar asks for `after`/`before` = the visible weeks (1 request per 200 activities). Profile, Goals and Training read the full history (best efforts) or the last 8 weeks (volume).
+- Results are cached with `"use cache: private"` (per user, in the browser's router cache for 6 hours).
+- M4 replaces this with the `activities` table, so pages read our database again (NFR-3).
+
+### Small per-device preferences
+- The calendar's **period type** (HOME-8) is stored in a cookie, `stramin-calendar` (1 year), set by a Server Action. It's a view setting that can differ between phone and desktop, so it isn't stored in the database.
 
 ## Security (PRIV, NFR)
 
@@ -120,13 +130,13 @@ stramin/
 │  │  ├─ [locale]/           # en / da
 │  │  │  ├─ (marketing)/     # landing, privacy policy
 │  │  │  ├─ (auth)/          # login, sign up
-│  │  │  └─ (app)/           # home, activities, goals, training, records, settings
+│  │  │  └─ (app)/           # home, goals, training, profile, settings
 │  │  ├─ api/
 │  │  │  ├─ strava/          # callback, webhook
 │  │  │  └─ jobs/run/        # job runner
 │  │  └─ auth/callback/
 │  ├─ components/            # shared UI (shadcn/ui lives in components/ui)
-│  ├─ features/              # feature modules: activities, events, goals, records, training…
+│  ├─ features/              # feature modules: activities, calendar, events, goals, profile, training…
 │  ├─ lib/
 │  │  ├─ db/                 # Drizzle schema, client, RLS helpers
 │  │  ├─ supabase/           # Supabase clients (server/browser)
