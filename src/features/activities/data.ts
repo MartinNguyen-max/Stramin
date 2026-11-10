@@ -55,7 +55,14 @@ export type StravaStatus =
 /** The user's Strava status, once per request. */
 export const getStravaStatus = cache(
   async (userId: string): Promise<StravaStatus> => {
-    const connection = await getStravaConnection(userId);
+    let connection: ConnectionRow | undefined;
+    try {
+      connection = await getStravaConnection(userId);
+    } catch (error) {
+      // E.g. the database update isn't applied yet: show "Connect Strava" instead of an error page.
+      console.error("[strava] status unavailable", error);
+      return { connected: false };
+    }
     if (!connection) return { connected: false };
     return {
       connected: true,
