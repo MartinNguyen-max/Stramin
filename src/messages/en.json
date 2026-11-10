@@ -92,6 +92,9 @@
     "pleaseWait": "Please wait…",
     "or": "or",
     "continueWithGoogle": "Continue with Google",
+    "name": "What should we call you?",
+    "continueAs": "Continue as {name}",
+    "useAnotherAccount": "Use another account",
     "login": {
       "title": "Log in",
       "submit": "Log in",
@@ -123,6 +126,9 @@
       "passwordTooShort": "The password must be at least 8 characters.",
       "passwordTooLong": "The password is too long (max 72 characters).",
       "passwordRequired": "Please enter your password.",
+      "nameRequired": "Please tell us what to call you.",
+      "nameTooLong": "The name is too long (max 30 characters).",
+      "nameInvalid": "Use letters, spaces, hyphens, apostrophes and periods only, starting with a letter.",
       "invalidCredentials": "Wrong email or password.",
       "emailNotConfirmed": "Please confirm your email first. Check your inbox.",
       "emailTaken": "An account with this email already exists.",
@@ -140,7 +146,7 @@
   },
   "Home": {
     "title": "Home",
-    "greeting": "Welcome, {email}",
+    "greeting": "Welcome, {name}",
     "connect": {
       "title": "Connect your training data",
       "text": "Connect Strava to see your full training history. Garmin users can also import their history with a one-time download.",

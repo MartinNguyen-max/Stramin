@@ -7,10 +7,12 @@ import { Input, Label } from "@/components/ui/input";
 import {
   type AuthFormState,
   initialAuthState,
+  MAX_NAME_LENGTH,
   MIN_PASSWORD_LENGTH,
+  NAME_HTML_PATTERN,
 } from "../schemas";
 
-type Field = "email" | "password" | "newPassword";
+type Field = "name" | "email" | "password" | "newPassword";
 
 type AuthFormProps = {
   action: (state: AuthFormState, formData: FormData) => Promise<AuthFormState>;
@@ -38,6 +40,22 @@ export function AuthForm({ action, fields, submitLabel }: AuthFormProps) {
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <input type="hidden" name="locale" value={locale} />
+      {fields.includes("name") && (
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="name">{t("name")}</Label>
+          <Input
+            id="name"
+            name="name"
+            type="text"
+            autoComplete="given-name"
+            maxLength={MAX_NAME_LENGTH}
+            pattern={NAME_HTML_PATTERN}
+            title={t("errors.nameInvalid")}
+            defaultValue={state.status === "error" ? state.name : undefined}
+            required
+          />
+        </div>
+      )}
       {fields.includes("email") && (
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="email">{t("email")}</Label>

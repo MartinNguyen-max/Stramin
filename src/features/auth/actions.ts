@@ -11,6 +11,8 @@ import {
   firstErrorKey,
   forgotPasswordSchema,
   loginSchema,
+  type NameFormState,
+  nameSchema,
   resetPasswordSchema,
   signupSchema,
 } from "./schemas";
@@ -28,6 +30,12 @@ async function getOrigin() {
 /** The submitted email, returned on errors so the form keeps it. */
 function emailOf(formData: FormData) {
   const value = formData.get("email");
+  return typeof value === "string" ? value : undefined;
+}
+
+/** The submitted name, returned on errors so the sign-up form keeps it. */
+function nameOf(formData: FormData) {
+  const value = formData.get("name");
   return typeof value === "string" ? value : undefined;
 }
 
@@ -94,17 +102,20 @@ export async function signUp(
       status: "error",
       error: firstErrorKey(parsed.error),
       email: emailOf(formData),
+      name: nameOf(formData),
     };
   }
   if (!supabaseConfig()) return notConfigured;
 
+  const { name, ...credentials } = parsed.data;
   const locale = localeFromForm(formData);
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
-    ...parsed.data,
+    ...credentials,
     options: {
       emailRedirectTo: `${await getOrigin()}/api/auth/callback?next=/${locale}/home`,
-      data: { locale },
+      // Stored in the user's metadata, so it's available before the email is confirmed (ACC-5).
+      data: { locale, display_name: name },
     },
   });
   if (error) {
@@ -112,6 +123,7 @@ export async function signUp(
       status: "error",
       error: mapSupabaseError(error.code),
       email: emailOf(formData),
+      name: nameOf(formData),
     };
   }
 
@@ -210,4 +222,37 @@ export async function signOut(formData: FormData) {
     await supabase.auth.signOut();
   }
   redirect({ href: "/", locale });
+}
+
+/** "Use another account" on Log in (ACC-3): forget the saved login and show the login form. */
+export async function switchAccount(formData: FormData) {
+  const locale = localeFromForm(formData);
+  if (supabaseConfig()) {
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+  }
+  redirect({ href: "/login", locale });
+}
+
+/** Changes the name in Settings (ACC-5). */
+export async function updateName(
+  _prev: NameFormState,
+  formData: FormData,
+): Promise<NameFormState> {
+  const parsed = nameSchema.safeParse(formData.get("name"));
+  if (!parsed.success) {
+    return { status: "error", error: firstErrorKey(parsed.error) };
+  }
+  if (!supabaseConfig()) return { status: "error", error: "notConfigured" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({
+    data: { display_name: parsed.data },
+  });
+  if (error) {
+    return { status: "error", error: mapSupabaseError(error.code) };
+  }
+  // The name is read from the login token, so get a fresh token with the new name right away.
+  await supabase.auth.refreshSession();
+  return { status: "saved" };
 }

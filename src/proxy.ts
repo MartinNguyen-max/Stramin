@@ -7,8 +7,11 @@ const handleI18n = createMiddleware(routing);
 
 /** Pages that require login (the app). */
 const PROTECTED_PATHS = ["/home", "/settings"];
-/** Pages only for logged-out visitors. Logged-in users are sent to /home. */
-const GUEST_ONLY_PATHS = ["/login", "/signup"];
+/**
+ * Pages only for logged-out visitors. Logged-in users are sent to /home.
+ * /login is not here: with a saved login it shows "Continue as …" (ACC-3).
+ */
+const GUEST_ONLY_PATHS = ["/signup"];
 
 function matches(pathname: string, paths: string[]) {
   return paths.some(
