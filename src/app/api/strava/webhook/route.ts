@@ -1,11 +1,12 @@
 import { after, type NextRequest, NextResponse } from "next/server";
 import {
+  accessTokenFor,
   getConnectionByAthlete,
   removeStravaConnection,
 } from "@/features/strava/connection";
-import { deleteStravaActivity, syncOneActivity } from "@/features/strava/sync";
+import { syncOneActivity } from "@/features/strava/sync";
 import { isWebhookEvent, webhookVerifyToken } from "@/features/strava/webhook";
-import { RateTracker } from "@/lib/strava/client";
+import { RateTracker, StravaError, tokenStillWorks } from "@/lib/strava/client";
 
 export const maxDuration = 30;
 
@@ -41,20 +42,31 @@ export async function POST(request: NextRequest) {
       const connection = await getConnectionByAthlete(String(event.owner_id));
       if (!connection) return;
 
+      // Webhook calls aren't signed, so every event is checked against Strava before acting on it.
       if (event.object_type === "athlete") {
         // The athlete revoked Stramin's access on Strava: delete their Strava data (CON-2).
         if (event.updates?.authorized === "false") {
-          await removeStravaConnection(connection, { revoke: false });
+          const revoked = await accessTokenFor(connection)
+            .then((token) => tokenStillWorks(token))
+            .then((works) => !works)
+            // Only a rejected token counts as revoked; a Strava outage doesn't.
+            .catch(
+              (error) =>
+                error instanceof StravaError &&
+                (error.status === 400 || error.status === 401),
+            );
+          if (revoked)
+            await removeStravaConnection(connection, { revoke: false });
         }
         return;
       }
 
-      const activityId = String(event.object_id);
-      if (event.aspect_type === "delete") {
-        await deleteStravaActivity(activityId);
-      } else {
-        await syncOneActivity(connection, activityId, new RateTracker());
-      }
+      // Create, update and delete are handled the same way: fetch the activity and store or delete it.
+      await syncOneActivity(
+        connection,
+        String(event.object_id),
+        new RateTracker(),
+      );
     } catch (error) {
       // The daily full refresh catches anything missed here.
       console.error("[strava] webhook event failed", error);

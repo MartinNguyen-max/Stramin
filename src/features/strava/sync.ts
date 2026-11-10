@@ -159,7 +159,11 @@ export async function quickSync(
   return list.length;
 }
 
-/** One activity changed on Strava (webhook, CON-4): fetch it again, or delete it when it's gone. */
+/**
+ * An activity was created, changed or deleted on Strava (webhook, CON-4). Webhook calls aren't signed,
+ * so the event itself is never trusted: the activity is fetched from Strava, stored when it belongs to
+ * this athlete, and deleted only when Strava no longer has it.
+ */
 export async function syncOneActivity(
   connection: ConnectionRow,
   activityId: string,
@@ -167,18 +171,24 @@ export async function syncOneActivity(
 ): Promise<void> {
   const token = await accessTokenFor(connection);
   const activity = await fetchActivity(token, activityId, tracker);
-  if (activity) {
-    await upsertActivities(connection.userId, [activity], new Date());
-  } else {
-    await deleteStravaActivity(activityId);
+  if (!activity) {
+    await deleteStravaActivity(connection.userId, activityId);
+    return;
   }
+  // Someone else's public activity must never end up in this user's calendar.
+  if (String(activity.athlete?.id) !== connection.providerAthleteId) return;
+  await upsertActivities(connection.userId, [activity], new Date());
 }
 
-export async function deleteStravaActivity(activityId: string): Promise<void> {
+async function deleteStravaActivity(
+  userId: string,
+  activityId: string,
+): Promise<void> {
   await getAdminDb()
     .delete(activities)
     .where(
       and(
+        eq(activities.userId, userId),
         eq(activities.provider, "strava"),
         eq(activities.providerActivityId, activityId),
       ),

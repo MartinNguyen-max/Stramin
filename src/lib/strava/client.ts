@@ -177,6 +177,8 @@ export type StravaActivity = {
   distance: number;
   total_elevation_gain?: number;
   trainer: boolean;
+  /** The owner. In summaries only the id. */
+  athlete?: { id: number };
 };
 
 async function fetchPage(
@@ -232,6 +234,20 @@ export async function fetchActivities(
     await onBatch?.(all);
     if (pages.some((page) => page.length < PAGE_SIZE)) return all;
   }
+}
+
+/** True while the token still works, i.e. the athlete hasn't revoked Stramin's access. */
+export async function tokenStillWorks(
+  accessToken: string,
+  tracker?: RateTracker,
+): Promise<boolean> {
+  const response = await apiGet("/athlete", accessToken, tracker);
+  if (response.ok) return true;
+  if (response.status === 401 || response.status === 403) return false;
+  throw new StravaError(
+    `Strava athlete check failed: ${response.status}`,
+    response.status,
+  );
 }
 
 /** One activity, or null when it doesn't exist (anymore) or isn't visible to Stramin. */
