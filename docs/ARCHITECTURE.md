@@ -51,31 +51,32 @@ Versions: the latest stable version of each tool at project setup.
 
 ## Data flows
 
+> **Built 2026-11-10 as [ADR 0012](decisions/0012-strava-sync-v1.md):** activity summaries only, no queue yet. Streams (M7) will add the queue from ADR 0005.
+
 ### 1. Connect Strava (CON-1, CON-3)
-1. The user clicks "Connect with Strava" and goes through Strava OAuth.
-2. `/api/strava/callback` exchanges the code for tokens and stores them **encrypted** in `connections`.
-3. A `backfill` job is put on the queue.
-4. The job runner imports the history page by page and queues one `fetch_activity` job per activity.
+1. The user clicks "Connect with Strava" and goes through Strava OAuth (`/api/strava/connect`, logged-in users only).
+2. `/api/strava/callback` checks the state and the granted scope, exchanges the code for tokens and stores them **encrypted** in `connections`.
+3. It redirects to Home at once and imports the history with `after()` (~5 requests). Home shows the progress until it's done.
 
 ### 2. New activity on Strava (CON-4)
-1. Strava calls `/api/strava/webhook` with `{ activity id, create|update|delete }`.
-2. The handler saves the event and queues a job. It answers within 2 seconds, as Strava requires.
-3. The job runner fetches the activity and its streams, then computes best efforts.
+1. Strava calls `/api/strava/webhook` with `{ object id, create|update|delete }`.
+2. The handler answers at once (Strava wants an answer within 2 seconds) and, with `after()`, fetches the activity and upserts it, or deletes it.
+3. "Deauthorized" on Strava's side deletes the connection and all its activities.
 
 ### 3. Manual refresh (CON-5)
-The user clicks Refresh, which queues a `sync_recent` job (fetching activities since the last sync).
+The Refresh button runs a quick sync: the activities of the last few days.
 
 ### 3b. Strava rolling cache ([ADR 0009](decisions/0009-strava-rolling-cache.md))
-Strava data may be cached for at most 7 days. A `refresh_expiring` job re-fetches Strava activities before they turn 7 days old. A cleanup job deletes anything that could not be refreshed in time.
+Every activity has `fetched_at`. The hourly job re-fetches all summaries once a day (a full refresh), and deletes Strava activities that weren't re-fetched for 7 days.
 
 ### 3c. Garmin
 Garmin pushes new activities to a webhook (Starter tier, no history). The author's own data can also be pulled with a Personal API key. The details follow once access is granted.
 
 ### 4. Job runner
-- Supabase Cron calls `/api/jobs/run` every minute. The call is protected by a shared secret.
-- Each run takes a small batch of jobs from the queue and processes them within the function time limit.
-- **Rate limits:** Strava's usage headers are stored after each call. When close to the limit, the runner stops and continues in the next window.
-- Failed jobs are retried with a delay.
+- Supabase Cron calls `/api/jobs/run` **every hour** (`pg_cron` + `pg_net`). The call sends `Authorization: Bearer <CRON_SECRET>`; the secret is in Supabase Vault (`cron_secret`) and in Vercel (`CRON_SECRET`).
+- Per connection: finish an unfinished import, a full refresh when the last one is > 24 h old, otherwise a quick sync when the last sync is > 3 h old, then delete Strava data older than 7 days.
+- **Rate limits:** Strava's usage headers are checked after each call. At 80 % of the 15-minute or daily limit the run stops; the next hour continues.
+- A failed connection keeps its error in `connections.last_error` and is retried next hour.
 
 ### 5. Best efforts (BE-1..5)
 - For every activity with streams, compute the **fastest segment** for each distance (sliding window over the distance stream) and the **best average power** for each duration (sliding window over time).
@@ -90,24 +91,23 @@ All values are stored in **SI units** (meters, seconds, watts). Units are conver
 | Table | Key columns | Notes |
 |---|---|---|
 | `profiles` | user_id, units, week_start, locale, indoor_filter_run, indoor_filter_bike | 1:1 with `auth.users` |
-| `connections` | user_id, provider, provider_athlete_id, access_token_enc, refresh_token_enc, expires_at, scopes, last_synced_at | `provider` = strava / garmin (CON-6). **Never readable from the browser.** |
-| `activities` | id, user_id, provider, provider_activity_id, sport, raw_type, is_indoor, name, start_time, start_time_local, moving_time, elapsed_time, distance, elevation_gain, avg_hr, avg_power | `sport` ∈ swim/bike/run/strength/other |
+| `connections` | id, user_id, provider, provider_athlete_id, athlete_name, access_token_enc, refresh_token_enc, expires_at, scopes, import_state, imported_count, last_full_sync_at, last_sync_at, last_error | `provider` = strava / garmin (CON-6). **No grants and no RLS policies for users: only the server reads it** (admin connection, always filtered by user id). **Built 2026-11-10.** |
+| `activities` | id, user_id, provider, provider_activity_id, name, sport, sport_type, is_indoor, start_time, start_local, moving_seconds, elapsed_seconds, distance_m, elevation_m, fetched_at | `sport` ∈ swim/bike/run/strength/other. Users can only **read** their own rows (RLS); only the server writes. `start_local` is Strava's local time as text ("2026-11-02T07:15:00Z"). **Built 2026-11-10.** |
 | *(Storage)* `streams/{user_id}/{activity_id}` | time, distance, heartrate, watts, altitude | Compressed file per activity, not in Postgres ([ADR 0008](decisions/0008-stream-storage.md)) |
 | `activity_best_efforts` | activity_id, user_id, sport, kind (distance/power), target, result, start_offset | One row per activity per distance/duration |
 | `events` | id, user_id, title, event_date, type, image_path, created_at | EVT. **Built 2026-11-10.** |
 | *(Storage)* bucket `event-images`, path `{user_id}/{file}` | Event background images (WebP, resized in the browser) | Private bucket; RLS: users only reach their own folder. Shown with short-lived signed URLs. |
 | `goals` | id, user_id, sport, distance_m, target_seconds, created_at | GOAL. **Built 2026-11-10.** |
 | `personal_bests` | user_id, sport, distance_m (together the key), seconds, achieved_on, updated_at | **Manual** best efforts only (BE-7, [ADR 0011](decisions/0011-best-efforts-v1.md)). **Built 2026-11-10.** |
-| `webhook_events` | id, payload, received_at, processed_at | Audit and debugging |
-| `api_usage` | provider, window, used, limit | Rate-limit tracking |
+| `webhook_events` | id, payload, received_at, processed_at | Audit and debugging *(not built: Vercel logs are enough for now)* |
+| `api_usage` | provider, window, used, limit | Rate-limit tracking *(not built: usage headers are checked per run, ADR 0012)* |
 
 **Weeks** are grouped by `start_time_local` (the athlete's local time), using the user's week-start setting.
 **Training workouts** (TRN) are static content stored as typed TypeScript/JSON in the codebase, not in the database.
 
-### Until M3/M4: reading Strava directly (temporary)
-- The Strava token is still the 6-hour cookie from the Strava test. Pages read activities **directly from Strava**, but only for the range they show (HOME-10): the calendar asks for `after`/`before` = the visible weeks (1 request per 200 activities). Profile, Goals and Training read the full history (best efforts) or the last 8 weeks (volume).
-- Results are cached with `"use cache: private"` (per user, in the browser's router cache for 6 hours).
-- M4 replaces this with the `activities` table, so pages read our database again (NFR-3).
+### Reading activities
+- Since M3/M4 (2026-11-10), pages read activities from the `activities` table (as the user, RLS), never from Strava (NFR-3). The calendar reads only the visible weeks (HOME-10).
+- The Vercel functions run in **Dublin (`dub1`)**, next to the Supabase database (`eu-west-1`), so each database round trip is short.
 
 ### Small per-device preferences
 - The calendar's **period type** (HOME-8) is stored in a cookie, `stramin-calendar` (1 year), set by a Server Action. It's a view setting that can differ between phone and desktop, so it isn't stored in the database.

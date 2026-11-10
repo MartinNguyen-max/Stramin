@@ -28,13 +28,33 @@
 | 17 | **Week numbers:** ISO 8601 with a Monday start, US style with a Sunday start. | The standard in Denmark/Europe. | – |
 | 18 | **Settings, Goals and Profile keep a readable width**; Home and the training catalog use the full width (max 1280 px). | The calendar needs room for 7 days + totals. | – |
 
-### Known limits (until M3/M4)
+### Known limits
 
-- Strava is still the 6-hour test connection. After 6 hours you must press "Connect Strava" again.
-- Profile, Goals and Training read your **full** Strava history on each visit (about 5 requests for ~860 activities); Home only reads the shown period. Strava allows 100 requests per 15 minutes, so many reloads in a row could hit the limit. The sync engine (M4) fixes this.
+- ~~Strava is the 6-hour test connection; pages read Strava directly.~~ *Fixed by M3/M4 (2026-11-10).*
 - Best efforts are estimates (ADR 0011). Fix any value by hand on the Profile page.
 
-### Things only you can do
+## Batch 2026-11-10 (evening): M3 + M4, speed
+
+| # | Decision | Why | Alternatives |
+|---|---|---|---|
+| 19 | **Sync without a queue** ([ADR 0012](decisions/0012-strava-sync-v1.md)): import right after connecting, webhook events handled at once, an **hourly** job (Supabase Cron) for a daily full refresh and a quick sync every 3 hours. | Summaries are only ~5 requests per user; a queue is only needed for streams (M7). | Supabase Queues now (ADR 0005); Vercel Cron (only daily on the free plan). |
+| 20 | **The webhook verify token is derived from the Strava client secret** (a hash). | No extra secret to manage. | A separate env variable. |
+| 21 | **Refresh button on Home** sits in a small line above the calendar ("Synced 5 minutes ago · Refresh"), and in Settings. | Visible where the data is, but quiet. | In the header on every page. |
+| 22 | **Disconnect deletes your Strava workouts** but keeps your own best efforts, goals and events. | Strava's terms; your own data is yours. | Delete everything. |
+| 23 | **Vercel region Dublin (`dub1`)**, next to Supabase `eu-west-1` (set by you). | Every database round trip stays inside Ireland. | – |
+| 24 | The temporary `/strava-test` page and the 6-hour cookie are removed. | Replaced by the real connection. | – |
+
+### Things only you can do (M3/M4)
+
+- [ ] **Apply the database changes** (tables `connections` and `activities`, plus the hourly job). Claude Code's safety check didn't let Claude run it. In PowerShell:
+  ```
+  pnpm exec supabase db push --remote
+  ```
+- [ ] Push / merge to `main`, so the new code is live.
+- [ ] On the live site: **Connect with Strava once more** (Home or Settings). The import starts by itself.
+- [ ] Tell Claude when it's live: Claude then registers Strava's webhook (`node scripts/strava-webhook.mjs create`).
+
+### Things only you can do (M2.5, done)
 
 - [x] **Apply the database changes** *(done 2026-11-10)* (new tables `events`, `goals`, `personal_bests` and the `event-images` bucket). Until then, events, goals and manual best efforts show "not available yet". In PowerShell, in the project folder:
   ```

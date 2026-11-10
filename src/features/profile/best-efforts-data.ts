@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { loadStravaActivities } from "@/features/activities/strava-source";
+import { loadActivitiesIfConnected } from "@/features/activities/data";
 import type { CurrentUser } from "@/features/auth/current-user";
 import {
   type BestEffort,
@@ -28,7 +28,7 @@ export async function loadBestEfforts(
   user: CurrentUser,
 ): Promise<BestEffortsResult> {
   const [activities, manual] = await Promise.all([
-    loadStravaActivities(),
+    loadActivitiesIfConnected(user),
     listManualEfforts(user).catch((error) => {
       console.error("[best efforts] manual values unavailable", error);
       return null;

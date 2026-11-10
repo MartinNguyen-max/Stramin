@@ -89,6 +89,7 @@ Inspired by Garmin Connect's month view (screenshot from the owner, 2026-11-10).
 | **Density** | 1 month: **detailed** chips. 3 months: **compact** chips (icon + distance or time, title on hover). 6 months, 1 year, custom > 14 weeks and all time: **mini** bars (one bar per workout, height = duration). In compact and mini, the week containing the 1st of a month shows the month name, which opens that month in the 1-month view. | HOME-7 |
 | **Phone** | Each week is a card: "Week 45 · 2–8 Nov" + total time; a 7-day strip with dates and sport dots; then the workouts listed by day. Mini density on a phone shows one row per week: 7 small cells with bars + the total. | HOME-9 |
 | **Loading** | The zone spinner while a new period loads. | – |
+| **Sync status** | Above the calendar: while importing, "Importing your Strava history… 412 workouts so far" (the page refreshes itself); afterwards a small "Synced 5 minutes ago · Refresh". After a failed connect, a short message explains why. | CON-3, CON-5 |
 | **Not connected** | A card "Connect Strava" (as before), instead of the calendar. | – |
 
 **Sport colors** (unchanged, from the zone colors of the logo): Swim Z1 blue · Bike Z2 green · Run Z5 red · Strength Z3 yellow · Other gray.
@@ -161,7 +162,7 @@ Your running level: VDOT 50.6
 | Section | Content | Req |
 |---|---|---|
 | **Preferences** | Units · Week start · Language · Indoor/outdoor | SET-1..4 |
-| **Connections** | Strava: connected/disconnect. Garmin: coming soon. | SET-5, CON-2 |
+| **Connections** | Strava: "Connect with Strava" (orange), or "Connected as {name}", last sync, **Refresh** and **Disconnect** (asks once more; deletes the Strava workouts). Garmin: coming soon. | SET-5, CON-2, CON-5 |
 | **Privacy** | Export data · Delete account · Privacy policy | PRIV-1, PRIV-2, PRIV-5 |
 | **Account** | Name · Log out | ACC-5, ACC-2 |
 

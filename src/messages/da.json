@@ -155,7 +155,6 @@
     "connect": {
       "title": "Forbind dine træningsdata",
       "text": "Forbind Strava for at se hele din træningshistorik. Garmin-brugere kan også importere deres historik med en engangs-download.",
-      "strava": "Forbind Strava",
       "garminGuide": "Guide til Garmin-historik",
       "demo": "Se et eksempel"
     },
@@ -195,9 +194,7 @@
     },
     "connections": {
       "title": "Forbindelser",
-      "connect": "Forbind",
-      "comingSoon": "Kommer snart",
-      "note": "Indtil videre varer Strava-forbindelsen 6 timer. Permanente forbindelser kommer som det næste."
+      "comingSoon": "Kommer snart"
     },
     "account": {
       "title": "Konto",
@@ -300,7 +297,6 @@
     "title": "Profil",
     "stravaConnected": "Strava forbundet",
     "stravaNotConnected": "Forbind Strava for at beregne dine bedste præstationer ud fra dine aktiviteter.",
-    "connect": "Forbind Strava",
     "loading": "Finder dine bedste præstationer…",
     "bestEfforts": {
       "title": "Bedste præstationer",
@@ -485,5 +481,32 @@
     "empty": "Ingen mål endnu. Sæt dit første.",
     "unavailable": "Mål kommer snart: databasen skal opdateres først.",
     "connectHint": "Forbind Strava for at sammenligne med dine bedste præstationer og din ugentlige mængde."
+  },
+  "Strava": {
+    "connect": "Forbind med Strava",
+    "connected": "Forbundet",
+    "connectedAs": "Forbundet som {name}",
+    "lastSync": "Sidst synkroniseret {time}",
+    "synced": "Synkroniseret {time}",
+    "importing": "Henter din Strava-historik…",
+    "importedSoFar": "{count, plural, =0 {Starter…} one {# træning indtil nu} other {# træninger indtil nu}}",
+    "importFailed": "Importen stoppede. Den fortsætter af sig selv inden for en time, eller tryk Opdater.",
+    "refresh": "Opdater",
+    "refreshing": "Opdaterer…",
+    "disconnect": "Afbryd forbindelsen",
+    "confirmDisconnect": "Vil du afbryde?",
+    "disconnecting": "Afbryder…",
+    "disconnectHint": "Stramin mister adgangen til Strava og sletter dine Strava-træninger her. Dine egne bedste præstationer, mål og events bliver.",
+    "errors": {
+      "notConnected": "Strava er ikke forbundet.",
+      "tooSoon": "Synkroniseret for under et minut siden. Prøv igen om lidt.",
+      "failed": "Strava svarede ikke. Prøv igen senere."
+    },
+    "notice": {
+      "denied": "Du gav ikke Stramin adgang på Strava, så intet blev forbundet.",
+      "failed": "Det lykkedes ikke at forbinde Strava. Prøv igen.",
+      "scope": "Stramin skal have adgang til alle dine aktiviteter. Forbind igen, og lad \"View data about your private activities\" være slået til.",
+      "taken": "Denne Strava-konto er allerede forbundet til en anden Stramin-konto."
+    }
   }
 }
