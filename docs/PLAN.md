@@ -75,6 +75,15 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 
 ✅ **Done when:** the owner has reviewed the new Home and pages on a preview, and the migrations are applied.
 
+### M3.5 – Owner feedback 2026-11-10 *(work mode; see [feedback](feedback/2026-11-10.md))*
+- [x] Calendar: week totals with time + distance, weekly averages over finished weeks, 3M in full detail, week overview for longer periods, ‹ › by one month, phone month grid (HOME-4..9)
+- [x] No empty calendar while importing; database connection retry (H3, H11)
+- [x] Profile: runs count pauses, Strava's exact best efforts, bike 100/120 km, best power + FTP, race predictions (BE-2, BE-3, BE-8, BE-9, ADR 0013)
+- [x] Training: block graphs, distance, tap for steps, more bike and swim workouts (TRN)
+- [x] Landing page with the real app and example data
+- [ ] Owner: `supabase db push --remote` (new activity columns) **before** merging; review
+- [ ] Later: a video for the landing page
+
 ### M3 – Strava connection *(built 2026-11-10, work mode; to test on the live site)*
 - [x] Strava OAuth with "Connect with Strava" button (CON-1, NFR-5) *(Strava's official button artwork still to swap in before release)*
 - [x] Token encryption (AES-256-GCM) + `connections` table (PRIV-4)

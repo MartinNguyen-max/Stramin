@@ -31,7 +31,7 @@ Landing ── Log in / Sign up ── Connect Strava ── Home
 
 | Screen | Content | Req |
 |---|---|---|
-| **Landing** | A **preview of the web app**: what Stramin is, plus a look at the real screens (e.g. the weekly overview). Clear **Log in** and **Sign up** buttons. Links to the guide and the privacy policy. | – |
+| **Landing** | Sells the app by **showing it** (owner feedback L1): a hero with a phone showing the calendar (desktop), then the real components with example data: calendar, countdowns, running level and power, workouts, a goal; then privacy and a final "Sign up free". "See the demo" opens `/demo`. | – |
 | **Log in / Sign up** | "Continue with Google" button (Google's guideline: white with gray border, dark in dark mode, official colored G logo), then email & password. Sign up also asks "What should we call you?". If a saved login exists, Log in shows **"Continue as {name}"** (zone spinner while loading) and **"Use another account"**. No age check. | ACC-1, ACC-3, ACC-5 |
 | **Connect** | "Connect with Strava" button (Strava's official design). Garmin is shown as "coming soon". | CON-1, NFR-5 |
 | **Import progress** | Progress bar ("Imported 412 of ~1,300 activities"). The user can continue to Home while it runs. | CON-3 |
@@ -81,13 +81,13 @@ Inspired by Garmin Connect's month view (screenshot from the owner, 2026-11-10).
 
 | Part | Content | Req |
 |---|---|---|
-| **Period bar** | ‹ › move one period back/forward. The label shows the period ("November 2026", "Sep – Nov 2026"). "Today" jumps back to the current period. The buttons 1M · 3M · 6M · 1Y · Custom · All choose the period type; Custom opens two date fields. The choice is remembered (cookie, per device). | HOME-6, HOME-8 |
+| **Period bar** | ‹ › move one month back/forward (also for 3M, 6M, 1Y). The label shows the period ("November 2026", "Sep – Nov 2026"). "Today" jumps back to the current period. The buttons 1M · 3M · 6M · 1Y · Custom · All choose the period type; Custom opens two date fields. The choice is remembered (cookie, per device). | HOME-6, HOME-8 |
 | **Week rows** | Week number on the left (ISO week numbers with a Monday start, US numbering with a Sunday start). Each day shows its date; days outside the period are dimmed; today has a ring. The first of a month shows the month name ("1 Dec"). | HOME-2 |
 | **Workout chip** | A colored left border (sport color) and a sport icon. **Detailed** (1 month): title, then distance · pace, then time. Run: min/km · Bike: km/h · Swim: min/100 m · Strength/Other: time only. Tapping opens the activity on Strava. | HOME-3, ACT-4 |
-| **Week total** | Total time, then one line per sport that week (distance; time for strength). Counts the whole week, also days outside the period. | HOME-4 |
-| **Period total** | Distance per sport (time for strength), total hours, number of workouts. For periods > 1 month: average per week. Counts only days inside the period. | HOME-5 |
-| **Density** | 1 month: **detailed** chips. 3 months: **compact** chips (icon + distance or time, title on hover). 6 months, 1 year, custom > 14 weeks and all time: **mini** bars (one bar per workout, height = duration). In compact and mini, the week containing the 1st of a month shows the month name, which opens that month in the 1-month view. | HOME-7 |
-| **Phone** | Each week is a card: "Week 45 · 2–8 Nov" + total time; a 7-day strip with dates and sport dots; then the workouts listed by day. Mini density on a phone shows one row per week: 7 small cells with bars + the total. | HOME-9 |
+| **Week total** | Total time, a sport bar, then per sport "time · distance" (time only for strength). Counts the whole week, also days outside the period. | HOME-4 |
+| **Period total** | Distance and time per sport, total hours, number of workouts, and the **average week** (also per sport). Totals count only days inside the period; the average uses the finished weeks shown, and a note says the current week isn't counted. | HOME-5 |
+| **Density** | Up to 3 months (≤ 15 weeks): the full calendar. Longer: the **week overview**: a table with one row per week (week number, dates, total time with a sport bar, time and distance per sport) and a header row per month with the month's totals; the month name opens that month. *(Changed after owner feedback 2026-11-10; the compact chips and mini bars are gone.)* | HOME-7 |
+| **Phone** | A month grid (7 days + Σ column): each day shows its date, sport dots and training time. Tapping a day shows its workouts and that week's totals below the grid. The week overview becomes one card per week. | HOME-9 |
 | **Loading** | The zone spinner while a new period loads. | – |
 | **Sync status** | Above the calendar: while importing, "Importing your Strava history… 412 workouts so far" (the page refreshes itself); afterwards a small "Synced 5 minutes ago · Refresh". After a failed connect, a short message explains why. | CON-3, CON-5 |
 | **Not connected** | A card "Connect Strava" (as before), instead of the calendar. | – |

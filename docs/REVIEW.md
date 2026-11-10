@@ -28,6 +28,30 @@
 | 17 | **Week numbers:** ISO 8601 with a Monday start, US style with a Sunday start. | The standard in Denmark/Europe. | – |
 | 18 | **Settings, Goals and Profile keep a readable width**; Home and the training catalog use the full width (max 1280 px). | The calendar needs room for 7 days + totals. | – |
 
+## Batch 2026-11-10 (night): owner feedback ([feedback/2026-11-10.md](feedback/2026-11-10.md))
+
+| # | Decision | Why | Alternatives |
+|---|---|---|---|
+| 25 | **Up to 3 months = full calendar; longer = a week overview table** with month headers and totals. | 6M/1Y with bars was hard to read ("a lot of poles"); a table makes week-to-week comparison easy. | Stacked month calendars; charts. |
+| 26 | **Phone calendar = month grid + tap a day** (workouts and the week's totals below). | Looks like the desktop calendar, fits 375 px. | Horizontal scrolling calendar. |
+| 27 | **The weekly average uses the finished week rows shown** (including the days outside the month in those rows), never the current week. | Matches "how many hours a week did I train"; each row is a real week. | Divide the month total by its number of days / 7. |
+| 28 | **‹ › always move one month.** | Owner feedback H9. | – |
+| 29 | **After connecting Strava, Home waits up to 8 s for the import**; if the history is longer, a spinner card replaces the empty calendar until workouts arrive. | Never an empty calendar (H3). | Always wait for the whole import. |
+| 30 | **Database connections:** idle ones are closed after 20 s and a broken one is retried once. | Probable cause of the "events are coming soon" bug after pressing 3M (H11): a serverless function reused a connection the database had already closed. | – |
+| 31 | **Best efforts** ([ADR 0013](decisions/0013-exact-efforts-and-power.md)): runs count pauses; Strava's own best efforts for the 3 best runs per distance; power streams for the 6 strongest rides; FTP ≈ 95 % of the best 20 min. | Owner feedback P1–P3, within Strava's rate limits. | Streams for every activity (M7). |
+| 32 | **Race predictions** from VDOT (5 km … marathon), shown with your own best. | Owner feedback P4, like Garmin. | Riegel from the longest race. |
+| 33 | **Workouts:** a block graph (width = time, height/colour = zone), time and distance, tap to open the steps; +6 bike, +3 swim workouts (placeholders by Claude). | Owner feedback T1–T4. | A separate workout page. |
+| 34 | **Landing page = the real app with example data**; the "See an example" link inside the app is gone. | Owner feedback L1, H2. | Screenshots. |
+
+### Things only you can do (feedback batch)
+
+- [ ] **Apply the database change** (new columns on `activities` for power and Strava's best efforts). **Before merging**, otherwise the sync can't store activities. In PowerShell:
+  ```
+  pnpm exec supabase db push --remote
+  ```
+- [ ] Push `feat/feedback-calendar`, merge, and look at Home (1M, 3M, 6M; phone), Profile, Training and the landing page.
+- [ ] The exact best efforts and power arrive with the next hourly job (or right after pressing Refresh … they need a few hours to be complete).
+
 ### Known limits
 
 - ~~Strava is the 6-hour test connection; pages read Strava directly.~~ *Fixed by M3/M4 (2026-11-10).*

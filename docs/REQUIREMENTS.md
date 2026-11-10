@@ -51,12 +51,12 @@ Each requirement has an ID (e.g. `ACC-1`), so the plan, code and tests can refer
 | HOME-1 | **Event countdowns at the top** (see EVT): one card per upcoming event with its title, date and **days left**. Adding, editing and removing an event is quick and done right there. | Must |
 | HOME-2 | Below the events: a **training calendar**. By default it shows the **current month**, split into weeks, **Monday–Sunday** (or Sunday–Saturday, SET-2). Each row is a week and shows the **week number**; each day shows its **date** (e.g. 4, 5, 6). | Must |
 | HOME-3 | Each day lists the workouts done that day, kept small: **title, distance, pace (speed for bike, pace per 100 m for swim) and time**. Each workout uses its sport color and links to the activity on Strava (ACT-4). | Must |
-| HOME-4 | A column on the far right shows the **total for each week**: total time, plus distance (or time) per sport. | Must |
-| HOME-5 | A row at the bottom shows the **total for the whole period**: distance per sport, time for strength, and total hours. For periods longer than one month it also shows the **average per week**. | Must |
-| HOME-6 | **Period picker:** 1 month (pick which month), 3 months, 6 months, 1 year (each can be moved back and forward in time), a **custom** period (from–to date) and **all time**. | Must |
-| HOME-7 | Longer periods still show **every week**, but more compactly: 3 months shows small workout chips without titles; 6 months and longer show a mini bar per workout. Each month can be opened in the 1-month view. | Must |
+| HOME-4 | A column on the far right shows the **total for each week**: total time, plus **time and distance** per sport (owner feedback H4). | Must |
+| HOME-5 | A row at the bottom shows the **total for the whole period** (time and distance per sport, total hours) and the **average week**. Averages use **finished weeks only**; the current week is left out, with a note (owner feedback H5, H6). | Must |
+| HOME-6 | **Period picker:** 1 month, 3 months, 6 months, 1 year, a **custom** period (from–to date) and **all time**. ‹ › always move **one month** (owner feedback H9). | Must |
+| HOME-7 | Up to 3 months: the full calendar (owner feedback H7). Longer periods: a **week overview**, one row per week with time and distance per sport, and a header per month with its totals (H8). Each month can be opened in the 1-month view. | Must |
 | HOME-8 | The chosen period type is **remembered** for the next visit (per device). | Must |
-| HOME-9 | On phones, the calendar becomes a list of weeks (a 7-day strip plus the workouts), since 7 columns don't fit. | Must |
+| HOME-9 | On phones, the calendar is a **month grid** too (owner feedback H10): each day shows sport dots and its time, the last column the week total; tapping a day lists its workouts and the week's totals below. | Must |
 | HOME-10 | Only the activities of the shown period are fetched (lazy loading), so the first load is fast. | Must |
 
 ## 4b. Activities (ACT)
@@ -75,11 +75,13 @@ Best efforts are shown on the **Profile** page (2026-11-10: the separate "Record
 | ID | Requirement | Priority |
 |---|---|---|
 | BE-1 | A best effort is the **fastest time** for a given distance. The exact version is the fastest segment inside any activity (e.g. the fastest 5 km inside a 12 km run), computed from streams (M7). | Must |
-| BE-2 | Distances: **Run** 1 km, 5 km, 10 km, 21.1 km, 42.2 km · **Bike** 20, 40, 90, 180 km · **Swim** 400 m, 1 km, 1.9 km, 3.8 km. | Must |
-| BE-3 | **Bike power:** best average watts over fixed durations (placeholders: 5 s, 1 min, 5 min, 20 min, 60 min). Only for activities with power data. | Future |
+| BE-2 | Distances: **Run** 1 km, 5 km, 10 km, 21.1 km, 42.2 km · **Bike** 20, 40, 90, 100, 120, 180 km · **Swim** 400 m, 1 km, 1.9 km, 3.8 km. | Must |
+| BE-3 | **Bike power:** best average watts over 1, 5, 20 and 60 minutes, and **FTP ≈ 95 % of the best 20 minutes**. Only rides with a power meter ([ADR 0013](decisions/0013-exact-efforts-and-power.md)). | Must |
 | BE-4 | Each best effort links to the activity it came from, with its date. | Should |
 | BE-5 | Best efforts are recomputed when activities are added, edited or deleted. | Must |
 | BE-6 | **First version (estimate):** best efforts are estimated from Strava's activity summaries: the best average pace of any activity at least as long as the distance ([ADR 0011](decisions/0011-best-efforts-v1.md)). Exact for races; on the safe (slower) side for segments inside longer activities. | Must |
+| BE-8 | **Runs count pauses** (elapsed time), like Strava. Where possible, Strava's own best efforts are used (exact); otherwise the estimate (ADR 0013). | Must |
+| BE-9 | **Predicted race times** (5 km, 10 km, half, marathon) from the running level (VDOT). | Must |
 | BE-7 | The user can **change a best effort** by hand (e.g. a race done before Strava). A manual value wins over the Strava value and can be reset. | Must |
 
 ## 6. Events (EVT)
