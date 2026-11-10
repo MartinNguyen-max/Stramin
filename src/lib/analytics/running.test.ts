@@ -5,6 +5,7 @@ import {
   oxygenCost,
   riegel,
   speedAtVo2,
+  strongestRiegelEffort,
   trainingPaces,
   vdot,
 } from "./running";
@@ -71,5 +72,13 @@ describe("bestVdot", () => {
 describe("riegel", () => {
   test("doubling the distance takes a bit more than twice the time", () => {
     expect(riegel(1200, 5000, 10_000)).toBeCloseTo(1200 * 2 ** 1.06, 6);
+  });
+
+  test("the strongest effort predicts the fastest times", () => {
+    const weak40 = { distance: 40_000, seconds: 80 * 60 };
+    const strong90 = { distance: 90_000, seconds: 150 * 60 };
+    expect(strongestRiegelEffort([weak40, strong90])).toBe(strong90);
+    expect(riegel(150 * 60, 90_000, 40_000)).toBeLessThan(80 * 60);
+    expect(strongestRiegelEffort([])).toBeNull();
   });
 });

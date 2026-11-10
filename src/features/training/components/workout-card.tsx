@@ -1,8 +1,8 @@
 import { ChevronDown } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
+import { useHours } from "@/i18n/use-hours";
 import {
   formatClock,
-  formatDuration,
   formatPacePer100,
   formatPacePerKm,
   formatSportDistance,
@@ -33,6 +33,7 @@ type Props = { workout: Workout; paces: PersonalPaces; units: Units };
 export function WorkoutCard({ workout, paces, units }: Props) {
   const t = useTranslations("Training");
   const tZones = useTranslations("Zones");
+  const hours = useHours();
   const zone = maxZone(workout);
   const lowest = Math.min(
     ...workout.steps.flatMap((step) =>
@@ -43,7 +44,7 @@ export function WorkoutCard({ workout, paces, units }: Props) {
   ) as Zone;
   const meters = workoutMeters(workout, paces);
   const duration = t("duration", {
-    time: formatDuration(workoutSeconds(workout, paces)),
+    time: hours(workoutSeconds(workout, paces)),
   });
   const distance =
     meters === null

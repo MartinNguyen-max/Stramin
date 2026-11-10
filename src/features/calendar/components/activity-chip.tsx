@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
 import {
-  SPORT_BG,
   SPORT_BORDER,
   SPORT_ICON,
   SPORT_TEXT,

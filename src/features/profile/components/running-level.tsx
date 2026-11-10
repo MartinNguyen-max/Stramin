@@ -79,6 +79,7 @@ export function RunningLevel({
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {PREDICTED.map((distance) => {
             const best = findEffort(efforts, "run", distance);
+            const predicted = equivalentTime(basis.level, distance);
             return (
               <li
                 key={distance}
@@ -88,7 +89,10 @@ export function RunningLevel({
                   {effortDistanceLabel("run", distance, locale, names)}
                 </span>
                 <span className="text-lg font-semibold tabular-nums">
-                  {formatClock(equivalentTime(basis.level, distance))}
+                  {formatClock(predicted)}
+                </span>
+                <span className="text-xs tabular-nums">
+                  {formatPacePerKm(distance, predicted, units)}
                 </span>
                 {best && (
                   <span className="text-xs text-muted-foreground tabular-nums">

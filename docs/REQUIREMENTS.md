@@ -26,7 +26,7 @@ Each requirement has an ID (e.g. `ACC-1`), so the plan, code and tests can refer
 | CON-2 | A user can disconnect Strava. Stramin then revokes access and deletes the imported Strava data. | Must |
 | CON-3 | On first connect, the full activity history is imported. The user sees import progress. | Must |
 | CON-4 | New, edited and deleted Strava activities are synced automatically. | Must |
-| CON-5 | A user can trigger a manual **Refresh**. | Must |
+| CON-5 | A user can trigger a manual **Refresh**. "Synced 5 minutes ago" counts on by itself, and the page reloads its data every 5 minutes and when the tab is opened again (owner feedback S1). | Must |
 | CON-6 | The data model supports more than one provider per user, so Garmin can be added without a redesign. | Must |
 | CON-7 | A user can connect Garmin. | Must |
 | CON-8 | Strava data is never kept for more than 7 days without being re-fetched ([ADR 0009](decisions/0009-strava-rolling-cache.md)). | Must |
@@ -51,12 +51,12 @@ Each requirement has an ID (e.g. `ACC-1`), so the plan, code and tests can refer
 | HOME-1 | **Event countdowns at the top** (see EVT): one card per upcoming event with its title, date and **days left**. Adding, editing and removing an event is quick and done right there. | Must |
 | HOME-2 | Below the events: a **training calendar**. By default it shows the **current month**, split into weeks, **Monday–Sunday** (or Sunday–Saturday, SET-2). Each row is a week and shows the **week number**; each day shows its **date** (e.g. 4, 5, 6). | Must |
 | HOME-3 | Each day lists the workouts done that day, kept small: **title, distance, pace (speed for bike, pace per 100 m for swim) and time**. Each workout uses its sport color and links to the activity on Strava (ACT-4). | Must |
-| HOME-4 | A column on the far right shows the **total for each week**: total time, plus **time and distance** per sport (owner feedback H4). | Must |
-| HOME-5 | A row at the bottom shows the **total for the whole period** (time and distance per sport, total hours) and the **average week**. Averages use **finished weeks only**; the current week is left out, with a note (owner feedback H5, H6). | Must |
+| HOME-4 | A column on the far right shows the **total for each week**: total **hours first** ("5:50 h"), then per sport its **icon, time and distance** (H4, C1). Totals show swims in km; the calendar days keep meters. | Must |
+| HOME-5 | The **average week is the main number** (hours per week, then distance and hours per sport per week); the **period total** comes second (C2). Averages use **finished weeks only**; the current week is left out, with a note (H5, H6). | Must |
 | HOME-6 | **Period picker:** 1 month, 3 months, 6 months, 1 year, a **custom** period (from–to date) and **all time**. ‹ › always move **one month** (owner feedback H9). | Must |
-| HOME-7 | Up to 3 months: the full calendar (owner feedback H7). Longer periods: a **week overview**, one row per week with time and distance per sport, and a header per month with its totals (H8). Each month can be opened in the 1-month view. | Must |
+| HOME-7 | Up to 3 months: the full calendar (H7). Longer periods: the average week first, then a **week overview** grouped **by month**: each month shows its **average week**, each week its hours and distance per sport (H8, C3). Months fold; long periods (all time) start folded except the newest month (C4). Each month can be opened in the 1-month view. | Must |
 | HOME-8 | The chosen period type is **remembered** for the next visit (per device). | Must |
-| HOME-9 | On phones, the calendar is a **month grid** too (owner feedback H10): each day shows sport dots and its time, the last column the week total; tapping a day lists its workouts and the week's totals below. | Must |
+| HOME-9 | On phones, the calendar is a **month grid** too (H10): each day shows sport dots and its time; under every week a line with its **hours and distance per sport** (M1); tapping a day lists its workouts below. The week overview uses sport icons, and months fold from 1 year (M2). | Must |
 | HOME-10 | Only the activities of the shown period are fetched (lazy loading), so the first load is fast. | Must |
 
 ## 4b. Activities (ACT)
@@ -81,7 +81,7 @@ Best efforts are shown on the **Profile** page (2026-11-10: the separate "Record
 | BE-5 | Best efforts are recomputed when activities are added, edited or deleted. | Must |
 | BE-6 | **First version (estimate):** best efforts are estimated from Strava's activity summaries: the best average pace of any activity at least as long as the distance ([ADR 0011](decisions/0011-best-efforts-v1.md)). Exact for races; on the safe (slower) side for segments inside longer activities. | Must |
 | BE-8 | **Runs count pauses** (elapsed time), like Strava. Where possible, Strava's own best efforts are used (exact); otherwise the estimate (ADR 0013). | Must |
-| BE-9 | **Predicted race times** (5 km, 10 km, half, marathon) from the running level (VDOT). | Must |
+| BE-9 | **Predicted race times** with their pace: running (5 km … marathon) from VDOT; **bike** (20/40/90/180 km) and **swim** (400 m/1/1.9/3.8 km) with Riegel's formula from the strongest effort (owner feedback P5). | Must |
 | BE-7 | The user can **change a best effort** by hand (e.g. a race done before Strava). A manual value wins over the Strava value and can be reset. | Must |
 
 ## 6. Events (EVT)
@@ -102,9 +102,9 @@ A goal is a performance target, e.g. "5 km in 18:00". Goals have their own page.
 
 | ID | Requirement | Priority |
 |---|---|---|
-| GOAL-1 | A user can create and delete goals: a **sport**, **distance** (from BE-2) and **target time**. | Must |
+| GOAL-1 | A user can create and delete goals: a **sport**, **distance** (from BE-2) and **target time**, or a **half or full Ironman** triathlon with a time per discipline and optional transitions (owner feedback G1). | Must |
 | GOAL-2 | A goal can optionally be linked to an event. | Future |
-| GOAL-3 | The goal shows the **gap** between the user's current best effort and the target. | Must |
+| GOAL-3 | The goal shows the **gap** between the user's current best effort and the target, with the **pace beside every time** and the gap per km (e.g. "You need 3:47 /km instead of 4:22 /km: 34 s/km faster") (G2, G3). | Must |
 | GOAL-4 | The goal shows short, simple **feedback** with tips on how to reach it (e.g. *"Your volume is already good. Add one faster session per week."*), plus matching **workouts from the training catalog**. | Must |
 | GOAL-5 | **Suggested targets build on the current best:** when the user picks a distance, Stramin shows their current best and suggests faster targets (about 2 %, 5 % and 10 % faster, rounded). A target slower than the current best is not accepted ("You already did 20:00"). | Must |
 | GOAL-6 | **Equivalent performances:** for running goals, Stramin shows what the goal means at another distance (e.g. *"10 km in 40:00 usually needs a 5 km of about 19:15"*) and compares it with the user's own best at that distance. | Must |

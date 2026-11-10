@@ -6,6 +6,7 @@ import { demoBestEfforts } from "@/features/demo/demo-efforts";
 import { DemoSpinner } from "@/features/demo/demo-spinner";
 import { BestEffortsCard } from "@/features/profile/components/best-efforts-card";
 import { PowerCard } from "@/features/profile/components/power-card";
+import { PredictionsCard } from "@/features/profile/components/predictions-card";
 import { RunningLevel } from "@/features/profile/components/running-level";
 import { EFFORT_SPORTS } from "@/lib/analytics/best-efforts";
 
@@ -50,6 +51,7 @@ async function DemoProfile() {
       </section>
       <PowerCard power={power} />
       <RunningLevel efforts={efforts} units="metric" />
+      <PredictionsCard efforts={efforts} units="metric" />
     </>
   );
 }

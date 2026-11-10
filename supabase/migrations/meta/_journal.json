@@ -50,6 +50,13 @@
       "when": 1794338659916,
       "tag": "20261110192419_nifty_shinko_yamashiro",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794352464366,
+      "tag": "20261110231424_tranquil_talkback",
+      "breakpoints": true
     }
   ]
 }

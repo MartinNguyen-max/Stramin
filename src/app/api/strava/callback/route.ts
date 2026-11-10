@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     });
     // Wait a few seconds, so Home opens with the workouts already there (owner feedback H3).
     // A long history continues in the background.
-    const done = await Promise.race([
+    await Promise.race([
       importing.then(() => true),
       new Promise<false>((resolve) =>
         setTimeout(() => resolve(false), IMPORT_WAIT_MS),

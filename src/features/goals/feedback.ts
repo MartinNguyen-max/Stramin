@@ -1,6 +1,7 @@
 import type { Effort } from "@/features/training/zones";
 import {
   type BestEffort,
+  distanceKey,
   type EffortSport,
   findEffort,
 } from "@/lib/analytics/best-efforts";
@@ -68,11 +69,14 @@ export function gapFor(target: number, best: number): Gap {
   };
 }
 
-/** The next shorter standard distance, for the speed check (running only). */
+/**
+ * The next shorter standard distance, for the speed check (running only). Keyed by `distanceKey`:
+ * goals store the half marathon as 21 098 m.
+ */
 const SPEED_REFERENCE: Record<number, number> = {
   5000: 1000,
   10000: 5000,
-  21097.5: 5000,
+  21098: 5000,
   42195: 5000,
 };
 
@@ -92,7 +96,8 @@ export function speedCheck(
   target: number,
   efforts: BestEffort[],
 ): SpeedCheck | null {
-  const reference = sport === "run" ? SPEED_REFERENCE[distance] : undefined;
+  const reference =
+    sport === "run" ? SPEED_REFERENCE[distanceKey(distance)] : undefined;
   if (!reference) return null;
   const needed = equivalentTime(vdot(distance, target), reference);
   const best = findEffort(efforts, "run", reference)?.seconds;
@@ -113,7 +118,7 @@ export function recommendedVolume(
   if (sport === "run") {
     if (distance <= 5000) return 20_000;
     if (distance <= 10_000) return 30_000;
-    if (distance <= 21_097.5) return 40_000;
+    if (distanceKey(distance) <= 21_098) return 40_000;
     return 55_000;
   }
   if (sport === "bike") {
@@ -174,6 +179,17 @@ export function goalFeedback(
     if (suggested.length === 0) suggested.push("hard", "easy");
   }
   return { gap, speed, volume, efforts: suggested };
+}
+
+/** `averageWeeklyMeters` for swim, bike and run at once (triathlon goals need all three). */
+export function weeklyMetersBySport(
+  activities: CalendarActivity[],
+  todayDate: string,
+  weekStartDay: WeekStartDay,
+): Record<EffortSport, number> {
+  const average = (sport: EffortSport) =>
+    averageWeeklyMeters(activities, sport, todayDate, weekStartDay);
+  return { run: average("run"), bike: average("bike"), swim: average("swim") };
 }
 
 /** Average weekly distance of a sport over the last `weeks` finished weeks (feedback-rules.md §4). */

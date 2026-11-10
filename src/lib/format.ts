@@ -9,6 +9,16 @@ export function formatDuration(seconds: number): string {
   return `${hours}:${String(minutes).padStart(2, "0")}`;
 }
 
+/**
+ * A duration people read as time spent: "53 min" under an hour, else "1:20 h" (owner feedback 2026-11-11, T5).
+ * `hourUnit` is the translated hour symbol ("h", Danish "t").
+ */
+export function formatHours(seconds: number, hourUnit: string): string {
+  const totalMinutes = Math.round(seconds / 60);
+  if (totalMinutes < 60) return `${totalMinutes} min`;
+  return `${formatDuration(seconds)} ${hourUnit}`;
+}
+
 /** Formats seconds as a clock time: "1:10:40", "45:58" or "0:42". Used for workouts and best efforts. */
 export function formatClock(seconds: number): string {
   const total = Math.round(seconds);
@@ -48,6 +58,16 @@ export function formatDistance(
   const value = units === "imperial" ? meters / METERS_PER_MILE : meters / 1000;
   const unit = units === "imperial" ? "mi" : "km";
   return `${value.toFixed(precise ? 2 : 1)} ${unit}`;
+}
+
+/**
+ * A distance in totals (week, month, period): always km (mi), also for swims (owner feedback 2026-11-11, C1).
+ * From 100 km (mi) without decimals, so the numbers stay short ("119 km", "32.4 km").
+ */
+export function formatTotalDistance(meters: number, units: Units): string {
+  const value = units === "imperial" ? meters / METERS_PER_MILE : meters / 1000;
+  const unit = units === "imperial" ? "mi" : "km";
+  return `${value.toFixed(value >= 100 ? 0 : 1)} ${unit}`;
 }
 
 /** A distance as it's best read for the sport: swims in meters (yards) up to 10 km, the rest in km (miles). */
@@ -94,6 +114,40 @@ export function formatSpeed(
   return units === "imperial"
     ? `${(perHour / METERS_PER_MILE).toFixed(1)} mph`
     : `${(perHour / 1000).toFixed(1)} km/h`;
+}
+
+/**
+ * How much faster `target` is than `best` over `distance`, in the sport's pace (owner feedback
+ * 2026-11-11, G3): "35 s/km", "1:05 /km", "12 s/100m", or for bikes "3.5 km/h". Null without a gap.
+ */
+export function formatPaceDifference(
+  sport: Sport,
+  distance: number,
+  best: number,
+  target: number,
+  units: Units,
+): string | null {
+  if (distance <= 0 || target <= 0 || best <= target) return null;
+  const imperial = units === "imperial";
+  if (sport === "bike") {
+    const perHour = (distance / target - distance / best) * 3600;
+    return imperial
+      ? `${(perHour / METERS_PER_MILE).toFixed(1)} mph`
+      : `${(perHour / 1000).toFixed(1)} km/h`;
+  }
+  const [unitMeters, unit] =
+    sport === "swim"
+      ? imperial
+        ? [100 * METERS_PER_YARD, "100yd"]
+        : [100, "100m"]
+      : imperial
+        ? [METERS_PER_MILE, "mi"]
+        : [1000, "km"];
+  const seconds = Math.round(((best - target) / distance) * unitMeters);
+  if (seconds < 1) return null;
+  return seconds < 60
+    ? `${seconds} s/${unit}`
+    : `${formatClock(seconds)} /${unit}`;
 }
 
 /**

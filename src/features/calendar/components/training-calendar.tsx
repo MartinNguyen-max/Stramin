@@ -1,46 +1,69 @@
+import { ChevronRight } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
-import { DISTANCE_SPORTS, SPORT_BG } from "@/features/activities/sport-style";
-import type { Calendar, CalendarDay, Totals } from "@/lib/analytics/calendar";
+import type { ReactNode } from "react";
+import { useHours } from "@/i18n/use-hours";
+import type {
+  Calendar,
+  CalendarDay,
+  CalendarWeek,
+  MonthGroup,
+  Totals,
+} from "@/lib/analytics/calendar";
 import { SPORTS, type Sport } from "@/lib/analytics/sports";
 import { addDays, toDisplayDate } from "@/lib/dates";
-import { formatDuration, formatSportDistance } from "@/lib/format";
 import type { Units } from "@/lib/preferences";
 import { cn } from "@/lib/utils";
 import { DetailedChip } from "./activity-chip";
 import { CalendarLink } from "./calendar-shell";
 import { MobileCalendar } from "./mobile-calendar";
-import { SportBar, SportLineText, sportLines } from "./sport-lines";
+import {
+  SportBar,
+  SportDistance,
+  SportIcon,
+  SportTimeLine,
+  totalDistance,
+  trainedSports,
+} from "./sport-lines";
 
 type CalendarProps = { calendar: Calendar; units: Units };
 
 /** Week number · 7 days · week total. */
-const GRID = "grid grid-cols-[3.25rem_repeat(7,minmax(0,1fr))_10rem]";
+const GRID = "grid grid-cols-[3.25rem_repeat(7,minmax(0,1fr))_11rem]";
+
+/**
+ * How many months the week overview shows open; with more, only the newest month starts open and the
+ * rest are folded to their average week (C4, M2). Phones have less room, so they fold sooner.
+ */
+const OPEN_MONTHS = { desktop: 13, phone: 7 };
 
 /**
  * The training calendar (HOME-2..9). Up to ~3 months: a real calendar (a grid on desktop, a tappable
- * month grid on phones). Longer periods: a week-by-week overview with numbers (owner feedback H7–H10).
+ * month grid on phones) with the average week below. Longer periods: the average week first, then the
+ * weeks grouped by month (owner feedback 2026-11-11, C2–C4).
  */
 export function TrainingCalendar({ calendar, units }: CalendarProps) {
+  if (calendar.density === "weeks") {
+    return (
+      <div className="flex flex-col gap-4">
+        <PeriodSummary calendar={calendar} units={units} />
+        <WeekOverview calendar={calendar} units={units} />
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-4">
-      {calendar.density === "detailed" ? (
-        <>
-          <div className="hidden md:block">
-            <DesktopGrid calendar={calendar} units={units} />
-          </div>
-          <div className="md:hidden">
-            <MobileCalendar
-              key={calendar.period.from}
-              weeks={calendar.weeks}
-              units={units}
-              multiMonth={calendar.period.view !== "1m"}
-            />
-          </div>
-        </>
-      ) : (
-        <WeekOverview calendar={calendar} units={units} />
-      )}
-      <PeriodTotals calendar={calendar} units={units} />
+      <div className="hidden md:block">
+        <DesktopGrid calendar={calendar} units={units} />
+      </div>
+      <div className="md:hidden">
+        <MobileCalendar
+          key={calendar.period.from}
+          weeks={calendar.weeks}
+          units={units}
+          multiMonth={calendar.period.view !== "1m"}
+        />
+      </div>
+      <PeriodSummary calendar={calendar} units={units} />
     </div>
   );
 }
@@ -144,9 +167,9 @@ function DayCell({ day, units }: { day: CalendarDay; units: Units }) {
   );
 }
 
-/** Total hours, then each sport's time and distance (HOME-4, H4). */
+/** Total hours first, then per sport its icon, time and distance (HOME-4, C1). */
 function WeekTotalCell({ totals, units }: { totals: Totals; units: Units }) {
-  const t = useTranslations("Calendar");
+  const hours = useHours();
   if (totals.count === 0) {
     return (
       <div className="bg-muted/30 px-2 py-1.5 text-xs text-muted-foreground">
@@ -156,12 +179,17 @@ function WeekTotalCell({ totals, units }: { totals: Totals; units: Units }) {
   }
   return (
     <div className="flex min-w-0 flex-col gap-1 bg-muted/30 px-2 py-1.5 text-xs">
-      <span className="font-semibold tabular-nums">
-        {formatDuration(totals.totalSeconds)} {t("hoursShort")}
+      <span className="text-sm font-bold tabular-nums">
+        {hours(totals.totalSeconds)}
       </span>
       <SportBar totals={totals} className="h-1.5" />
-      {sportLines(totals, units).map((line) => (
-        <SportLineText key={line.sport} line={line} />
+      {trainedSports(totals).map((sport) => (
+        <SportTimeLine
+          key={sport}
+          sport={sport}
+          totals={totals}
+          units={units}
+        />
       ))}
     </div>
   );
@@ -177,156 +205,290 @@ function shownSports(totals: Totals): Sport[] {
 }
 
 /**
- * Long periods: one row per week with numbers per sport, and a header per month with its totals
- * (owner feedback H8: easy to compare week to week).
+ * Long periods (C3, C4): the weeks grouped by month. Each month shows its average week, each week its
+ * hours and the distance per sport. Months fold open and closed.
  */
 function WeekOverview({ calendar, units }: CalendarProps) {
-  const t = useTranslations("Calendar");
-  const tSports = useTranslations("Activities.sports");
-  const format = useFormatter();
   const sports = shownSports(calendar.totals);
   const maxSeconds = Math.max(
     1,
     ...calendar.weeks.map((week) => week.totals.totalSeconds),
   );
-  const gridTemplateColumns = `8.5rem 9rem repeat(${sports.length}, minmax(0, 1fr))`;
-  const monthTotals = new Map(
-    calendar.months.map((entry) => [entry.month, entry.totals]),
-  );
+  const count = calendar.groups.length;
+  const isOpen = (index: number, limit: number) =>
+    count <= limit || index === count - 1;
 
   return (
     <>
-      {/* Desktop: a table. */}
-      <div className="hidden overflow-hidden rounded-2xl border bg-card md:block">
-        <div
-          className="grid border-b bg-muted/50 text-xs font-medium text-muted-foreground"
-          style={{ gridTemplateColumns }}
-        >
-          <div className="px-3 py-2">{t("week")}</div>
-          <div className="px-3 py-2">{t("total")}</div>
-          {sports.map((sport) => (
-            <div key={sport} className="flex items-center gap-1.5 px-3 py-2">
-              <span className={cn("size-2 rounded-full", SPORT_BG[sport])} />
-              {tSports(sport)}
-            </div>
-          ))}
-        </div>
-        {calendar.weeks.map((week) => (
-          <div key={week.start}>
-            {week.months.map((month) => (
-              <MonthHeader
-                key={month}
-                month={month}
-                totals={monthTotals.get(month)}
-                units={units}
-              />
-            ))}
-            <div
-              className={cn(
-                "grid items-center border-b text-xs",
-                week.days.some((day) => day.isToday) && "bg-muted/60",
-                week.days[0].isFuture && "opacity-40",
-              )}
-              style={{ gridTemplateColumns }}
-            >
-              <div className="flex flex-col px-3 py-2">
-                <span className="font-semibold">
-                  {t("weekNumber", { number: week.number })}
-                </span>
-                <span className="text-muted-foreground">
-                  {format.dateTimeRange(
-                    toDisplayDate(week.start),
-                    toDisplayDate(addDays(week.start, 6)),
-                    { day: "numeric", month: "short" },
-                  )}
-                </span>
-              </div>
-              <div className="flex flex-col gap-1 px-3 py-2">
-                <span className="font-semibold tabular-nums">
-                  {week.totals.count > 0
-                    ? `${formatDuration(week.totals.totalSeconds)} ${t("hoursShort")}`
-                    : "–"}
-                </span>
-                <SportBar
-                  totals={week.totals}
-                  className="h-1.5"
-                  widthPercent={(week.totals.totalSeconds / maxSeconds) * 100}
-                />
-              </div>
-              {sports.map((sport) => (
-                <SportCell
-                  key={sport}
-                  sport={sport}
-                  totals={week.totals}
-                  units={units}
-                />
-              ))}
-            </div>
-          </div>
+      <OverviewTable
+        calendar={calendar}
+        units={units}
+        sports={sports}
+        maxSeconds={maxSeconds}
+        isOpen={(index) => isOpen(index, OPEN_MONTHS.desktop)}
+      />
+      <div className="flex flex-col gap-3 md:hidden">
+        {calendar.groups.map((group, index) => (
+          <MonthCard
+            key={group.month}
+            group={group}
+            units={units}
+            maxSeconds={maxSeconds}
+            open={isOpen(index, OPEN_MONTHS.phone)}
+          />
         ))}
       </div>
-
-      {/* Phone: one card per week. */}
-      <ol className="flex flex-col gap-2 md:hidden">
-        {calendar.weeks
-          .filter((week) => !week.days[0].isFuture)
-          .map((week) => (
-            <li key={week.start} className="flex flex-col gap-2">
-              {week.months.map((month) => (
-                <MonthHeader
-                  key={month}
-                  month={month}
-                  totals={monthTotals.get(month)}
-                  units={units}
-                  compact
-                />
-              ))}
-              <div
-                className={cn(
-                  "flex flex-col gap-1.5 rounded-xl border bg-card px-3 py-2",
-                  week.days.some((day) => day.isToday) &&
-                    "ring-2 ring-foreground",
-                )}
-              >
-                <div className="flex items-baseline justify-between gap-2 text-sm">
-                  <span className="font-semibold">
-                    {t("weekNumber", { number: week.number })}
-                    <span className="font-normal text-muted-foreground">
-                      {" · "}
-                      {format.dateTimeRange(
-                        toDisplayDate(week.start),
-                        toDisplayDate(addDays(week.start, 6)),
-                        { day: "numeric", month: "short" },
-                      )}
-                    </span>
-                  </span>
-                  <span className="font-semibold tabular-nums">
-                    {week.totals.count > 0
-                      ? `${formatDuration(week.totals.totalSeconds)} ${t("hoursShort")}`
-                      : "–"}
-                  </span>
-                </div>
-                <SportBar
-                  totals={week.totals}
-                  className="h-1.5"
-                  widthPercent={(week.totals.totalSeconds / maxSeconds) * 100}
-                />
-                {week.totals.count > 0 && (
-                  <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-xs">
-                    {sportLines(week.totals, units).map((line) => (
-                      <SportLineText key={line.sport} line={line} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </li>
-          ))}
-      </ol>
     </>
   );
 }
 
-function SportCell({
+/** Desktop: one table, a folding header row per month, one row per week. */
+function OverviewTable({
+  calendar,
+  units,
+  sports,
+  maxSeconds,
+  isOpen,
+}: CalendarProps & {
+  sports: Sport[];
+  maxSeconds: number;
+  isOpen: (index: number) => boolean;
+}) {
+  const t = useTranslations("Calendar");
+  const tSports = useTranslations("Activities.sports");
+  const gridTemplateColumns = `13rem 8rem repeat(${sports.length}, minmax(0, 1fr))`;
+
+  return (
+    <div className="hidden overflow-hidden rounded-2xl border bg-card md:block">
+      <div
+        className="grid border-b bg-muted/50 text-xs font-medium text-muted-foreground"
+        style={{ gridTemplateColumns }}
+      >
+        <div className="px-3 py-2">{t("week")}</div>
+        <div className="px-3 py-2">{t("hours")}</div>
+        {sports.map((sport) => (
+          <div key={sport} className="flex items-center gap-1.5 px-3 py-2">
+            <SportIcon sport={sport} />
+            {tSports(sport)}
+          </div>
+        ))}
+      </div>
+      {calendar.groups.map((group, index) => (
+        <details
+          key={group.month}
+          open={isOpen(index)}
+          className="group/month border-b last:border-b-0"
+        >
+          <summary
+            className="grid cursor-pointer list-none items-center bg-muted/40 text-sm hover:bg-muted/70 [&::-webkit-details-marker]:hidden"
+            style={{ gridTemplateColumns }}
+          >
+            <div className="flex min-w-0 items-center gap-1.5 px-3 py-2">
+              <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-open/month:rotate-90" />
+              <span className="flex min-w-0 flex-col">
+                <MonthLink month={group.month} />
+                <span className="text-xs text-muted-foreground">
+                  {t("averageWeek")}
+                </span>
+              </span>
+            </div>
+            <div className="px-3 py-2 font-bold tabular-nums">
+              <AverageHours group={group} />
+            </div>
+            {sports.map((sport) => (
+              <div key={sport} className="px-3 py-2 font-semibold">
+                {group.average ? (
+                  <SportValue
+                    sport={sport}
+                    totals={group.average}
+                    units={units}
+                  />
+                ) : (
+                  "–"
+                )}
+              </div>
+            ))}
+          </summary>
+          {group.weeks.map((week) => (
+            <div
+              key={week.start}
+              className={cn(
+                "grid items-center border-t text-xs",
+                isCurrent(week) && "bg-muted/60",
+              )}
+              style={{ gridTemplateColumns }}
+            >
+              <WeekLabel week={week} className="px-3 py-1.5 pl-9" />
+              <div className="flex flex-col gap-1 px-3 py-1.5">
+                <WeekHours week={week} />
+                <SportBar
+                  totals={week.totals}
+                  className="h-1"
+                  widthPercent={(week.totals.totalSeconds / maxSeconds) * 100}
+                />
+              </div>
+              {sports.map((sport) => (
+                <div key={sport} className="px-3 py-1.5">
+                  <SportValue
+                    sport={sport}
+                    totals={week.totals}
+                    units={units}
+                  />
+                </div>
+              ))}
+            </div>
+          ))}
+        </details>
+      ))}
+    </div>
+  );
+}
+
+/** Phone: a folding card per month with its average week, and two lines per week. */
+function MonthCard({
+  group,
+  units,
+  maxSeconds,
+  open,
+}: {
+  group: MonthGroup;
+  units: Units;
+  maxSeconds: number;
+  open: boolean;
+}) {
+  const t = useTranslations("Calendar");
+  return (
+    <details
+      open={open}
+      className="group/month overflow-hidden rounded-2xl border bg-card"
+    >
+      <summary className="flex cursor-pointer list-none flex-col gap-1.5 bg-muted/40 px-3 py-2.5 [&::-webkit-details-marker]:hidden">
+        <span className="flex items-center justify-between gap-2">
+          <span className="flex items-center gap-1.5">
+            <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-open/month:rotate-90" />
+            <MonthLink month={group.month} />
+          </span>
+          <span className="text-sm font-bold tabular-nums">
+            <AverageHours group={group} />
+          </span>
+        </span>
+        <span className="flex flex-wrap items-center gap-x-3 gap-y-0.5 pl-5.5 text-xs">
+          <span className="text-muted-foreground">{t("averageWeek")}</span>
+          {group.average &&
+            trainedSports(group.average).map((sport) => (
+              <SportDistance
+                key={sport}
+                sport={sport}
+                totals={group.average as Totals}
+                units={units}
+                className="font-medium"
+              />
+            ))}
+        </span>
+      </summary>
+      <ol className="divide-y border-t">
+        {group.weeks.map((week) => (
+          <li
+            key={week.start}
+            className={cn(
+              "flex flex-col gap-1 px-3 py-2",
+              isCurrent(week) && "bg-muted/60",
+            )}
+          >
+            <span className="flex items-baseline justify-between gap-2 text-sm">
+              <WeekLabel week={week} />
+              <span className="font-semibold">
+                <WeekHours week={week} />
+              </span>
+            </span>
+            <SportBar
+              totals={week.totals}
+              className="h-1"
+              widthPercent={(week.totals.totalSeconds / maxSeconds) * 100}
+            />
+            {week.totals.count > 0 && (
+              <span className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs">
+                {trainedSports(week.totals).map((sport) => (
+                  <SportDistance
+                    key={sport}
+                    sport={sport}
+                    totals={week.totals}
+                    units={units}
+                  />
+                ))}
+              </span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </details>
+  );
+}
+
+function isCurrent(week: CalendarWeek): boolean {
+  return week.days.some((day) => day.isToday);
+}
+
+function MonthLink({ month }: { month: string }) {
+  const t = useTranslations("Calendar");
+  const format = useFormatter();
+  return (
+    <CalendarLink
+      query={{ view: "1m", month }}
+      title={t("openMonth")}
+      className="font-semibold underline-offset-2 first-letter:uppercase hover:underline"
+    >
+      {format.dateTime(toDisplayDate(`${month}-01`), {
+        month: "long",
+        year: "numeric",
+      })}
+    </CalendarLink>
+  );
+}
+
+/** "Wk 45 · 2–8 Nov" */
+function WeekLabel({
+  week,
+  className,
+}: {
+  week: CalendarWeek;
+  className?: string;
+}) {
+  const t = useTranslations("Calendar");
+  const format = useFormatter();
+  return (
+    <span className={cn("whitespace-nowrap tabular-nums", className)}>
+      <span className="font-semibold">
+        {t("week")} {week.number}
+      </span>
+      <span className="text-muted-foreground">
+        {" · "}
+        {format.dateTimeRange(
+          toDisplayDate(week.start),
+          toDisplayDate(addDays(week.start, 6)),
+          { day: "numeric", month: "short" },
+        )}
+      </span>
+    </span>
+  );
+}
+
+function WeekHours({ week }: { week: CalendarWeek }) {
+  const hours = useHours();
+  return (
+    <span className="tabular-nums">
+      {week.totals.count > 0 ? hours(week.totals.totalSeconds) : "–"}
+    </span>
+  );
+}
+
+function AverageHours({ group }: { group: MonthGroup }) {
+  const hours = useHours();
+  return <>{group.average ? hours(group.average.totalSeconds) : "–"}</>;
+}
+
+/** A sport's distance in a table cell (time for strength), or "–". */
+function SportValue({
   sport,
   totals,
   units,
@@ -335,154 +497,135 @@ function SportCell({
   totals: Totals;
   units: Units;
 }) {
+  const hours = useHours();
   if (totals.seconds[sport] === 0) {
-    return <div className="px-3 py-2 text-muted-foreground">–</div>;
+    return <span className="text-muted-foreground">–</span>;
   }
-  const distance =
-    (DISTANCE_SPORTS as readonly Sport[]).includes(sport) &&
-    totals.meters[sport] > 0
-      ? formatSportDistance(sport, totals.meters[sport], units)
-      : null;
   return (
-    <div className="flex flex-col px-3 py-2 tabular-nums">
-      <span className="font-medium">
-        {formatDuration(totals.seconds[sport])}
-      </span>
-      {distance && <span className="text-muted-foreground">{distance}</span>}
-    </div>
+    <span className="tabular-nums" title={hours(totals.seconds[sport])}>
+      {totalDistance(sport, totals, units) ?? hours(totals.seconds[sport])}
+    </span>
   );
 }
 
-function MonthHeader({
-  month,
-  totals,
-  units,
-  compact = false,
-}: {
-  month: string;
-  totals: Totals | undefined;
-  units: Units;
-  compact?: boolean;
-}) {
-  const t = useTranslations("Calendar");
-  const format = useFormatter();
-  return (
-    <div
-      className={cn(
-        "flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1",
-        compact
-          ? "px-1 pt-2 text-sm"
-          : "border-b bg-muted/30 px-3 py-2 text-xs",
-      )}
-    >
-      <CalendarLink
-        query={{ view: "1m", month }}
-        title={t("openMonth")}
-        className="font-semibold underline-offset-2 first-letter:uppercase hover:underline"
-      >
-        {format.dateTime(toDisplayDate(`${month}-01`), {
-          month: "long",
-          year: "numeric",
-        })}
-      </CalendarLink>
-      {totals && totals.count > 0 && (
-        <span className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-muted-foreground">
-          <span className="font-semibold text-foreground tabular-nums">
-            {formatDuration(totals.totalSeconds)} {t("hoursShort")}
-          </span>
-          {!compact &&
-            sportLines(totals, units).map((line) => (
-              <SportLineText key={line.sport} line={line} />
-            ))}
-        </span>
-      )}
-    </div>
-  );
-}
+/* ---------------------------------------------- Average week + period total */
 
-/* ----------------------------------------------------------- Period total */
-
-/** Totals for the period, and the average of the finished weeks (HOME-5, H5, H6). */
-function PeriodTotals({ calendar, units }: CalendarProps) {
+/**
+ * The average week is the main number, then the average per sport, then the period's total
+ * (HOME-5, owner feedback C2). Averages use finished weeks only (H6).
+ */
+function PeriodSummary({ calendar, units }: CalendarProps) {
   const t = useTranslations("Calendar");
   const tSports = useTranslations("Activities.sports");
+  const hours = useHours();
+  const format = useFormatter();
   const { totals, weeklyAverage, finishedWeeks } = calendar;
-  const sports = shownSports(totals);
-  const averages = weeklyAverage ? sportLines(weeklyAverage, units) : [];
 
   return (
-    <section className="flex flex-col gap-3 rounded-2xl border bg-card p-4">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <h3 className="font-semibold">{t("periodTotal")}</h3>
-        <p className="text-sm text-muted-foreground tabular-nums">
-          {t("workouts", { count: totals.count })}
-          {" · "}
-          <span className="font-semibold text-foreground">
-            {formatDuration(totals.totalSeconds)} {t("hoursShort")}
-          </span>
-        </p>
+    <section className="flex flex-col gap-4 rounded-2xl border bg-card p-4">
+      <div className="flex flex-col gap-1">
+        <h3 className="text-sm font-medium text-muted-foreground">
+          {t("averageWeek")}
+        </h3>
+        {weeklyAverage ? (
+          <p className="flex flex-wrap items-baseline gap-x-2">
+            <span className="text-3xl font-bold tabular-nums">
+              {hours(weeklyAverage.totalSeconds)}
+            </span>
+            <span className="text-sm text-muted-foreground tabular-nums">
+              {t("perWeekWorkouts", {
+                count: format.number(weeklyAverage.count, {
+                  maximumFractionDigits: 1,
+                }),
+              })}
+            </span>
+          </p>
+        ) : (
+          <p className="text-sm text-muted-foreground">{t("noFinishedWeek")}</p>
+        )}
       </div>
 
       {weeklyAverage && (
-        <p className="flex flex-wrap items-baseline gap-x-2 text-sm">
-          <span className="text-muted-foreground">{t("averageWeek")}</span>
-          <span className="text-lg font-semibold tabular-nums">
-            {formatDuration(weeklyAverage.totalSeconds)} {t("hoursShort")}
-          </span>
-          <span className="text-muted-foreground tabular-nums">
-            {t("workoutsPerWeek", {
-              count: Math.round(weeklyAverage.count * 10) / 10,
-            })}
-          </span>
+        <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {shownSports(totals).map((sport) => (
+            <AverageCard
+              key={sport}
+              label={tSports(sport)}
+              sport={sport}
+              average={weeklyAverage}
+              units={units}
+            />
+          ))}
+        </ul>
+      )}
+
+      {weeklyAverage && (
+        <p className="text-xs text-muted-foreground">
+          {t("averageNote", { count: finishedWeeks })}
         </p>
       )}
 
-      <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-5">
-        {sports.map((sport) => {
-          const isDistance =
-            (DISTANCE_SPORTS as readonly Sport[]).includes(sport) &&
-            totals.meters[sport] > 0;
-          const average = averages.find((line) => line.sport === sport);
-          return (
-            <li
-              key={sport}
-              className="flex flex-col gap-0.5 rounded-xl bg-muted/50 p-3"
-            >
-              <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className={cn("size-2 rounded-full", SPORT_BG[sport])} />
-                {tSports(sport)}
-              </span>
-              <span className="text-lg font-semibold tabular-nums">
-                {isDistance
-                  ? formatSportDistance(sport, totals.meters[sport], units)
-                  : totals.seconds[sport] > 0
-                    ? `${formatDuration(totals.seconds[sport])} ${t("hoursShort")}`
-                    : "–"}
-              </span>
-              {isDistance && (
-                <span className="text-xs tabular-nums">
-                  {formatDuration(totals.seconds[sport])} {t("hoursShort")}
+      <div className="flex flex-col gap-1.5 border-t pt-3">
+        <p className="flex flex-wrap items-baseline justify-between gap-x-4 text-sm">
+          <span className="font-medium">{t("periodTotal")}</span>
+          <span className="text-muted-foreground tabular-nums">
+            {t("workouts", { count: totals.count })}
+            {totals.count > 0 && (
+              <>
+                {" · "}
+                <span className="font-semibold text-foreground">
+                  {hours(totals.totalSeconds)}
                 </span>
-              )}
-              {average && (
-                <span className="text-xs text-muted-foreground tabular-nums">
-                  {t("perWeek", {
-                    value: [average.time, average.distance]
-                      .filter(Boolean)
-                      .join(" · "),
-                  })}
-                </span>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-
-      <p className="text-xs text-muted-foreground">
-        {weeklyAverage
-          ? t("averageNote", { count: finishedWeeks })
-          : t("noFinishedWeek")}
-      </p>
+              </>
+            )}
+          </span>
+        </p>
+        {totals.count > 0 && (
+          <p className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+            {trainedSports(totals).map((sport) => (
+              <SportTimeLine
+                key={sport}
+                sport={sport}
+                totals={totals}
+                units={units}
+              />
+            ))}
+          </p>
+        )}
+      </div>
     </section>
+  );
+}
+
+/** One sport in the average week: distance per week first (time for strength), then hours per week. */
+function AverageCard({
+  label,
+  sport,
+  average,
+  units,
+}: {
+  label: ReactNode;
+  sport: Sport;
+  average: Totals;
+  units: Units;
+}) {
+  const hours = useHours();
+  const distance = totalDistance(sport, average, units);
+  const trained = average.seconds[sport] > 0;
+  return (
+    <li className="flex flex-col gap-0.5 rounded-xl bg-muted/50 p-3">
+      <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <SportIcon sport={sport} />
+        {label}
+      </span>
+      <span className="text-lg font-semibold tabular-nums">
+        {!trained ? "–" : (distance ?? hours(average.seconds[sport]))}
+      </span>
+      {trained && distance && (
+        <span className="text-xs text-muted-foreground tabular-nums">
+          {hours(average.seconds[sport])}
+        </span>
+      )}
+    </li>
   );
 }
