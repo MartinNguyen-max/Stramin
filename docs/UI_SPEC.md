@@ -1,25 +1,28 @@
 # Stramin – UI Spec
 
-> **Status:** Draft v0.3 (2026-11-09)
+> **Status:** Draft v0.4 (2026-11-10)
 > Screens and navigation for the first release. Requirement IDs refer to [REQUIREMENTS.md](REQUIREMENTS.md).
 > Exact visuals (colors, chart styles) are decided during implementation. This doc fixes **what** is on each screen and **how** you get there.
 
 ## Navigation
 
-> **Not decided.** Options include a sidebar or a bottom tab bar. It will be decided later.
-> The main sections are: **Home, Activities, Goals, Training, Records, Settings**.
-> The wireframes below show **content only**, not the final layout or look.
+*Decided 2026-11-10 (work mode, see [REVIEW.md](REVIEW.md)).*
+
+- The main sections are **Home, Goals, Training, Profile**. **Settings** sits behind a gear icon in the header.
+- **Phone:** a fixed **bottom tab bar** with the four sections (icon + label), like most installed apps. The header only has the logo and the gear.
+- **Desktop (≥ 768 px):** the four sections are text links in the header. There is no bottom bar.
+- **Log out** lives in Settings → Account.
 
 ## Screen map
 
 ```
-Landing ── Log in / Sign up ── Connect Strava ── Import progress ── Home
-                                                                     │
-              ┌──────────────┬────────────┬────────────┬──────────┤
-          Activities       Goals      Training      Records    Settings
-              │              │            │                       │
-       Activity detail  Goal detail  Workout detail      Events, Connections,
-                                                         Privacy
+Landing ── Log in / Sign up ── Connect Strava ── Home
+   │                                              │
+ Demo (example data)      ┌───────────┬───────────┼───────────┐
+                        Goals      Training     Profile    Settings ⚙
+                                                (best      (preferences,
+                                                 efforts)   connections,
+                                                            account)
 ```
 
 ---
@@ -35,95 +38,128 @@ Landing ── Log in / Sign up ── Connect Strava ── Import progress ─
 
 ## 2. Home
 
-Top to bottom:
+Top to bottom: **events**, then the **training calendar**.
+
+### 2.1 Events (HOME-1, EVT)
 
 ```
-┌──────────────────────────────────┐
-│ Stramin                 ↻   (●)  │  ↻ = refresh, (●) = settings
-├──────────────────────────────────┤
-│ ┌──────────┐ ┌──────────┐        │  Event countdowns
-│ │ [image]  │ │ [image]  │  →     │  (horizontal scroll)
-│ │ Ironman  │ │ CPH Half │        │
-│ │ 100 days │ │ 42 days  │        │
-│ └──────────┘ └──────────┘        │
-├──────────────────────────────────┤
-│ This week            8 h 30 min  │  Weekly overview
-│ ███████████▓▓▓▓▓▓░░░░▒▒          │  one bar split by sport
-│ Swim 1:30  Bike 4:00  Run 2:30   │
-│ Strength 0:30                    │
-├──────────────────────────────────┤
-│ Weeks                            │  Week comparison
-│  ▂ ▅ ▃ ▇ ▆ ▄ █ ▅                 │  stacked bars by sport,
-│  ←  older           this week →  │  scrollable back in time
-├──────────────────────────────────┤
-│ Average week   [6 months ▾]      │  Average volume
-│ Swim 5.2 km · Bike 120 km        │  period picker
-│ Run 35 km · Strength 1:15        │
-└──────────────────────────────────┘
+┌────────────────┐ ┌────────────────┐ ┌ ─ ─ ─ ─ ─ ─ ┐
+│ [image]      ✎ │ │ [zone colors] ✎│   +  Add event
+│ Ironman CPH    │ │ CPH Half       │ └ ─ ─ ─ ─ ─ ─ ┘
+│ 16 Aug 2026    │ │ 13 Sep 2026    │
+│ 279 days       │ │ 307 days       │
+└────────────────┘ └────────────────┘   ← horizontal scroll
 ```
 
-| Section | Content | Req |
+- One card per upcoming event, sorted by date: background image (or a gradient in the zone colors by type), title, date and the **days left** in large text ("Today!" / "Tomorrow").
+- Tap a card (or ✎) to edit; the dialog also has **Delete**. The last card is **+ Add event**.
+- The dialog has: title, date, type (Triathlon, Run, Bike, Swim, Other) and an optional background image.
+- Empty state: only the "+ Add event" card, with "Add your next race".
+
+### 2.2 Training calendar (HOME-2..10)
+
+Inspired by Garmin Connect's month view (screenshot from the owner, 2026-11-10).
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ ‹  November 2026  ›   Today            [1M] [3M] [6M] [1Y] [Custom] [All]   │
+├────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬────────────────┤
+│ Wk │ Mon   │ Tue   │ Wed   │ Thu   │ Fri   │ Sat   │ Sun   │ Week total     │
+├────┼───────┼───────┼───────┼───────┼───────┼───────┼───────┼────────────────┤
+│ 44 │ 26    │ 27    │ 28    │ 29    │ 30    │ 31    │ 1     │ 9:50 h         │
+│    │▌Aarhus│▌Dubai │▌Swim  │▌Mont- │▌Aarhus│▌Styrke│▌Dubai │ ● Run 23.9 km  │
+│    │ Løb   │ 67.7km│ 1150m │ lay   │ Løb   │ 1:35  │ 50.9km│ ● Bike 171 km  │
+│    │ 13.1km│ 29km/h│ 2:07  │ ...   │ ...   │       │ ...   │ ● Swim 1.2 km  │
+│    │ 5:21… │ 2:19  │ /100m │       │       │       │       │ ● Str. 1:35    │
+├────┼───────┼───────┼───────┼───────┼───────┼───────┼───────┼────────────────┤
+│ 45 │ 2 …                                                    │ …              │
+├────┴────────────────────────────────────────────────────────┴────────────────┤
+│ November total   ● Swim 4.1 km  ● Bike 330 km  ● Run 52 km  ● Strength 2:18 │
+│ 28:50 h in total · 7:10 h per week on average (only for periods > 1 month)  │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+| Part | Content | Req |
 |---|---|---|
-| **Header** | Refresh button. Settings icon. | CON-5 |
-| **Event countdowns** | A card per upcoming event: image, name, days left. Tap to edit, ⋯ to hide, "+" card to add. Empty state: "Add an event". | HOME-4, EVT-3, EVT-4 |
-| **This week** | Total hours and a split by sport, using one color per sport. | HOME-1 |
-| **Weeks** | A stacked bar chart, one bar per week. Tapping a week shows its details. | HOME-2 |
-| **Average week** | Average distance per sport (hours for strength). The period picker includes "All time". | HOME-3 |
+| **Period bar** | ‹ › move one period back/forward. The label shows the period ("November 2026", "Sep – Nov 2026"). "Today" jumps back to the current period. The buttons 1M · 3M · 6M · 1Y · Custom · All choose the period type; Custom opens two date fields. The choice is remembered (cookie, per device). | HOME-6, HOME-8 |
+| **Week rows** | Week number on the left (ISO week numbers with a Monday start, US numbering with a Sunday start). Each day shows its date; days outside the period are dimmed; today has a ring. The first of a month shows the month name ("1 Dec"). | HOME-2 |
+| **Workout chip** | A colored left border (sport color) and a sport icon. **Detailed** (1 month): title, then distance · pace, then time. Run: min/km · Bike: km/h · Swim: min/100 m · Strength/Other: time only. Tapping opens the activity on Strava. | HOME-3, ACT-4 |
+| **Week total** | Total time, then one line per sport that week (distance; time for strength). Counts the whole week, also days outside the period. | HOME-4 |
+| **Period total** | Distance per sport (time for strength), total hours, number of workouts. For periods > 1 month: average per week. Counts only days inside the period. | HOME-5 |
+| **Density** | 1 month: **detailed** chips. 3 months: **compact** chips (icon + distance or time, title on hover). 6 months, 1 year, custom > 14 weeks and all time: **mini** bars (one bar per workout, height = duration). In compact and mini, the week containing the 1st of a month shows the month name, which opens that month in the 1-month view. | HOME-7 |
+| **Phone** | Each week is a card: "Week 45 · 2–8 Nov" + total time; a 7-day strip with dates and sport dots; then the workouts listed by day. Mini density on a phone shows one row per week: 7 small cells with bars + the total. | HOME-9 |
+| **Loading** | The zone spinner while a new period loads. | – |
+| **Not connected** | A card "Connect Strava" (as before), instead of the calendar. | – |
+
+**Sport colors** (unchanged, from the zone colors of the logo): Swim Z1 blue · Bike Z2 green · Run Z5 red · Strength Z3 yellow · Other gray.
 
 ## 3. Activities
 
-Inspired by how Garmin Connect groups activities by week.
-
-```
-┌──────────────────────────────────┐
-│ Activities          [All sports▾]│
-├──────────────────────────────────┤
-│ Week 45 · Nov 3–9     8 h 30 min │  week header with
-│ Swim 1:30 · Bike 4:00 · Run 2:30 │  totals per sport
-├──────────────────────────────────┤
-│ 🏃 Sun  Long run    18.2 km 1:32 │
-│ 🚴 Sat  Indoor ride 45.0 km 1:30 │
-│ 🏊 Fri  Swim         2.5 km 0:48 │
-│ ...                              │
-├──────────────────────────────────┤
-│ Week 44 · Oct 27–Nov 2  ...      │
-└──────────────────────────────────┘
-```
-
-| Screen | Content | Req |
-|---|---|---|
-| **Activity list** | Grouped by week, newest first. A week header with totals per sport. Each row: sport icon, day, name, distance, duration. Sport filter. Infinite scroll. | ACT-1, ACT-2 |
-| **Activity detail** | Key stats (duration, distance, pace/speed, HR, power, elevation). "View on Strava" link. | ACT-3, ACT-4 |
+*Replaced by the Home calendar (2026-11-10).* An activity detail page (ACT-3) may come later; for now every workout links to Strava.
 
 ## 4. Goals
 
+```
+Goals                                              [+ New goal]
+┌ ● Run · 10 km in 40:00 ─────────────────────────────────────┐
+│ Current best 41:30 · 1:30 to go (3.6 %)   ███████████░░      │
+│ ✓ 40:00 on 10 km ≈ 19:15 on 5 km. Your 5 km (19:40) is a bit │
+│   slower → add speed work.                                   │
+│ ✓ Your running volume (32 km/week) is good for 10 km.        │
+│ Workouts that help: [12 × 400 m] [Cruise intervals]          │
+│                                                     Delete   │
+└──────────────────────────────────────────────────────────────┘
+```
+
 | Screen | Content | Req |
 |---|---|---|
-| **Goals list** | Cards: "5 km in 15:00". Each card shows the current best and the gap, e.g. "Current 16:20, 1:20 to go". Button "+ New goal". | GOAL-1, GOAL-3 |
-| **Goal detail** | Target vs. current best. Progress over time. Feedback hints. Linked event (optional). | GOAL-2..4 |
-| **New / edit goal** | Sport, distance, target time, optional event. | GOAL-1 |
+| **Goals list** | One card per goal: sport color, "10 km in 40:00", current best and the gap (time and %), a progress bar, the feedback (2–4 short tips, rules in [feedback-rules.md](feedback-rules.md)) and links to matching workouts. "Achieved 🎉" when the best is already at or below the target. | GOAL-1, GOAL-3, GOAL-4, GOAL-6 |
+| **New goal** | Sport → distance → shows the current best and three suggested targets (≈ 2 %, 5 %, 10 % faster, rounded) as buttons, or a custom time. Targets slower than the current best are refused. Without a best effort, any target is allowed. | GOAL-1, GOAL-5 |
 
-## 5. Training
+## 5. Training inspiration
+
+```
+Training inspiration
+[Run] [Bike] [Swim]          [All] [● Z1–Z2 Easy] [● Z3 Moderate] [● Z4–Z5 Hard]
+Paces based on your 5 km best (19:40, VDOT 50.6). Change it on your profile.
+┌ ● Z5  12 × 400 m ──────────────────────────────┐
+│ Short, fast repeats for speed.        ~55 min  │
+│ ● Z1  Warm-up 15 min · 5:23/km                 │
+│ ● Z5  12 × 400 m · 1:24 (3:30/km)              │
+│ ● Z1      200 m easy jog between               │
+│ ● Z1  Cool-down 10 min · 5:23/km               │
+└────────────────────────────────────────────────┘
+```
 
 | Screen | Content | Req |
 |---|---|---|
-| **Workout list** | ~10 running workouts with a name, short description and duration. | TRN-1 |
-| **Workout detail** | The steps in order (warm-up → intervals → cool-down) with a personal target pace per step. Without best efforts, it shows "Connect Strava / log a run to see your paces". | TRN-2..4 |
+| **Catalog** | Sport tabs and effort chips (zone colors), saved in the URL. A card per workout: name, short description, duration, and the steps with zone dot and personal pace. | TRN-1..5 |
+| **No best effort** | Steps without paces, and a note: "Add a best effort on your profile to see your paces". | TRN-4 |
 
-## 6. Records
+## 6. Profile
+
+```
+Profile
+(M) Martin · martin@…
+Best efforts                                [Run] [Bike] [Swim]
+ Distance   Time      Pace       Date         Source
+ 5 km       19:40     3:56/km    12 Oct 2026  Strava ↗        ✎
+ 10 km      41:30     4:09/km    3 Sep 2026   Manual          ✎ ↺
+ …
+Your running level: VDOT 50.6
+ Easy 4:56–5:28/km · Marathon 4:24 · Threshold 4:08 · Interval 3:48 · Repetition 3:34
+```
 
 | Section | Content | Req |
 |---|---|---|
-| **Sport tabs** | Run · Bike · Swim | – |
-| **Best efforts** | Distance, time, pace, date. Tap a row to open the activity on Strava. | BE-1, BE-2, BE-4 |
-| **Bike power** | Duration and best watts (Bike tab only). | BE-3 |
-| **Indoor/outdoor** | A quick filter (Both / Outdoor / Indoor) for Run and Bike. It defaults to the setting. | SPT-4 |
+| **Header** | Name and email. | ACC-5 |
+| **Best efforts** | Tabs per sport. Distance, time, pace (speed for bike), date and source: "Strava" (estimate, links to the activity) or "Manual". ✎ edits the time (and optionally the date); ↺ resets to the Strava value. Missing values show "–" and can be added by hand. | BE-2, BE-4, BE-6, BE-7 |
+| **Running level** | VDOT and the five training paces, from the best running effort. Hidden without running efforts. | TRN-3 |
 
 ## 7. Settings
 
 | Section | Content | Req |
 |---|---|---|
-| **Events** | Create, edit, delete and hide events. Upload images. | EVT-1, EVT-2 |
 | **Preferences** | Units · Week start · Language · Indoor/outdoor | SET-1..4 |
 | **Connections** | Strava: connected/disconnect. Garmin: coming soon. | SET-5, CON-2 |
 | **Privacy** | Export data · Delete account · Privacy policy | PRIV-1, PRIV-2, PRIV-5 |
@@ -152,5 +188,6 @@ Inspired by how Garmin Connect groups activities by week.
 
 ## Open questions
 
-- [ ] **Navigation pattern** (sidebar, bottom tabs, other) and **Home layout**.
-- [ ] Which details of Garmin's weekly activity view should we copy exactly? (To be shown with a screenshot when we build the screen.)
+- [x] **Navigation pattern** and **Home layout**: decided 2026-11-10 (see above, to be reviewed by the owner).
+- [x] Garmin's month view: shown by the owner with a screenshot (2026-11-10); the calendar follows it.
+- [ ] A sport filter on the calendar (ACT-2).

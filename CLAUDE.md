@@ -18,7 +18,7 @@ Guidance for Claude (and any contributor) working on Stramin.
 
 - Claude works on its own without asking: code, docs, checks, `git commit`, `pnpm add`, `pnpm db:generate`.
 - All work goes on **one branch**, with local commits only. **No `git push`.** The owner pushes when they are back.
-- When a choice comes up, Claude picks its recommendation, writes it down in the docs, and keeps going.
+- When a choice comes up, Claude **makes the decision itself**, writes it down in the docs and in **`docs/REVIEW.md`** (what was decided, why, and the alternatives), and keeps going. The owner reviews the list when back, and anything can be discussed and changed.
 - Claude only stops for things only the owner can do (accounts, keys, passwords), or when the owner stops it.
 - At the end: a short report covering what was done, which choices were made, and what's next.
 

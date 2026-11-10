@@ -1,6 +1,6 @@
 # Stramin – Plan
 
-> **Status:** Draft v0.1 (2026-11-09)
+> **Status:** Draft v0.2 (2026-11-10)
 > Milestones for the first release. Requirement IDs refer to [REQUIREMENTS.md](REQUIREMENTS.md).
 > Each milestone ends with something that **works and is deployed**.
 
@@ -45,9 +45,9 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
 ### M2 – Accounts
 - [x] Supabase Auth: email & password, verification, password reset (ACC-1..3) *(works online, 2026-11-09)*
 - [x] Google login (ADR 0004) *(works online, 2026-11-10)*
-- [ ] Log in with a saved login: show "Continue as {name}" / "Use another account" instead of logging in silently (ACC-3)
-- [ ] Name: "What should we call you?" at sign up, from Google, editable in Settings (ACC-5)
-- [ ] Google button styled after Google's guideline, with the official G logo
+- [x] Log in with a saved login: show "Continue as {name}" / "Use another account" instead of logging in silently (ACC-3) *(built, to test on a preview)*
+- [x] Name: "What should we call you?" at sign up, from Google, editable in Settings (ACC-5) *(built, to test)*
+- [x] Google button styled after Google's guideline, with the official G logo *(built, to test)*
 - [x] `profiles` table with RLS, and the RLS-aware Drizzle client (PRIV-3)
 - [x] Protected app area + log out
 - [x] Landing page: **Log in** and **Sign up** buttons (replacing "Coming soon")
@@ -57,6 +57,22 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
 - [x] Zone spinner as loading indicator; Strava data cached in the browser for 6 h (until M4)
 
 ✅ **Done when:** you can sign up, log in, change settings and log out.
+
+### M2.5 – New Home, Goals, Training, Profile *(work mode, 2026-11-10)*
+The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals, training inspiration). Built before M3/M4 on the temporary Strava connection. Decisions to review: [REVIEW.md](REVIEW.md).
+- [ ] Docs: requirements, UI spec, ADR 0010 (VDOT), ADR 0011 (best efforts v1), feedback rules
+- [ ] Navigation: bottom tabs on phones, header links on desktop (Home, Goals, Training, Profile, Settings ⚙)
+- [ ] Home: training calendar with week numbers, dates, workouts, week totals and period totals (HOME-2..5)
+- [ ] Home: period picker 1M / 3M / 6M / 1Y / custom / all, remembered per device, compact and mini views (HOME-6..9)
+- [ ] Home: fetch only the shown period from Strava (HOME-10)
+- [ ] Events with countdown, image upload and default backgrounds (HOME-1, EVT-1..4)
+- [ ] Profile: best efforts (estimate + manual), running level and paces (BE-2, BE-4, BE-6, BE-7)
+- [ ] Training inspiration: catalog with zone filter and personal paces (TRN-1..5)
+- [ ] Goals: suggestions, gap, equivalent performances, feedback, workouts (GOAL-1, GOAL-3..6)
+- [ ] Database: `events`, `goals`, `personal_bests`, `event-images` bucket (migrations) *(owner applies them: see REVIEW.md)*
+- [ ] Demo page with example data (`/demo`), also used for screenshots and tests
+
+✅ **Done when:** the owner has reviewed the new Home and pages on a preview, and the migrations are applied.
 
 ### M3 – Strava connection
 - [ ] Strava OAuth with "Connect with Strava" button (CON-1, NFR-5)
@@ -76,42 +92,33 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
 ✅ **Done when:** your full Strava history is in the database and new activities appear automatically.
 
 ### M5 – Activities
-- [ ] Decide the **navigation pattern** (UI_SPEC open question)
-- [ ] Activity list grouped by week, with weekly totals (ACT-1, ACT-2)
-- [ ] Activity detail + "View on Strava" (ACT-3, ACT-4)
-
-✅ **Done when:** you can browse all your activities week by week.
+- [x] ~~Navigation pattern~~ *(decided in M2.5)*
+- [x] ~~Activity list grouped by week~~ *(replaced by the Home calendar, M2.5)*
+- [ ] Activity detail page (ACT-3) *(Should; every workout links to Strava for now, ACT-4)*
+- [ ] Sport filter on the calendar (ACT-2, Future)
 
 ### M6 – Home
-- [ ] Decide the **Home layout** (UI_SPEC open question)
-- [ ] This week by sport (HOME-1)
-- [ ] Week comparison chart (HOME-2)
-- [ ] Average volume with period picker (HOME-3)
+- [x] ~~This week, week chart, average week~~ *(replaced by the calendar, M2.5)*
+- [ ] Switch the calendar to the `activities` table once M4 is done (NFR-3)
 
 ✅ **Done when:** Home shows correct numbers, checked against Strava.
 
-### M7 – Best efforts
+### M7 – Best efforts (exact)
 - [ ] Stream fetching + compressed storage (ADR 0008)
-- [ ] Fastest-segment and best-power algorithms, unit tested (BE-1..3)
+- [ ] Fastest-segment and best-power algorithms, unit tested (BE-1, BE-3)
+- [ ] Replace the estimates (ADR 0011) with exact segments; manual values stay (BE-5)
 - [ ] Top-3 retention for the Strava cache (ADR 0009)
-- [ ] Records page with indoor/outdoor filter (BE-4, BE-5, SPT-4, SET-4)
+- [ ] Indoor/outdoor filter (SPT-4, SET-4)
 
 ✅ **Done when:** your records match what you expect from your own history.
 
-### M8 – Events & goals
-- [ ] Events: CRUD, image upload, default images (EVT-1, EVT-2, EVT-4)
-- [ ] Countdowns on Home, hideable (HOME-4, EVT-3)
-- [ ] Goals: CRUD + gap to current best (GOAL-1..3)
-- [ ] Write the feedback rules doc → implement feedback (GOAL-4)
+### M8 – Events & goals (rest)
+- [ ] Link a goal to an event (GOAL-2, Future)
+- [ ] Hide an event without deleting it (EVT-5, Future)
 
-✅ **Done when:** your Ironman countdown is on Home, and a 5 km goal shows the gap and feedback.
-
-### M9 – Training library
-- [ ] Write the ~10 running workouts *(owner: you)*
-- [ ] Decide the pace model (new ADR)
-- [ ] Workout list + detail with personal paces (TRN-1..4)
-
-✅ **Done when:** each workout shows your personal target paces.
+### M9 – Training library (rest)
+- [ ] Replace Claude's placeholder workouts with your own *(owner: you)*
+- [ ] Heart-rate zones in bpm (needs max/threshold heart rate)
 
 ### M10 – Garmin *(starts when Garmin approves)*
 - [ ] Garmin OAuth + push webhook (CON-7)
