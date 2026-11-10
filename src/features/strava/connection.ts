@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { decryptToken, encryptToken } from "@/lib/crypto/tokens";
-import { getAdminDb } from "@/lib/db/client";
+import { getAdminDb, retryOnConnectionError } from "@/lib/db/client";
 import { activities, type ConnectionRow, connections } from "@/lib/db/schema";
 import {
   deauthorize,
@@ -27,12 +27,14 @@ export class AthleteTakenError extends Error {
 export async function getStravaConnection(
   userId: string,
 ): Promise<ConnectionRow | undefined> {
-  const [row] = await getAdminDb()
-    .select()
-    .from(connections)
-    .where(
-      and(eq(connections.userId, userId), eq(connections.provider, "strava")),
-    );
+  const [row] = await retryOnConnectionError(() =>
+    getAdminDb()
+      .select()
+      .from(connections)
+      .where(
+        and(eq(connections.userId, userId), eq(connections.provider, "strava")),
+      ),
+  );
   return row;
 }
 

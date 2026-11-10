@@ -81,3 +81,31 @@ describe("workouts", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 });
+
+describe("blocks and distance (owner feedback T1, T3)", () => {
+  test("repeats are expanded into blocks, without a rest after the last one", async () => {
+    const { workoutSegments } = await import("./plan");
+    const intervals = WORKOUTS.find((w) => w.id === "intervals-400");
+    if (!intervals) throw new Error("missing workout");
+    const segments = workoutSegments(intervals, personalPaces(efforts));
+    // Warm-up, 12 × 400 m, 11 recoveries, cool-down.
+    expect(segments).toHaveLength(1 + 12 + 11 + 1);
+    expect(segments[1].zone).toBe(5);
+    expect(segments[2].zone).toBe(1);
+  });
+
+  test("distance: exact for distance steps, from the pace for time steps", async () => {
+    const { workoutMeters } = await import("./plan");
+    const longRun = WORKOUTS.find((w) => w.id === "long-run");
+    const ride = WORKOUTS.find((w) => w.id === "bike-endurance");
+    if (!longRun || !ride) throw new Error("missing workout");
+    expect(workoutMeters(longRun, personalPaces(efforts))).toBe(16_000);
+    expect(workoutMeters(ride, personalPaces(efforts))).toBeNull();
+    const easy = WORKOUTS.find((w) => w.id === "easy-run");
+    if (!easy) throw new Error("missing workout");
+    // 45 min at an easy pace of about 5:20/km is roughly 8–9 km.
+    const meters = workoutMeters(easy, personalPaces(efforts)) ?? 0;
+    expect(meters).toBeGreaterThan(7500);
+    expect(meters).toBeLessThan(9500);
+  });
+});

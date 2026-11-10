@@ -43,6 +43,13 @@
       "when": 1794334749355,
       "tag": "20261110181909_activities_grant_and_sync_cron",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794338659916,
+      "tag": "20261110192419_nifty_shinko_yamashiro",
+      "breakpoints": true
     }
   ]
 }

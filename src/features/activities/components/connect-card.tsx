@@ -13,12 +13,6 @@ export function ConnectCard({ next = "/home" }: { next?: string }) {
       <div className="flex flex-wrap gap-3">
         <ConnectStravaButton next={next} />
         <Link
-          href="/demo"
-          className={buttonVariants({ variant: "outline", size: "lg" })}
-        >
-          {t("connect.demo")}
-        </Link>
-        <Link
           href="/guide"
           className={buttonVariants({ variant: "ghost", size: "lg" })}
         >

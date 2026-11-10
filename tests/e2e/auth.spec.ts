@@ -9,7 +9,7 @@ test("app pages require login", async ({ page }) => {
 
 test("landing page links to sign up and log in", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: "Sign up free" }).click();
+  await page.getByRole("link", { name: "Sign up free" }).first().click();
   await expect(
     page.getByRole("heading", { level: 1, name: "Sign up" }),
   ).toBeVisible();

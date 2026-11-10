@@ -33,12 +33,20 @@ export function EventCard({
   const t = useTranslations("Events");
   const format = useFormatter();
   const days = daysUntil(event.date, today);
+  // "38 days left": the number big, the words small (owner feedback H1).
   const countdown =
-    days === 0
-      ? t("today")
-      : days === 1
-        ? t("tomorrow")
-        : t("daysLeft", { count: days });
+    days === 0 ? (
+      t("today")
+    ) : days === 1 ? (
+      t("tomorrow")
+    ) : (
+      <>
+        {days}
+        <span className="ml-1.5 text-base font-semibold">
+          {t("daysLeftLabel", { count: days })}
+        </span>
+      </>
+    );
 
   return (
     <div className={cn(CARD, "text-white")}>

@@ -1,8 +1,9 @@
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { ZONE_BG, type Zone } from "@/features/training/zones";
-import type { BestEffort } from "@/lib/analytics/best-efforts";
+import { type BestEffort, findEffort } from "@/lib/analytics/best-efforts";
 import {
   bestVdot,
+  equivalentTime,
   PACE_ZONES,
   type PaceTarget,
   trainingPaces,
@@ -11,6 +12,9 @@ import { formatClock, formatPacePerKm } from "@/lib/format";
 import type { Units } from "@/lib/preferences";
 import { cn } from "@/lib/utils";
 import { effortDistanceLabel } from "../distance-label";
+
+/** Race predictions (owner feedback P4), like Garmin's race predictor. */
+const PREDICTED = [5000, 10_000, 21_097.5, 42_195];
 
 const ORDER: PaceTarget[] = [
   "recovery",
@@ -46,6 +50,10 @@ export function RunningLevel({
   }
 
   const paces = trainingPaces(basis.level);
+  const names = {
+    halfMarathon: tDistances("halfMarathon"),
+    marathon: tDistances("marathon"),
+  };
   const pace = (secondsPerKm: number) =>
     formatPacePerKm(1000, secondsPerKm, units);
 
@@ -61,14 +69,40 @@ export function RunningLevel({
       </div>
       <p className="text-sm text-muted-foreground">
         {t("basis", {
-          distance: effortDistanceLabel("run", basis.distance, locale, {
-            halfMarathon: tDistances("halfMarathon"),
-            marathon: tDistances("marathon"),
-          }),
+          distance: effortDistanceLabel("run", basis.distance, locale, names),
           time: formatClock(basis.seconds),
         })}{" "}
         {t("explain")}
       </p>
+      <div className="flex flex-col gap-2">
+        <h3 className="text-sm font-semibold">{t("predictions")}</h3>
+        <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {PREDICTED.map((distance) => {
+            const best = findEffort(efforts, "run", distance);
+            return (
+              <li
+                key={distance}
+                className="flex flex-col gap-0.5 rounded-xl border p-3"
+              >
+                <span className="text-xs text-muted-foreground">
+                  {effortDistanceLabel("run", distance, locale, names)}
+                </span>
+                <span className="text-lg font-semibold tabular-nums">
+                  {formatClock(equivalentTime(basis.level, distance))}
+                </span>
+                {best && (
+                  <span className="text-xs text-muted-foreground tabular-nums">
+                    {t("yourBest", { time: formatClock(best.seconds) })}
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+        <p className="text-xs text-muted-foreground">{t("predictionsNote")}</p>
+      </div>
+
+      <h3 className="text-sm font-semibold">{t("pacesTitle")}</h3>
       <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {ORDER.map((target) => {
           const zone = PACE_ZONES[target] as Zone;

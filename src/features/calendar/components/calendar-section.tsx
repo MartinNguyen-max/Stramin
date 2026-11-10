@@ -54,6 +54,7 @@ export async function CalendarSection({
   weekStart,
   load,
   notConnected,
+  whenEmpty,
 }: {
   base: CalendarBase;
   request: CalendarRequest;
@@ -61,6 +62,8 @@ export async function CalendarSection({
   weekStart: WeekStartDay;
   load: ActivityLoader;
   notConnected: React.ReactNode;
+  /** Shown instead of an empty calendar, e.g. while the first import runs (owner feedback H3). */
+  whenEmpty?: React.ReactNode;
 }) {
   // The calendar depends on today's date, so it's always rendered per request.
   await connection();
@@ -79,6 +82,7 @@ export async function CalendarSection({
     activities = await load(visibleRange(period, weekStart));
   }
   if (!activities) return notConnected;
+  if (activities.length === 0 && whenEmpty) return whenEmpty;
 
   const calendar = buildCalendar(activities, period, weekStart, today);
   const label = await periodLabel(period);

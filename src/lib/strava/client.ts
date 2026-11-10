@@ -179,6 +179,20 @@ export type StravaActivity = {
   trainer: boolean;
   /** The owner. In summaries only the id. */
   athlete?: { id: number };
+  average_watts?: number;
+  weighted_average_watts?: number;
+  /** True when the watts come from a power meter (not estimated by Strava). */
+  device_watts?: boolean;
+};
+
+/** The detailed activity adds Strava's own best efforts for runs (fastest 1 km, 5 km, …, elapsed time). */
+export type StravaDetailedActivity = StravaActivity & {
+  best_efforts?: {
+    name: string;
+    distance: number;
+    elapsed_time: number;
+    moving_time: number;
+  }[];
 };
 
 async function fetchPage(
@@ -255,7 +269,7 @@ export async function fetchActivity(
   accessToken: string,
   id: string,
   tracker?: RateTracker,
-): Promise<StravaActivity | null> {
+): Promise<StravaDetailedActivity | null> {
   const response = await apiGet(`/activities/${id}`, accessToken, tracker);
   if (response.status === 404 || response.status === 403) return null;
   if (!response.ok) {
@@ -265,4 +279,32 @@ export async function fetchActivity(
     );
   }
   return response.json();
+}
+
+/** An activity's power data: watts per sample and the sample times in seconds. Null without power data. */
+export async function fetchPowerStream(
+  accessToken: string,
+  id: string,
+  tracker?: RateTracker,
+): Promise<{ time: number[]; watts: number[] } | null> {
+  const response = await apiGet(
+    `/activities/${id}/streams?keys=time,watts&key_by_type=true`,
+    accessToken,
+    tracker,
+  );
+  if (response.status === 404) return null;
+  if (!response.ok) {
+    throw new StravaError(
+      `Strava streams for ${id} failed: ${response.status}`,
+      response.status,
+    );
+  }
+  const streams = (await response.json()) as Record<
+    string,
+    { data?: number[] }
+  >;
+  const time = streams.time?.data;
+  const watts = streams.watts?.data;
+  if (!time || !watts || time.length !== watts.length) return null;
+  return { time, watts };
 }

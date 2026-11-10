@@ -11,42 +11,49 @@
     "hero": {
       "badge": "Under udvikling",
       "title": "Din træning, endelig overskuelig.",
-      "subtitle": "Forbind Garmin eller Strava, og se din svømning, cykling, løb og styrketræning, som den burde vises. Gratis, og kun for dine øjne.",
+      "subtitle": "Forbind Strava, og se din svømning, cykling, løb og styrketræning, som den bør vises: en klar kalender, ugens totaler, dine bedste præstationer og mål. Gratis, og kun for dine øjne.",
       "signup": "Opret gratis konto",
-      "login": "Log ind"
-    },
-    "features": {
-      "title": "Alt det vigtige, på én skærm",
-      "weekly": {
-        "title": "Ugeoverblik",
-        "text": "Træningstimer fordelt på svøm, cykel, løb og styrke, sammenlignet uge for uge."
-      },
-      "averages": {
-        "title": "Din typiske uge",
-        "text": "Gennemsnitlig mængde pr. sport over en valgfri periode, fra 4 uger til hele tiden."
-      },
-      "bestEfforts": {
-        "title": "Bedste præstationer",
-        "text": "Dine hurtigste 5 km, 10 km, halv- og helmaraton, cykelrekorder og bedste watt."
-      },
-      "goals": {
-        "title": "Mål",
-        "text": "Sæt et mål som 5 km på 15:00, og se hvor langt du er, og hvad du skal arbejde på."
-      },
-      "countdowns": {
-        "title": "Nedtælling til løb",
-        "text": "Dit næste løb, altid et blik væk."
-      },
-      "activities": {
-        "title": "Aktivitetslog",
-        "text": "Alle træningspas fra Garmin og Strava, samlet uge for uge."
-      }
+      "login": "Log ind",
+      "demo": "Se demoen",
+      "haveAccount": "Har du allerede en konto?"
     },
     "privacy": {
       "title": "Dine data er dine",
       "onlyYou": "Kun du kan se dine data. Ingen feeds, ingen ranglister, ingen offentlige profiler.",
       "noAds": "Ingen reklamer, intet salg af data og ingen AI-træning på dine data.",
       "control": "Eksportér eller slet alt permanent når som helst."
+    },
+    "showcase": {
+      "sample": "Eksempeldata",
+      "calendar": {
+        "eyebrow": "Kalender",
+        "title": "Al din træning, måned for måned",
+        "text": "Hver træning på sin dag med distance, tempo og tid. Ugens total til højre, gennemsnitsugen nederst, og fra én måned til hele historikken."
+      },
+      "events": {
+        "eyebrow": "Nedtælling",
+        "title": "Ved altid, hvor længe der er til løbsdagen",
+        "text": "Tilføj dine løb med et billede, og tæl ned til dem øverst på siden."
+      },
+      "level": {
+        "eyebrow": "Dit niveau",
+        "title": "Bedste præstationer, forventede tider og watt",
+        "text": "Dine hurtigste tider fra Strava, hvad du kan løbe i et løb, dine watt og din FTP, og de tempoer, du skal træne i."
+      },
+      "training": {
+        "eyebrow": "Træning",
+        "title": "Træninger med dine egne tempoer",
+        "text": "Vælg roligt, moderat eller hårdt. Hver blok viser det tempo eller den zone, der passer til dig. Tryk på en træning for at se trinnene."
+      },
+      "goals": {
+        "eyebrow": "Mål",
+        "title": "Mål, der starter, hvor du er",
+        "text": "Sæt et mål, der er hurtigere end din bedste, og få enkle tips og de træninger, der hjælper dig derhen."
+      }
+    },
+    "cta": {
+      "title": "Se din egen træning sådan her",
+      "text": "Gratis, privat og lavet til triatleter. Det tager et minut at forbinde Strava."
     }
   },
   "Footer": {
@@ -155,10 +162,10 @@
     "connect": {
       "title": "Forbind dine træningsdata",
       "text": "Forbind Strava for at se hele din træningshistorik. Garmin-brugere kan også importere deres historik med en engangs-download.",
-      "garminGuide": "Guide til Garmin-historik",
-      "demo": "Se et eksempel"
+      "garminGuide": "Guide til Garmin-historik"
     },
-    "loading": "Henter din træning…"
+    "loading": "Henter din træning…",
+    "unavailable": "Din træning kunne ikke hentes lige nu. Genindlæs siden for at prøve igen."
   },
   "Activities": {
     "hours": "t",
@@ -228,7 +235,14 @@
     "workouts": "{count, plural, =0 {Ingen træninger} one {# træning} other {# træninger}}",
     "perWeek": "{value} pr. uge",
     "allTimeSince": "Alt (siden {date})",
-    "viewOnStrava": "View on Strava"
+    "viewOnStrava": "View on Strava",
+    "total": "Total",
+    "averageWeek": "Gennemsnitlig uge",
+    "workoutsPerWeek": "{count} træninger pr. uge",
+    "averageNote": "Gennemsnittet bruger de {count, plural, one {# færdige uge} other {# færdige uger}}, der vises. Den aktuelle uge tæller først med, når den er slut.",
+    "noFinishedWeek": "Ingen uge i perioden er slut endnu, så der er intet ugentligt gennemsnit.",
+    "restDay": "Ingen træning denne dag.",
+    "importWaiting": "Henter dine træninger fra Strava…"
   },
   "Events": {
     "title": "Events",
@@ -236,7 +250,6 @@
     "emptyHint": "Tilføj dit næste løb, og tæl ned til det",
     "today": "I dag!",
     "tomorrow": "I morgen",
-    "daysLeft": "{count, plural, one {# dag} other {# dage}}",
     "editEvent": "Rediger {title}",
     "addTitle": "Nyt event",
     "editTitle": "Rediger event",
@@ -262,7 +275,7 @@
     "saving": "Gemmer…",
     "delete": "Slet",
     "confirmDelete": "Vil du slette det?",
-    "unavailable": "Events kommer snart: databasen skal opdateres først.",
+    "unavailable": "Events kunne ikke hentes lige nu. Genindlæs siden for at prøve igen.",
     "errors": {
       "titleRequired": "Giv eventet en titel.",
       "titleTooLong": "Titlen er for lang (maks. 60 tegn).",
@@ -271,7 +284,8 @@
       "imageUpload": "Billedet kunne ikke uploades. Prøv et andet, eller gem uden billede.",
       "unavailable": "Events kan ikke gemmes lige nu. Prøv igen senere.",
       "generic": "Noget gik galt. Prøv igen."
-    }
+    },
+    "daysLeftLabel": "{count, plural, one {dag tilbage} other {dage tilbage}}"
   },
   "Demo": {
     "title": "Eksempeldata",
@@ -300,7 +314,7 @@
     "loading": "Finder dine bedste præstationer…",
     "bestEfforts": {
       "title": "Bedste præstationer",
-      "note": "Strava-værdierne er skøn ud fra aktiviteternes gennemsnitstempo: præcise for løb, lidt for langsomme, når din hurtigste indsats lå inde i en længere tur. Tryk på ✎ for at skrive din rigtige tid.",
+      "note": "Strava-værdierne kommer fra Stravas egne bedste præstationer, hvor det er muligt; ellers er de skønnet ud fra dine aktiviteter (pauser tæller med, som på Strava). Tryk på ✎ for at skrive din egen tid.",
       "distance": "Distance",
       "time": "Tid",
       "pace": "Tempo",
@@ -321,7 +335,8 @@
         "dateInvalid": "Vælg en dato, der ikke er i fremtiden.",
         "unavailable": "Det kan ikke gemmes lige nu. Prøv igen senere.",
         "generic": "Noget gik galt. Prøv igen."
-      }
+      },
+      "estimate": "Skøn"
     },
     "level": {
       "title": "Dit løbeniveau",
@@ -337,6 +352,23 @@
         "threshold": "Tærskel",
         "interval": "Interval",
         "repetition": "Gentagelser"
+      },
+      "predictions": "Forventede løbstider",
+      "predictionsNote": "Hvad dit niveau forudsiger med den rette træning. Længere løb kræver også den ugentlige mængde.",
+      "yourBest": "Din bedste: {time}",
+      "pacesTitle": "Træningstempoer"
+    },
+    "power": {
+      "title": "Watt på cyklen",
+      "ftp": "FTP ≈ {watts} W",
+      "ftpNote": "95 % af dine bedste 20 minutter",
+      "none": "Dine bedste watt vises her efter næste synkronisering, for ture med wattmåler.",
+      "viewRide": "Se turen på Strava",
+      "durations": {
+        "60": "1 min",
+        "300": "5 min",
+        "1200": "20 min",
+        "3600": "60 min"
       }
     }
   },
@@ -429,8 +461,48 @@
       "swim-threshold": {
         "name": "Tærskel 10 × 100 m",
         "description": "Gentagelser i tærskeltempo med en hurtig afslutning."
+      },
+      "bike-recovery": {
+        "name": "Restitutionstur",
+        "description": "Meget let træden for at løsne benene efter en hård dag."
+      },
+      "bike-sweet-spot": {
+        "name": "Sweet spot 3 × 15 min",
+        "description": "Lige under tærsklen: meget form for tiden."
+      },
+      "bike-long-tempo": {
+        "name": "Langtur med tempo",
+        "description": "Udholdenhed med en tempoblok i midten, som en løbssimulering."
+      },
+      "bike-ftp-2x20": {
+        "name": "FTP-booster 2 × 20 min",
+        "description": "Den klassiske tærskeltræning, der hæver din FTP."
+      },
+      "bike-over-unders": {
+        "name": "Over-unders",
+        "description": "Tærskel med korte ryk over: lærer dig at restituere, mens du arbejder."
+      },
+      "bike-sprints": {
+        "name": "Spurter 10 × 30 sek",
+        "description": "Korte, maksimale ryk med lang pause, for topfart."
+      },
+      "swim-endurance": {
+        "name": "Udholdenhed 1500 m",
+        "description": "Én lang, jævn svømmetur, der bygger fundamentet."
+      },
+      "swim-pyramid": {
+        "name": "Pyramide 100–400–100",
+        "description": "Op og ned ad stigen i et jævnt, stærkt tempo."
+      },
+      "swim-sprints": {
+        "name": "Spurter 12 × 50 m",
+        "description": "Hurtige 50'ere med fuld pause, for fart og et stærkt tag."
       }
-    }
+    },
+    "showSteps": "Vis trinnene",
+    "hideSteps": "Skjul trinnene",
+    "distance": "ca. {distance}",
+    "profileLabel": "Træningens blokke: jo højere, jo hårdere"
   },
   "Goals": {
     "title": "Mål",

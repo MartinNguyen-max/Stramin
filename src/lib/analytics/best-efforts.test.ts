@@ -1,25 +1,27 @@
 import { describe, expect, test } from "vitest";
 import {
   distanceKey,
+  type EffortActivity,
   estimateBestEfforts,
   findEffort,
   isEffortDistance,
   mergeBestEfforts,
 } from "./best-efforts";
-import type { CalendarActivity } from "./calendar";
 
 function run(
   id: string,
   meters: number,
   seconds: number,
   date = "2026-10-01",
-): CalendarActivity {
+  elapsed = seconds,
+): EffortActivity {
   return {
     id,
     name: "Run",
     sport: "run",
     startLocal: `${date}T07:00:00Z`,
     movingSeconds: seconds,
+    elapsedSeconds: elapsed,
     distanceMeters: meters,
     indoor: false,
   };
@@ -70,5 +72,87 @@ describe("mergeBestEfforts", () => {
     expect(distanceKey(21_097.5)).toBe(21_098);
     expect(isEffortDistance("run", 21_098)).toBe(true);
     expect(isEffortDistance("run", 3000)).toBe(false);
+  });
+});
+
+describe("pauses and Strava's own best efforts (owner feedback P1, P2)", () => {
+  test("a pause inside a run counts, like on Strava", () => {
+    // 5 km: 18 min running, 10 min paused.
+    const efforts = estimateBestEfforts([
+      run("paused", 5000, 18 * 60, "2026-10-01", 28 * 60),
+    ]);
+    expect(findEffort(efforts, "run", 5000)?.seconds).toBe(28 * 60);
+  });
+
+  test("Strava's exact best effort wins over the average-pace estimate", () => {
+    const efforts = estimateBestEfforts([
+      {
+        ...run("long", 12_000, 3000),
+        exactEfforts: [
+          { distance: 5000, seconds: 1180 },
+          { distance: 10_000, seconds: 2460 },
+        ],
+      },
+      run("other", 5100, 1260),
+    ]);
+    expect(findEffort(efforts, "run", 5000)).toMatchObject({
+      seconds: 1180,
+      activityId: "long",
+      exact: true,
+    });
+    expect(findEffort(efforts, "run", 1000)?.exact).toBe(false);
+  });
+});
+
+describe("detail candidates", () => {
+  test("the fastest few runs per distance", async () => {
+    const { runDetailCandidates } = await import("./best-efforts");
+    const runs = [
+      run("slow", 10_000, 3600),
+      run("fast", 10_000, 2400),
+      run("short", 1200, 240),
+    ];
+    const ids = runDetailCandidates(runs, 1);
+    expect(ids).toContain("fast");
+    expect(ids).toContain("short");
+    expect(ids).not.toContain("slow");
+  });
+
+  test("rides with a power meter, highest power first", async () => {
+    const { rideDetailCandidates } = await import("./best-efforts");
+    const ids = rideDetailCandidates(
+      [
+        {
+          id: "a",
+          deviceWatts: true,
+          movingSeconds: 3600,
+          avgWatts: 200,
+          weightedAvgWatts: 230,
+        },
+        {
+          id: "b",
+          deviceWatts: true,
+          movingSeconds: 3600,
+          avgWatts: 250,
+          weightedAvgWatts: null,
+        },
+        {
+          id: "c",
+          deviceWatts: false,
+          movingSeconds: 3600,
+          avgWatts: 300,
+          weightedAvgWatts: 300,
+        },
+        {
+          id: "d",
+          deviceWatts: true,
+          movingSeconds: 600,
+          avgWatts: 400,
+          weightedAvgWatts: 400,
+        },
+      ],
+      2,
+    );
+    expect(ids).toEqual(["b", "a"]);
   });
 });

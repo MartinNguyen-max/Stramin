@@ -1,19 +1,24 @@
+import { ChevronDown } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import {
   formatClock,
   formatDuration,
   formatPacePer100,
   formatPacePerKm,
+  formatSportDistance,
 } from "@/lib/format";
 import type { Units } from "@/lib/preferences";
 import { cn } from "@/lib/utils";
 import {
   maxZone,
   type PersonalPaces,
+  type Segment,
   stepPace,
   stepPaceRange,
   stepSeconds,
+  workoutMeters,
   workoutSeconds,
+  workoutSegments,
   zoneOf,
 } from "../plan";
 import type { Amount, Step, Target, Workout } from "../workouts";
@@ -21,7 +26,10 @@ import { EFFORT_BORDER, ZONE_BG, type Zone } from "../zones";
 
 type Props = { workout: Workout; paces: PersonalPaces; units: Units };
 
-/** One workout of the catalog with its steps and personal paces (TRN-1..4). */
+/**
+ * One workout of the catalog (TRN-1..4): name, a graph of its blocks (owner feedback T1), time and
+ * distance (T3). Tap it to see the steps with personal paces (T2).
+ */
 export function WorkoutCard({ workout, paces, units }: Props) {
   const t = useTranslations("Training");
   const tZones = useTranslations("Zones");
@@ -33,26 +41,38 @@ export function WorkoutCard({ workout, paces, units }: Props) {
         : [zoneOf(step.target)],
     ),
   ) as Zone;
+  const meters = workoutMeters(workout, paces);
+  const duration = t("duration", {
+    time: formatDuration(workoutSeconds(workout, paces)),
+  });
+  const distance =
+    meters === null
+      ? null
+      : t("distance", {
+          distance: formatSportDistance(workout.sport, meters, units),
+        });
 
   return (
-    <article
+    <details
       id={workout.id}
       className={cn(
-        "flex scroll-mt-24 flex-col gap-3 rounded-2xl border border-t-4 bg-card p-4",
+        "group scroll-mt-24 rounded-2xl border border-t-4 bg-card",
         EFFORT_BORDER[workout.effort],
       )}
     >
-      <header className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 flex-col gap-0.5">
-          <h3 className="font-semibold">{t(`workouts.${workout.id}.name`)}</h3>
-          <p className="text-sm text-muted-foreground">
-            {t(`workouts.${workout.id}.description`)}
-          </p>
-        </div>
-        <span className="flex shrink-0 flex-col items-end gap-1">
+      <summary className="flex cursor-pointer list-none flex-col gap-3 p-4 [&::-webkit-details-marker]:hidden">
+        <span className="flex items-start justify-between gap-3">
+          <span className="flex min-w-0 flex-col gap-0.5">
+            <span className="font-semibold">
+              {t(`workouts.${workout.id}.name`)}
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {t(`workouts.${workout.id}.description`)}
+            </span>
+          </span>
           <span
             className={cn(
-              "rounded-full px-2 py-0.5 text-[11px] font-bold text-black/80",
+              "shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold text-black/80",
               ZONE_BG[zone],
             )}
           >
@@ -60,14 +80,20 @@ export function WorkoutCard({ workout, paces, units }: Props) {
               ? tZones("short", { zone })
               : `${tZones("short", { zone: lowest })}–${zone}`}
           </span>
-          <span className="text-xs text-muted-foreground tabular-nums">
-            {t("duration", {
-              time: formatDuration(workoutSeconds(workout, paces)),
-            })}
+        </span>
+        <WorkoutProfile segments={workoutSegments(workout, paces)} />
+        <span className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
+          <span className="tabular-nums">
+            {[duration, distance].filter(Boolean).join(" · ")}
+          </span>
+          <span className="flex items-center gap-1 font-medium text-foreground">
+            <span className="group-open:hidden">{t("showSteps")}</span>
+            <span className="hidden group-open:inline">{t("hideSteps")}</span>
+            <ChevronDown className="size-3.5 transition-transform group-open:rotate-180" />
           </span>
         </span>
-      </header>
-      <ol className="flex flex-col gap-1.5 text-sm">
+      </summary>
+      <ol className="flex flex-col gap-1.5 border-t px-4 py-3 text-sm">
         {workout.steps.map((step, index) => (
           <StepLine
             // biome-ignore lint/suspicious/noArrayIndexKey: steps are static and never reordered.
@@ -79,7 +105,33 @@ export function WorkoutCard({ workout, paces, units }: Props) {
           />
         ))}
       </ol>
-    </article>
+    </details>
+  );
+}
+
+/** The blocks of a workout: width = time, height and color = zone (owner feedback T1). */
+function WorkoutProfile({ segments }: { segments: Segment[] }) {
+  const t = useTranslations("Training");
+  const total = segments.reduce((sum, segment) => sum + segment.seconds, 0);
+  if (total === 0) return null;
+  return (
+    <span
+      role="img"
+      aria-label={t("profileLabel")}
+      className="flex h-12 items-end gap-px rounded-lg bg-muted/40 px-1 pt-1"
+    >
+      {segments.map((segment, index) => (
+        <span
+          // biome-ignore lint/suspicious/noArrayIndexKey: blocks are static and never reordered.
+          key={index}
+          className={cn("min-w-0.5 rounded-t-sm", ZONE_BG[segment.zone])}
+          style={{
+            width: `${(segment.seconds / total) * 100}%`,
+            height: `${segment.zone * 20}%`,
+          }}
+        />
+      ))}
+    </span>
   );
 }
 

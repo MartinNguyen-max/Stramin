@@ -3,6 +3,7 @@ import {
   boolean,
   index,
   integer,
+  jsonb,
   pgPolicy,
   pgTable,
   real,
@@ -86,6 +87,20 @@ export const activities = pgTable(
     elapsedSeconds: integer("elapsed_seconds").notNull(),
     distanceM: real("distance_m").notNull().default(0),
     elevationM: real("elevation_m"),
+    /** Rides with a power meter (Strava: device_watts). */
+    avgWatts: real("avg_watts"),
+    weightedAvgWatts: real("weighted_avg_watts"),
+    deviceWatts: boolean("device_watts").notNull().default(false),
+    /**
+     * Exact best efforts from the provider's detailed activity (runs, BE-1): [{ distance, seconds }].
+     * Only for the few runs that could hold a record (ADR 0013).
+     */
+    bestEfforts:
+      jsonb("best_efforts").$type<{ distance: number; seconds: number }[]>(),
+    /** Best average power per duration in seconds, from the power stream (rides, BE-3): { "1200": 285 }. */
+    powerBests: jsonb("power_bests").$type<Record<string, number>>(),
+    /** When best_efforts / power_bests were last fetched (also kept within 7 days, ADR 0009). */
+    detailsFetchedAt: timestamp("details_fetched_at", { withTimezone: true }),
     /** When the data was last fetched from the provider (rolling 7-day cache, ADR 0009). */
     fetchedAt: timestamp("fetched_at", { withTimezone: true })
       .notNull()
