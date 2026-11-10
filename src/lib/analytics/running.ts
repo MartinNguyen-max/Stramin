@@ -115,3 +115,24 @@ export function bestVdot(
 export function riegel(seconds: number, from: number, to: number): number {
   return seconds * (to / from) ** 1.06;
 }
+
+/**
+ * The bike or swim effort that predicts the fastest times with Riegel's formula (owner feedback
+ * 2026-11-11, P5): the lowest seconds ÷ distance^1.06. The same effort wins for every target distance,
+ * like the highest VDOT does for running.
+ */
+export function strongestRiegelEffort<
+  T extends { distance: number; seconds: number },
+>(efforts: T[]): T | null {
+  let best: T | null = null;
+  let bestScore = Number.POSITIVE_INFINITY;
+  for (const effort of efforts) {
+    if (effort.distance <= 0 || effort.seconds <= 0) continue;
+    const score = effort.seconds / effort.distance ** 1.06;
+    if (score < bestScore) {
+      best = effort;
+      bestScore = score;
+    }
+  }
+  return best;
+}

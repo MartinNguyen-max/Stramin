@@ -215,15 +215,26 @@ export type CalendarWeek = {
   months: string[];
 };
 
-export type MonthTotals = { month: string; totals: Totals };
+/**
+ * A month in the week overview (owner feedback 2026-11-11, C3): its weeks, and their average week.
+ * A week belongs to the month that holds most of its days (its 4th day); weeks at the edges of the
+ * period go to its first or last month. Weeks that haven't started yet are left out.
+ */
+export type MonthGroup = {
+  month: string;
+  weeks: CalendarWeek[];
+  finishedWeeks: number;
+  /** The average of the finished weeks, or null when none is finished. */
+  average: Totals | null;
+};
 
 export type Calendar = {
   period: CalendarPeriod;
   weeks: CalendarWeek[];
   /** Only days inside the period (HOME-5). */
   totals: Totals;
-  /** Per month, only days inside the period (for the week overview). */
-  months: MonthTotals[];
+  /** The weeks grouped by month, with each month's average week (for the week overview). */
+  groups: MonthGroup[];
   /** Weeks shown that are over (the current week isn't finished, H6). */
   finishedWeeks: number;
   /** The average of the finished weeks, or null when none is finished (H5, H6). */
@@ -276,7 +287,6 @@ export function buildCalendar(
   }
 
   const totals = emptyCalendarTotals();
-  const monthTotals = new Map<string, Totals>();
   const weeks: CalendarWeek[] = [];
 
   for (let start = range.from; start <= range.to; start = addDays(start, 7)) {
@@ -290,13 +300,7 @@ export function buildCalendar(
       const dayActivities = byDate.get(date) ?? [];
       for (const activity of dayActivities) {
         add(weekTotals, activity);
-        if (inPeriod) {
-          add(totals, activity);
-          const month = monthOf(date);
-          const forMonth = monthTotals.get(month) ?? emptyCalendarTotals();
-          add(forMonth, activity);
-          monthTotals.set(month, forMonth);
-        }
+        if (inPeriod) add(totals, activity);
       }
       if (inPeriod && (date.endsWith("-01") || date === period.from)) {
         const month = monthOf(date);
@@ -321,28 +325,49 @@ export function buildCalendar(
   }
 
   // Averages use finished weeks only: the current week isn't over yet (H6).
-  const finished = weeks.filter((week) => week.days[6].date < todayDate);
-  const months: MonthTotals[] = [];
-  for (
-    let month = monthOf(period.from);
-    month <= monthOf(period.to);
-    month = addMonths(month, 1)
-  ) {
-    months.push({
-      month,
-      totals: monthTotals.get(month) ?? emptyCalendarTotals(),
-    });
-  }
+  const finished = weeks.filter((week) => isFinished(week, todayDate));
 
   return {
     period,
     weeks,
     totals,
-    months,
+    groups: groupByMonth(weeks, period, todayDate),
     finishedWeeks: finished.length,
     weeklyAverage: averageTotals(finished.map((week) => week.totals)),
     density: densityFor(weeks.length),
   };
+}
+
+function isFinished(week: CalendarWeek, todayDate: string): boolean {
+  return week.days[6].date < todayDate;
+}
+
+/** The weeks by month, each month with its average week (C3). See `MonthGroup`. */
+function groupByMonth(
+  weeks: CalendarWeek[],
+  period: CalendarPeriod,
+  todayDate: string,
+): MonthGroup[] {
+  const first = monthOf(period.from);
+  const last = monthOf(period.to);
+  const groups: MonthGroup[] = [];
+  for (const week of weeks) {
+    if (week.days[0].date > todayDate) continue;
+    const middle = monthOf(week.days[3].date);
+    const month = middle < first ? first : middle > last ? last : middle;
+    let group = groups.at(-1);
+    if (group?.month !== month) {
+      group = { month, weeks: [], finishedWeeks: 0, average: null };
+      groups.push(group);
+    }
+    group.weeks.push(week);
+  }
+  for (const group of groups) {
+    const finished = group.weeks.filter((week) => isFinished(week, todayDate));
+    group.finishedWeeks = finished.length;
+    group.average = averageTotals(finished.map((week) => week.totals));
+  }
+  return groups;
 }
 
 /** Reads a calendar request from URL search params. Returns null when no valid view is given. */

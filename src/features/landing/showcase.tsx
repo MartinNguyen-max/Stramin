@@ -9,7 +9,7 @@ import { DEMO_GOALS, demoBestEfforts } from "@/features/demo/demo-efforts";
 import { demoEvents } from "@/features/demo/demo-events";
 import { EventsStrip } from "@/features/events/components/events-strip";
 import { GoalCard } from "@/features/goals/components/goal-card";
-import { averageWeeklyMeters } from "@/features/goals/feedback";
+import { weeklyMetersBySport } from "@/features/goals/feedback";
 import { PowerCard } from "@/features/profile/components/power-card";
 import { RunningLevel } from "@/features/profile/components/running-level";
 import { WorkoutCard } from "@/features/training/components/workout-card";
@@ -107,9 +107,8 @@ export async function Showcase() {
           <GoalCard
             goal={goal}
             efforts={efforts}
-            metersPerWeek={averageWeeklyMeters(
+            weeklyMeters={weeklyMetersBySport(
               activities,
-              goal.sport,
               serverToday,
               "monday",
             )}

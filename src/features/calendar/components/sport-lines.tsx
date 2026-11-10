@@ -1,42 +1,103 @@
-import { DISTANCE_SPORTS, SPORT_BG } from "@/features/activities/sport-style";
+import { useTranslations } from "next-intl";
+import {
+  DISTANCE_SPORTS,
+  SPORT_BG,
+  SPORT_ICON,
+  SPORT_TEXT,
+} from "@/features/activities/sport-style";
+import { useHours } from "@/i18n/use-hours";
 import type { Totals } from "@/lib/analytics/calendar";
 import { SPORTS, type Sport } from "@/lib/analytics/sports";
-import { formatDuration, formatSportDistance } from "@/lib/format";
+import { formatTotalDistance } from "@/lib/format";
 import type { Units } from "@/lib/preferences";
 import { cn } from "@/lib/utils";
 
-/** Shared by the server-rendered calendar and the phone calendar (no hooks, no server imports). */
+/**
+ * Sport numbers for the totals (week, month, period). Shared by the server-rendered calendar and the
+ * phone calendar, so only hooks that work in both. Totals always show km, also for swims (feedback
+ * 2026-11-11, C1); the calendar days keep meters.
+ */
 
-export type SportLine = {
-  sport: Sport;
-  time: string;
-  distance: string | null;
-};
-
-/** Per sport with training: its time, plus the distance for swim/bike/run (owner feedback H4). */
-export function sportLines(totals: Totals, units: Units): SportLine[] {
-  return SPORTS.filter((sport) => totals.seconds[sport] > 0).map((sport) => ({
-    sport,
-    time: formatDuration(totals.seconds[sport]),
-    distance:
-      (DISTANCE_SPORTS as readonly Sport[]).includes(sport) &&
-      totals.meters[sport] > 0
-        ? formatSportDistance(sport, totals.meters[sport], units)
-        : null,
-  }));
+/** The sports with training in these totals. */
+export function trainedSports(totals: Totals): Sport[] {
+  return SPORTS.filter((sport) => totals.seconds[sport] > 0);
 }
 
-/** "● 2:00 · 8.0 km" */
-export function SportLineText({ line }: { line: SportLine }) {
+/** The distance in totals, or null for strength/other (shown as time). */
+export function totalDistance(
+  sport: Sport,
+  totals: Totals,
+  units: Units,
+): string | null {
+  return (DISTANCE_SPORTS as readonly Sport[]).includes(sport) &&
+    totals.meters[sport] > 0
+    ? formatTotalDistance(totals.meters[sport], units)
+    : null;
+}
+
+/** The sport's icon in its color, with the sport name for screen readers and on hover. */
+export function SportIcon({
+  sport,
+  className,
+}: {
+  sport: Sport;
+  className?: string;
+}) {
+  const tSports = useTranslations("Activities.sports");
+  const Icon = SPORT_ICON[sport];
+  return (
+    <Icon
+      role="img"
+      aria-label={tSports(sport)}
+      className={cn("size-3.5 shrink-0", SPORT_TEXT[sport], className)}
+    >
+      <title>{tSports(sport)}</title>
+    </Icon>
+  );
+}
+
+/** "[icon] 2:00 h · 8.0 km": hours first, the distance beside (week totals, C1). */
+export function SportTimeLine({
+  sport,
+  totals,
+  units,
+}: {
+  sport: Sport;
+  totals: Totals;
+  units: Units;
+}) {
+  const hours = useHours();
+  const distance = totalDistance(sport, totals, units);
   return (
     <span className="flex items-center gap-1.5 tabular-nums">
-      <span
-        className={cn("size-1.5 shrink-0 rounded-full", SPORT_BG[line.sport])}
-      />
-      <span className="text-foreground">{line.time}</span>
-      {line.distance && (
-        <span className="text-muted-foreground">· {line.distance}</span>
+      <SportIcon sport={sport} />
+      <span className="text-foreground">{hours(totals.seconds[sport])}</span>
+      {distance && (
+        <span className="truncate text-muted-foreground">· {distance}</span>
       )}
+    </span>
+  );
+}
+
+/** "[icon] 8.0 km", or the time for strength: the short form for strips and the week overview. */
+export function SportDistance({
+  sport,
+  totals,
+  units,
+  className,
+}: {
+  sport: Sport;
+  totals: Totals;
+  units: Units;
+  className?: string;
+}) {
+  const hours = useHours();
+  return (
+    <span
+      className={cn("inline-flex items-center gap-1 tabular-nums", className)}
+    >
+      <SportIcon sport={sport} className="size-3" />
+      {totalDistance(sport, totals, units) ?? hours(totals.seconds[sport])}
     </span>
   );
 }

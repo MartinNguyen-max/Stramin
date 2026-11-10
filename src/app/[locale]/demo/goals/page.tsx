@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { DEMO_GOALS, demoBestEfforts } from "@/features/demo/demo-efforts";
 import { DemoSpinner } from "@/features/demo/demo-spinner";
 import { GoalCard } from "@/features/goals/components/goal-card";
-import { averageWeeklyMeters } from "@/features/goals/feedback";
+import { weeklyMetersBySport } from "@/features/goals/feedback";
 import { today } from "@/lib/dates";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,7 +26,7 @@ async function DemoGoals() {
   await connection();
   const t = await getTranslations("Goals");
   const { efforts, activities } = await demoBestEfforts();
-  const serverToday = today();
+  const weeklyMeters = weeklyMetersBySport(activities, today(), "monday");
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
       <div className="flex flex-col gap-1">
@@ -39,12 +39,7 @@ async function DemoGoals() {
             key={goal.id}
             goal={goal}
             efforts={efforts}
-            metersPerWeek={averageWeeklyMeters(
-              activities,
-              goal.sport,
-              serverToday,
-              "monday",
-            )}
+            weeklyMeters={weeklyMeters}
             units="metric"
             readOnly
             trainingBase="/demo/training"

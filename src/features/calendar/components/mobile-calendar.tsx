@@ -3,13 +3,14 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { SPORT_BG } from "@/features/activities/sport-style";
+import { useHours } from "@/i18n/use-hours";
 import type { CalendarDay, CalendarWeek } from "@/lib/analytics/calendar";
 import { toDisplayDate } from "@/lib/dates";
 import { formatDuration } from "@/lib/format";
 import type { Units } from "@/lib/preferences";
 import { cn } from "@/lib/utils";
 import { ActivityRow } from "./activity-chip";
-import { SportBar, SportLineText, sportLines } from "./sport-lines";
+import { SportDistance, trainedSports } from "./sport-lines";
 
 /** The day that's selected at first: today, else the last day with training, else the first day. */
 function initialDay(weeks: CalendarWeek[]): string {
@@ -23,9 +24,9 @@ function initialDay(weeks: CalendarWeek[]): string {
 }
 
 /**
- * The calendar on phones (owner feedback H10): a real month grid like the desktop calendar.
- * Each day shows sport dots and its training time; tapping a day lists its workouts below,
- * together with that week's totals. The last column is the week's total time.
+ * The calendar on phones (H10): a month grid like the desktop calendar. Each day shows sport dots and
+ * its training time; tapping a day lists its workouts below the grid. Under every week, a line with
+ * its total hours and the distance per sport (owner feedback 2026-11-11, M1).
  */
 export function MobileCalendar({
   weeks,
@@ -40,26 +41,22 @@ export function MobileCalendar({
   const format = useFormatter();
   const [selected, setSelected] = useState(() => initialDay(weeks));
 
-  const selectedWeek =
-    weeks.find((week) => week.days.some((day) => day.date === selected)) ??
-    weeks[0];
   const selectedDay =
-    selectedWeek.days.find((day) => day.date === selected) ??
-    selectedWeek.days[0];
+    weeks.flatMap((week) => week.days).find((day) => day.date === selected) ??
+    weeks[0].days[0];
 
   return (
     <div className="flex flex-col gap-3">
       <div className="overflow-hidden rounded-2xl border bg-card">
-        <div className="grid grid-cols-[repeat(7,minmax(0,1fr))_2.75rem] border-b bg-muted/50 py-1.5 text-center text-[11px] font-medium text-muted-foreground">
+        <div className="grid grid-cols-7 border-b bg-muted/50 py-1.5 text-center text-[11px] font-medium text-muted-foreground">
           {weeks[0].days.map((day) => (
             <span key={day.date}>
               {format.dateTime(toDisplayDate(day.date), { weekday: "narrow" })}
             </span>
           ))}
-          <span aria-hidden>Σ</span>
         </div>
         {weeks.map((week) => (
-          <div key={week.start}>
+          <div key={week.start} className="border-b last:border-b-0">
             {multiMonth &&
               week.months.map((month) => (
                 <div
@@ -72,7 +69,7 @@ export function MobileCalendar({
                   })}
                 </div>
               ))}
-            <div className="grid grid-cols-[repeat(7,minmax(0,1fr))_2.75rem] border-b last:border-b-0">
+            <div className="grid grid-cols-7">
               {week.days.map((day) => (
                 <DayButton
                   key={day.date}
@@ -81,12 +78,8 @@ export function MobileCalendar({
                   onSelect={() => setSelected(day.date)}
                 />
               ))}
-              <span className="flex flex-col items-center justify-center bg-muted/40 text-[11px] font-semibold tabular-nums">
-                {week.totals.count > 0
-                  ? formatDuration(week.totals.totalSeconds)
-                  : "–"}
-              </span>
             </div>
+            <WeekStrip week={week} units={units} />
           </div>
         ))}
       </div>
@@ -113,30 +106,39 @@ export function MobileCalendar({
         ) : (
           <p className="text-sm text-muted-foreground">{t("restDay")}</p>
         )}
-
-        <div className="flex flex-col gap-1.5 border-t pt-2.5">
-          <div className="flex items-baseline justify-between text-xs">
-            <span className="font-semibold">
-              {t("weekNumber", { number: selectedWeek.number })}
-            </span>
-            <span className="font-semibold tabular-nums">
-              {selectedWeek.totals.count > 0
-                ? `${formatDuration(selectedWeek.totals.totalSeconds)} ${t("hoursShort")}`
-                : "–"}
-            </span>
-          </div>
-          {selectedWeek.totals.count > 0 && (
-            <>
-              <SportBar totals={selectedWeek.totals} className="h-1.5" />
-              <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-xs">
-                {sportLines(selectedWeek.totals, units).map((line) => (
-                  <SportLineText key={line.sport} line={line} />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
       </section>
+    </div>
+  );
+}
+
+/** "Wk 45   5:50 h   [swim] 3.2 km  [bike] 119 km  [run] 32.0 km" under each week (M1). */
+function WeekStrip({ week, units }: { week: CalendarWeek; units: Units }) {
+  const t = useTranslations("Calendar");
+  const hours = useHours();
+  return (
+    <div className="flex items-center gap-x-3 border-t border-dashed bg-muted/40 px-2 py-1 text-[11px] tabular-nums">
+      <span className="shrink-0 text-muted-foreground">
+        {t("week")} {week.number}
+      </span>
+      {week.totals.count === 0 ? (
+        <span className="text-muted-foreground">–</span>
+      ) : (
+        <>
+          <span className="shrink-0 font-bold">
+            {hours(week.totals.totalSeconds)}
+          </span>
+          <span className="flex min-w-0 flex-wrap gap-x-2.5 gap-y-0.5">
+            {trainedSports(week.totals).map((sport) => (
+              <SportDistance
+                key={sport}
+                sport={sport}
+                totals={week.totals}
+                units={units}
+              />
+            ))}
+          </span>
+        </>
+      )}
     </div>
   );
 }
@@ -166,7 +168,7 @@ function DayButton({
         month: "long",
       })}
       className={cn(
-        "flex h-16 min-w-0 flex-col items-center gap-0.5 border-r pt-1 transition-colors",
+        "flex h-16 min-w-0 flex-col items-center gap-0.5 border-r pt-1 transition-colors last:border-r-0",
         !day.inPeriod && "bg-muted/40 text-muted-foreground",
         selected && "bg-foreground text-background",
       )}

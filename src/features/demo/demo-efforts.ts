@@ -1,4 +1,5 @@
 import type { Goal } from "@/features/goals/data";
+import { totalTime } from "@/features/goals/triathlon";
 import {
   type BestEffort,
   type EffortActivity,
@@ -46,9 +47,23 @@ export async function demoBestEfforts(): Promise<{
   return { efforts, activities, power: bestPowerAcross(rides) };
 }
 
-/** Demo goals: one close, one bigger, one on the bike. */
+const HALF_SPLITS = {
+  swim: 38 * 60,
+  bike: 2 * 3600 + 40 * 60,
+  run: 1 * 3600 + 45 * 60,
+  transitions: 6 * 60,
+};
+
+/** Demo goals: one close, one bigger, one on the bike, and a half Ironman. */
 export const DEMO_GOALS: Goal[] = [
   { id: "demo-goal-1", sport: "run", distance: 10_000, target: 42 * 60 },
   { id: "demo-goal-2", sport: "run", distance: 21_098, target: 95 * 60 },
   { id: "demo-goal-3", sport: "bike", distance: 40_000, target: 70 * 60 },
+  {
+    id: "demo-goal-4",
+    sport: "triathlon",
+    race: "half",
+    target: totalTime(HALF_SPLITS),
+    splits: HALF_SPLITS,
+  },
 ];

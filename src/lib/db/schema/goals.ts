@@ -43,7 +43,15 @@ function ownRowPolicies(name: string, userId: ExtraConfigColumn) {
   ];
 }
 
-/** Performance goals (GOAL-1), e.g. 5 km in 18:00. Distances are integer meters (half marathon = 21098). */
+/** Goal sports: a single sport, or a whole triathlon (owner feedback 2026-11-11, G1). */
+export const GOAL_SPORTS = [...EFFORT_SPORTS, "triathlon"] as const;
+export type GoalSport = (typeof GOAL_SPORTS)[number];
+
+/**
+ * Performance goals (GOAL-1), e.g. 5 km in 18:00. Distances are integer meters (half marathon = 21098).
+ * Triathlons store the whole race distance (113 000 or 226 000 m), the total as the target, and a
+ * target per discipline in the split columns (null for single-sport goals).
+ */
 export const goals = pgTable(
   "goals",
   {
@@ -51,9 +59,13 @@ export const goals = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => authUsers.id, { onDelete: "cascade" }),
-    sport: text("sport", { enum: EFFORT_SPORTS }).notNull(),
+    sport: text("sport", { enum: GOAL_SPORTS }).notNull(),
     distanceM: integer("distance_m").notNull(),
     targetSeconds: integer("target_seconds").notNull(),
+    swimSeconds: integer("swim_seconds"),
+    bikeSeconds: integer("bike_seconds"),
+    runSeconds: integer("run_seconds"),
+    transitionSeconds: integer("transition_seconds"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

@@ -66,6 +66,10 @@ describe("speedCheck (GOAL-6)", () => {
     expect(speedCheck("run", 1000, 200, [])).toBeNull();
     expect(speedCheck("bike", 40_000, 3600, [])).toBeNull();
   });
+
+  test("half marathon goals, stored as 21 098 m, compare with the 5 km", () => {
+    expect(speedCheck("run", 21_098, 80 * 60, [])?.distance).toBe(5000);
+  });
 });
 
 describe("volumeCheck", () => {
@@ -73,6 +77,10 @@ describe("volumeCheck", () => {
     expect(volumeCheck("run", 10_000, 25_000)?.enough).toBe(true);
     expect(volumeCheck("run", 10_000, 20_000)?.enough).toBe(false);
     expect(volumeCheck("run", 10_000, null)).toBeNull();
+  });
+
+  test("a half marathon (21 098 m) needs 40 km per week, not the marathon's 55", () => {
+    expect(volumeCheck("run", 21_098, 0)?.recommended).toBe(40_000);
   });
 });
 

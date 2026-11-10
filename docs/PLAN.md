@@ -75,13 +75,21 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 
 ✅ **Done when:** the owner has reviewed the new Home and pages on a preview, and the migrations are applied.
 
+### M3.6 – Owner feedback 2026-11-11 *(work mode; see [feedback](feedback/2026-11-11.md))*
+- [x] Calendar: hours first with sport icons, swims in km in totals, the average week as the main number, week overview grouped by month with each month's average week, folding months (HOME-4, 5, 7)
+- [x] Phone: hours + distance per week under every week; month cards with averages and icons (HOME-9)
+- [x] "Synced … ago" stays current (CON-5)
+- [x] Goals: half/full Ironman with a time per discipline, pace beside every time, the gap per km (GOAL-1, GOAL-3)
+- [x] Profile: bike and swim predictions (BE-9); Training: "53 min" / "1:20 h"
+- [ ] Owner: `supabase db push --remote` (goal split columns) **before** merging; review
+
 ### M3.5 – Owner feedback 2026-11-10 *(work mode; see [feedback](feedback/2026-11-10.md))*
 - [x] Calendar: week totals with time + distance, weekly averages over finished weeks, 3M in full detail, week overview for longer periods, ‹ › by one month, phone month grid (HOME-4..9)
 - [x] No empty calendar while importing; database connection retry (H3, H11)
 - [x] Profile: runs count pauses, Strava's exact best efforts, bike 100/120 km, best power + FTP, race predictions (BE-2, BE-3, BE-8, BE-9, ADR 0013)
 - [x] Training: block graphs, distance, tap for steps, more bike and swim workouts (TRN)
 - [x] Landing page with the real app and example data
-- [ ] Owner: `supabase db push --remote` (new activity columns) **before** merging; review
+- [x] Owner: `supabase db push --remote` (new activity columns) **before** merging; review
 - [ ] Later: a video for the landing page
 
 ### M3 – Strava connection *(built 2026-11-10, work mode; to test on the live site)*

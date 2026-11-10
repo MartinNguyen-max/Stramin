@@ -201,7 +201,7 @@ describe("buildCalendar", () => {
     expect(calendar.totals.seconds.strength).toBe(3600);
   });
 
-  test("averages only finished weeks, and totals per month", () => {
+  test("averages only finished weeks", () => {
     const activities = [
       activity({ startLocal: "2026-10-27T07:00:00Z", movingSeconds: 3600 }),
       activity({ startLocal: "2026-11-03T07:00:00Z", movingSeconds: 7200 }),
@@ -212,8 +212,44 @@ describe("buildCalendar", () => {
     expect(calendar.finishedWeeks).toBe(2);
     expect(calendar.weeklyAverage?.totalSeconds).toBe((3600 + 7200) / 2);
     expect(calendar.weeklyAverage?.meters.run).toBe(10_000);
-    expect(calendar.months).toHaveLength(1);
-    expect(calendar.months[0].totals.totalSeconds).toBe(7200 + 36_000);
+  });
+
+  test("groups weeks by the month that holds most of their days", () => {
+    const period = resolvePeriod({ view: "3m" }, TODAY);
+    const activities = [
+      // Week of 28 Sep–4 Oct: mostly October.
+      activity({ startLocal: "2026-09-29T07:00:00Z", movingSeconds: 3600 }),
+      activity({ startLocal: "2026-10-05T07:00:00Z", movingSeconds: 7200 }),
+      // Not finished: left out of November's average.
+      activity({ startLocal: "2026-11-10T07:00:00Z", movingSeconds: 36_000 }),
+    ];
+    const calendar = buildCalendar(activities, period, "monday", TODAY);
+    const groups = calendar.groups;
+    expect(groups.map((group) => group.month)).toEqual([
+      "2026-09",
+      "2026-10",
+      "2026-11",
+    ]);
+    const october = groups[1];
+    expect(october.weeks[0].start).toBe("2026-09-28");
+    expect(october.weeks).toHaveLength(5);
+    expect(october.average?.totalSeconds).toBe((3600 + 7200) / 5);
+
+    // November: two finished weeks, the current week, no future weeks.
+    const novemberGroup = groups[2];
+    expect(novemberGroup.weeks.map((week) => week.start)).toEqual([
+      "2026-11-02",
+      "2026-11-09",
+    ]);
+    expect(novemberGroup.finishedWeeks).toBe(1);
+    expect(novemberGroup.average?.totalSeconds).toBe(0);
+  });
+
+  test("weeks at the edges go to the period's first month", () => {
+    // 1 Nov 2026 is a Sunday: its week is mostly October, but October isn't shown.
+    const calendar = buildCalendar([], november, "monday", TODAY);
+    expect(calendar.groups[0].month).toBe("2026-11");
+    expect(calendar.groups[0].weeks[0].start).toBe("2026-10-26");
   });
 
   test("no average before a week has finished", () => {

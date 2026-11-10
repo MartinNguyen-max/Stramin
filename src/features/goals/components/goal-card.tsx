@@ -1,39 +1,61 @@
-import { CircleCheck, Lightbulb } from "lucide-react";
+import { CircleCheck } from "lucide-react";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { SPORT_BG } from "@/features/activities/sport-style";
 import { effortDistanceLabel } from "@/features/profile/distance-label";
 import type { TrainingBase } from "@/features/training/components/training-view";
 import { workoutsFor } from "@/features/training/workouts";
-import { EFFORT_BG } from "@/features/training/zones";
-import { Link } from "@/i18n/navigation";
-import { type BestEffort, findEffort } from "@/lib/analytics/best-efforts";
-import { formatClock, formatSportDistance } from "@/lib/format";
+import {
+  type BestEffort,
+  type EffortSport,
+  findEffort,
+} from "@/lib/analytics/best-efforts";
+import {
+  formatClock,
+  formatPaceDifference,
+  formatSportDistance,
+  formatSportPace,
+} from "@/lib/format";
 import type { Units } from "@/lib/preferences";
 import { cn } from "@/lib/utils";
-import type { Goal } from "../data";
+import type { Goal, SingleGoal } from "../data";
 import { goalFeedback } from "../feedback";
 import { DeleteGoalButton } from "./delete-goal-button";
+import { GapBar, GoalTips, GoalWorkouts } from "./goal-parts";
+import { TriathlonGoalCard } from "./triathlon-goal-card";
 
-/** One goal: target, gap, tips and matching workouts (GOAL-3..6, feedback-rules.md). */
-export function GoalCard({
-  goal,
-  efforts,
-  metersPerWeek,
-  units,
-  readOnly = false,
-  trainingBase = "/training",
-}: {
-  goal: Goal;
+export type GoalCardProps = {
   efforts: BestEffort[];
-  metersPerWeek: number | null;
+  /** Average weekly distance per sport over the last 8 finished weeks, or null without Strava. */
+  weeklyMeters: Record<EffortSport, number> | null;
   units: Units;
   readOnly?: boolean;
   /** Where the workout links go (the demo has its own catalog). */
   trainingBase?: TrainingBase;
-}) {
+};
+
+/** One goal card: single sport or triathlon (GOAL-3..6, owner feedback 2026-11-11). */
+export function GoalCard({ goal, ...props }: GoalCardProps & { goal: Goal }) {
+  return goal.sport === "triathlon" ? (
+    <TriathlonGoalCard goal={goal} {...props} />
+  ) : (
+    <SingleGoalCard goal={goal} {...props} />
+  );
+}
+
+/**
+ * Target, best and gap, each with its pace (G2), what the gap means per km (G3), tips and matching
+ * workouts (feedback-rules.md).
+ */
+function SingleGoalCard({
+  goal,
+  efforts,
+  weeklyMeters,
+  units,
+  readOnly = false,
+  trainingBase = "/training",
+}: GoalCardProps & { goal: SingleGoal }) {
   const t = useTranslations("Goals");
   const tSports = useTranslations("Activities.sports");
-  const tTraining = useTranslations("Training");
   const tDistances = useTranslations("Distances");
   const format = useFormatter();
   const locale = useLocale();
@@ -43,15 +65,37 @@ export function GoalCard({
   };
   const label = (meters: number) =>
     effortDistanceLabel(goal.sport, meters, locale, names);
+  const pace = (meters: number, seconds: number) =>
+    formatSportPace(goal.sport, meters, seconds, units) ?? "";
 
   const best = findEffort(efforts, goal.sport, goal.distance)?.seconds;
-  const feedback = goalFeedback(goal, efforts, metersPerWeek);
+  const feedback = goalFeedback(
+    goal,
+    efforts,
+    weeklyMeters ? weeklyMeters[goal.sport] : null,
+  );
   const { gap, speed, volume } = feedback;
   const achieved = gap?.level === "achieved";
+  const paceGap =
+    best === undefined
+      ? null
+      : formatPaceDifference(
+          goal.sport,
+          goal.distance,
+          best,
+          goal.target,
+          units,
+        );
 
   const tips: string[] = [];
   if (gap?.level === "big") {
-    tips.push(t("gap.big", { time: formatClock(gap.stepTarget ?? 0) }));
+    const step = gap.stepTarget ?? 0;
+    tips.push(
+      t("gap.big", {
+        time: formatClock(step),
+        pace: pace(goal.distance, step),
+      }),
+    );
   } else if (gap?.level === "close" || gap?.level === "season") {
     tips.push(t(`gap.${gap.level}`));
   }
@@ -62,6 +106,7 @@ export function GoalCard({
         time: formatClock(goal.target),
         distance: label(goal.distance),
         needed: formatClock(speed.needed),
+        pace: pace(speed.distance, speed.needed),
         reference,
       }),
     );
@@ -70,6 +115,7 @@ export function GoalCard({
         t(speed.limiter === "speed" ? "speed.slower" : "speed.supports", {
           reference,
           best: formatClock(speed.best),
+          pace: pace(speed.distance, speed.best),
         }),
       );
     }
@@ -105,6 +151,9 @@ export function GoalCard({
               time: formatClock(goal.target),
             })}
           </h3>
+          <span className="text-sm font-medium tabular-nums">
+            {t("card.goalPace", { pace: pace(goal.distance, goal.target) })}
+          </span>
         </div>
         {!readOnly && <DeleteGoalButton id={goal.id} />}
       </header>
@@ -112,7 +161,10 @@ export function GoalCard({
       {best !== undefined && gap ? (
         <div className="flex flex-col gap-1.5">
           <p className="text-sm tabular-nums">
-            {t("card.currentBest", { time: formatClock(best) })}
+            {t("card.currentBest", {
+              time: formatClock(best),
+              pace: pace(goal.distance, best),
+            })}
             {!achieved && (
               <span className="text-muted-foreground">
                 {" · "}
@@ -126,17 +178,16 @@ export function GoalCard({
               </span>
             )}
           </p>
-          <span className="h-2 overflow-hidden rounded-full bg-muted">
-            <span
-              className={cn(
-                "block h-full rounded-full",
-                achieved ? "bg-zone-2" : "bg-linear-to-r from-zone-3 to-zone-5",
-              )}
-              style={{
-                width: `${Math.min(100, (goal.target / best) * 100)}%`,
-              }}
-            />
-          </span>
+          <GapBar target={goal.target} best={best} achieved={achieved} />
+          {paceGap && (
+            <p className="text-sm">
+              {t("card.paceGap", {
+                target: pace(goal.distance, goal.target),
+                current: pace(goal.distance, best),
+                diff: paceGap,
+              })}
+            </p>
+          )}
         </div>
       ) : (
         <p className="text-sm text-muted-foreground">{t("card.noBest")}</p>
@@ -149,46 +200,8 @@ export function GoalCard({
         </p>
       )}
 
-      {tips.length > 0 && (
-        <ul className="flex flex-col gap-1.5 text-sm">
-          {tips.map((tip) => (
-            <li key={tip} className="flex gap-2">
-              <Lightbulb className="mt-0.5 size-4 shrink-0 text-zone-3" />
-              <span>{tip}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {workouts.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <span className="text-xs font-medium text-muted-foreground">
-            {t("workouts")}
-          </span>
-          <ul className="flex flex-wrap gap-2">
-            {workouts.map((workout) => (
-              <li key={workout.id}>
-                <Link
-                  href={{
-                    pathname: trainingBase,
-                    query: { sport: workout.sport, effort: workout.effort },
-                    hash: workout.id,
-                  }}
-                  className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm hover:bg-muted"
-                >
-                  <span
-                    className={cn(
-                      "size-2 rounded-full",
-                      EFFORT_BG[workout.effort],
-                    )}
-                  />
-                  {tTraining(`workouts.${workout.id}.name`)}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <GoalTips tips={tips} />
+      <GoalWorkouts workouts={workouts} trainingBase={trainingBase} />
     </article>
   );
 }

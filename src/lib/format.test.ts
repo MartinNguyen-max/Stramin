@@ -3,10 +3,51 @@ import {
   formatClock,
   formatDistance,
   formatDuration,
+  formatHours,
+  formatPaceDifference,
   formatSportDistance,
   formatSportPace,
+  formatTotalDistance,
   parseClock,
 } from "./format";
+
+describe("formatHours", () => {
+  test("minutes under an hour, h:mm with the unit from an hour", () => {
+    expect(formatHours(53 * 60, "h")).toBe("53 min");
+    expect(formatHours(80 * 60, "t")).toBe("1:20 t");
+    expect(formatHours(5 * 3600 + 50 * 60, "h")).toBe("5:50 h");
+  });
+
+  test("59.6 minutes round up to an hour", () => {
+    expect(formatHours(3580, "h")).toBe("1:00 h");
+  });
+});
+
+describe("formatPaceDifference", () => {
+  test("the owner's half: 1:32 → 1:20 is 34 s faster per km", () => {
+    expect(
+      formatPaceDifference("run", 21_097.5, 92 * 60, 80 * 60, "metric"),
+    ).toBe("34 s/km");
+  });
+
+  test("swim per 100 m, bike in km/h, nothing without a gap", () => {
+    expect(formatPaceDifference("swim", 1900, 38 * 60, 34 * 60, "metric")).toBe(
+      "13 s/100m",
+    );
+    expect(
+      formatPaceDifference("bike", 90_000, 3 * 3600, 2.5 * 3600, "metric"),
+    ).toBe("6.0 km/h");
+    expect(formatPaceDifference("run", 5000, 1000, 1100, "metric")).toBeNull();
+  });
+});
+
+describe("formatTotalDistance", () => {
+  test("km for every sport, no decimals from 100", () => {
+    expect(formatTotalDistance(3200, "metric")).toBe("3.2 km");
+    expect(formatTotalDistance(119_400, "metric")).toBe("119 km");
+    expect(formatTotalDistance(1609.344 * 120, "imperial")).toBe("120 mi");
+  });
+});
 
 describe("formatDuration", () => {
   test("formats hours and minutes", () => {

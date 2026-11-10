@@ -28,6 +28,33 @@
 | 17 | **Week numbers:** ISO 8601 with a Monday start, US style with a Sunday start. | The standard in Denmark/Europe. | – |
 | 18 | **Settings, Goals and Profile keep a readable width**; Home and the training catalog use the full width (max 1280 px). | The calendar needs room for 7 days + totals. | – |
 
+## Batch 4 – 2026-11-11: owner feedback ([feedback/2026-11-11.md](feedback/2026-11-11.md))
+
+| # | Decision | Why | Alternatives |
+|---|---|---|---|
+| 35 | **Durations people read as time spent** show as "53 min" under an hour and "5:50 h" (Danish "t") from an hour: totals, averages and workouts. Day cells keep "1:05". | Owner feedback C1, T5. | Always h:mm. |
+| 36 | **Totals show swims in km** (one decimal; no decimals from 100 km). The calendar days keep meters. | Owner feedback C1. | – |
+| 37 | **The average week is the main block**, the period total a line below it. For long periods the block moves **above** the week overview, so you don't scroll past 52 weeks to find it. | Owner feedback C2. | Always below. |
+| 38 | **Week overview grouped by month: a week belongs to the month with most of its days** (its 4th day); weeks at the edges go to the first/last month shown. Each month's average uses its finished weeks. Weeks that haven't started are hidden. | Every week is under exactly one month, and the month's average is a real "average week". | Split weeks across months; average = month total ÷ days × 7. |
+| 39 | **Week rows show hours + distance per sport** (time only for strength); per-sport time is in the tooltip. | Owner feedback C3: "total hours and total distance in each"; one line per week keeps it compact. | Time and distance per sport (two lines). |
+| 40 | **Months fold** (tap the header). Open by default: desktop up to 13 months, phone up to 7; longer periods only open the newest month, so all time (and 1Y on the phone) becomes a list of month averages. | Owner feedback C4, M2 (long scroll). | Year groups; always open. |
+| 41 | **Phone calendar: a strip under every week** with hours and distance per sport (sport icons), instead of the Σ column; the day panel only lists the day's workouts. | Owner feedback M1: distance per week is needed and the Σ column had no room. | Tap the Σ cell for a week panel; horizontal scroll. |
+| 42 | **Sport icons in their colors** (waves, bike, shoe, dumbbell) in all totals instead of colored dots. | Owner feedback M2 ("is green the bike?"). | A legend. |
+| 43 | **"Synced … ago" counts on every 30 s**, and the page reloads its data every 5 minutes while visible and when the tab is opened again. | Owner feedback S1; also shows workouts the webhook brought in. | Only count; only reload on Refresh. |
+| 44 | **Triathlon goals = a goal with sport "triathlon"**: the race distance (113 / 226 km), the total as the target, and four new nullable columns (swim, bike, run, transitions). Names: "Half Ironman" / "Ironman". No "faster than your best" rule for the total. | One goals list and table; owner feedback G1. | A separate table; Olympic/sprint distances too (easy to add later). |
+| 45 | **Triathlon feedback:** per discipline target vs. best at that distance (with paces); tips for the discipline with the **biggest gap** (pace needed vs. now, weekly volume, workouts), and **running off the bike ≈ 5–10 % slower** than a fresh best. | Owner feedback G1, G3. | Compare with the whole race only. |
+| 46 | **Pace beside every time in Goals**, and "You need X instead of Y: Z faster" per km (/100 m for swims, km/h for bikes). | Owner feedback G2, G3. | – |
+| 47 | **Bike and swim predictions use Riegel's formula from the strongest effort** (the one predicting the fastest times), like VDOT's best effort for running. | Owner feedback P5; consistent with running. | From the nearest distance. |
+| 48 | **Bug fix:** half marathon goals (stored as 21 098 m) never got the "≈ on 5 km" tip and were told to build towards the marathon's 55 km per week instead of 40 km. | Found while checking the demo. | – |
+
+### Things only you can do (batch 4)
+
+- [ ] **Apply the database change** (4 new columns on `goals` for triathlon splits) **before merging**. Without it the goals list still works, but saving a triathlon goal fails. In PowerShell:
+  ```
+  pnpm exec supabase db push --remote
+  ```
+- [ ] Commit, push `feat/feedback-2`, merge, and look at Home (1M, 3M, 6M, 1Y, All; phone), Goals (also a new triathlon goal), Profile and Training.
+
 ## Batch 2026-11-10 (night): owner feedback ([feedback/2026-11-10.md](feedback/2026-11-10.md))
 
 | # | Decision | Why | Alternatives |

@@ -7,7 +7,7 @@ import { getCurrentUser } from "@/features/auth/current-user";
 import { GoalCard } from "@/features/goals/components/goal-card";
 import { GoalForm } from "@/features/goals/components/goal-form";
 import { type Goal, listGoals } from "@/features/goals/data";
-import { averageWeeklyMeters } from "@/features/goals/feedback";
+import { weeklyMetersBySport } from "@/features/goals/feedback";
 import { loadBestEfforts } from "@/features/profile/best-efforts-data";
 import { getOrCreateProfile } from "@/features/profile/data";
 import { effortDistanceLabel } from "@/features/profile/distance-label";
@@ -57,7 +57,9 @@ async function GoalsContent() {
   }
   const { efforts, activities } = await loadBestEfforts(user);
 
-  const serverToday = today();
+  const weeklyMeters = activities
+    ? weeklyMetersBySport(activities, today(), weekStart)
+    : null;
   const names = {
     halfMarathon: tDistances("halfMarathon"),
     marathon: tDistances("marathon"),
@@ -98,6 +100,7 @@ async function GoalsContent() {
           <GoalForm
             bests={bests}
             distanceLabels={distanceLabels}
+            units={units}
             startOpen={goals.length === 0}
           />
           {goals.length === 0 ? (
@@ -109,16 +112,7 @@ async function GoalsContent() {
                   key={goal.id}
                   goal={goal}
                   efforts={efforts}
-                  metersPerWeek={
-                    activities
-                      ? averageWeeklyMeters(
-                          activities,
-                          goal.sport,
-                          serverToday,
-                          weekStart,
-                        )
-                      : null
-                  }
+                  weeklyMeters={weeklyMeters}
                   units={units}
                 />
               ))}
