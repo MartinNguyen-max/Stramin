@@ -23,7 +23,16 @@
 | 12 | **Goal rules:** suggestions 2 / 5 / 10 % faster than the best; slower targets refused; gap message; speed check against the next shorter distance; volume check vs. a table ([feedback-rules.md](feedback-rules.md)). | Simple and explainable, as asked. | More complex models. |
 | 13 | **Training catalog:** 9 running workouts (3 easy, 3 moderate, 3 hard) and a few bike/swim placeholders, **written by Claude**. Please replace them with your own. | Placeholders, as asked. | – |
 | 14 | **Zone labels:** Z1 Recovery · Z2 Endurance · Z3 Tempo · Z4 Threshold · Z5 VO2max. No bpm yet (needs max/threshold heart rate). | Standard 5-zone model. | Bpm ranges from a max-HR setting (later). |
-| 15 | **Demo page** (`/demo`) with example data: the real Home with made-up workouts. Used to look at the design without logging in, for tests, and later for the landing page preview. | Without a local database Claude couldn't otherwise see the logged-in pages. | – |
+| 15 | **Demo pages** (`/demo`, `/demo/goals`, `/demo/training`, `/demo/profile`) with example data, read-only, linked from the "Connect Strava" card. Used to look at the design without logging in, and later for the landing page preview. | Without a local database Claude couldn't otherwise see the logged-in pages. | – |
+| 16 | **Profile shows the three sports side by side** (stacked on phones) instead of tabs. | Everything visible at once; only 4–5 rows per sport. | Tabs. |
+| 17 | **Week numbers:** ISO 8601 with a Monday start, US style with a Sunday start. | The standard in Denmark/Europe. | – |
+| 18 | **Settings, Goals and Profile keep a readable width**; Home and the training catalog use the full width (max 1280 px). | The calendar needs room for 7 days + totals. | – |
+
+### Known limits (until M3/M4)
+
+- Strava is still the 6-hour test connection. After 6 hours you must press "Connect Strava" again.
+- Profile, Goals and Training read your **full** Strava history on each visit (about 5 requests for ~860 activities); Home only reads the shown period. Strava allows 100 requests per 15 minutes, so many reloads in a row could hit the limit. The sync engine (M4) fixes this.
+- Best efforts are estimates (ADR 0011). Fix any value by hand on the Profile page.
 
 ### Things only you can do
 

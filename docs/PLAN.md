@@ -60,17 +60,18 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
 
 ### M2.5 – New Home, Goals, Training, Profile *(work mode, 2026-11-10)*
 The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals, training inspiration). Built before M3/M4 on the temporary Strava connection. Decisions to review: [REVIEW.md](REVIEW.md).
-- [ ] Docs: requirements, UI spec, ADR 0010 (VDOT), ADR 0011 (best efforts v1), feedback rules
-- [ ] Navigation: bottom tabs on phones, header links on desktop (Home, Goals, Training, Profile, Settings ⚙)
-- [ ] Home: training calendar with week numbers, dates, workouts, week totals and period totals (HOME-2..5)
-- [ ] Home: period picker 1M / 3M / 6M / 1Y / custom / all, remembered per device, compact and mini views (HOME-6..9)
-- [ ] Home: fetch only the shown period from Strava (HOME-10)
-- [ ] Events with countdown, image upload and default backgrounds (HOME-1, EVT-1..4)
-- [ ] Profile: best efforts (estimate + manual), running level and paces (BE-2, BE-4, BE-6, BE-7)
-- [ ] Training inspiration: catalog with zone filter and personal paces (TRN-1..5)
-- [ ] Goals: suggestions, gap, equivalent performances, feedback, workouts (GOAL-1, GOAL-3..6)
-- [ ] Database: `events`, `goals`, `personal_bests`, `event-images` bucket (migrations) *(owner applies them: see REVIEW.md)*
-- [ ] Demo page with example data (`/demo`), also used for screenshots and tests
+- [x] Docs: requirements, UI spec, ADR 0010 (VDOT), ADR 0011 (best efforts v1), feedback rules
+- [x] Navigation: bottom tabs on phones, header links on desktop (Home, Goals, Training, Profile, Settings ⚙)
+- [x] Home: training calendar with week numbers, dates, workouts, week totals and period totals (HOME-2..5)
+- [x] Home: period picker 1M / 3M / 6M / 1Y / custom / all, remembered per device, compact and mini views (HOME-6..9)
+- [x] Home: fetch only the shown period from Strava (HOME-10)
+- [x] Events with countdown, image upload and default backgrounds (HOME-1, EVT-1..4) *(needs the migrations)*
+- [x] Profile: best efforts (estimate + manual), running level and paces (BE-2, BE-4, BE-6, BE-7) *(manual values need the migrations)*
+- [x] Training inspiration: catalog with zone filter and personal paces (TRN-1..5)
+- [x] Goals: suggestions, gap, equivalent performances, feedback, workouts (GOAL-1, GOAL-3..6) *(needs the migrations)*
+- [x] Database: `events`, `goals`, `personal_bests`, `event-images` bucket (migrations written) *(owner applies them: see REVIEW.md)*
+- [x] Demo pages with example data (`/demo`, `/demo/goals`, `/demo/training`, `/demo/profile`), also used for screenshots
+- [ ] Owner: apply the migrations, push, review on a preview
 
 ✅ **Done when:** the owner has reviewed the new Home and pages on a preview, and the migrations are applied.
 
@@ -146,7 +147,7 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 
 ## Open items
 
-- [ ] **Fast first load (M4):** don't make the user wait for the full history. To be decided before M4. Options:
+- [ ] **Fast first load (M4):** don't make the user wait for the full history. *Partly done (2026-11-10): Home fetches only the shown period (HOME-10). Still open for the sync engine.* Options:
   - **A. Recent first, rest in the background.** Fetch the last 3 months first (1 Strava request), show Home right away, then import the older history in the background. If the user picks a longer period before that is done, fetch that range first. *Recommendation:* records (M7) and "all time" averages still get the full history.
   - **B. Only on demand.** Fetch older data only when the user picks a longer period. Fewer requests, but records and averages would be incomplete, and every first look at an old period waits for Strava.
 

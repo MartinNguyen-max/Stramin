@@ -141,7 +141,7 @@ Paces based on your 5 km best (19:40, VDOT 50.6). Change it on your profile.
 ```
 Profile
 (M) Martin · martin@…
-Best efforts                                [Run] [Bike] [Swim]
+Best efforts            (one card per sport: Run · Bike · Swim)
  Distance   Time      Pace       Date         Source
  5 km       19:40     3:56/km    12 Oct 2026  Strava ↗        ✎
  10 km      41:30     4:09/km    3 Sep 2026   Manual          ✎ ↺
@@ -153,7 +153,7 @@ Your running level: VDOT 50.6
 | Section | Content | Req |
 |---|---|---|
 | **Header** | Name and email. | ACC-5 |
-| **Best efforts** | Tabs per sport. Distance, time, pace (speed for bike), date and source: "Strava" (estimate, links to the activity) or "Manual". ✎ edits the time (and optionally the date); ↺ resets to the Strava value. Missing values show "–" and can be added by hand. | BE-2, BE-4, BE-6, BE-7 |
+| **Best efforts** | One card per sport (side by side on desktop, stacked on phones). Distance, time, pace (speed for bike), date and source: "Strava" (estimate, links to the activity) or "Manual". ✎ edits the time (and optionally the date); ↺ resets to the Strava value. Missing values show "–" and can be added by hand. | BE-2, BE-4, BE-6, BE-7 |
 | **Running level** | VDOT and the five training paces, from the best running effort. Hidden without running efforts. | TRN-3 |
 
 ## 7. Settings
