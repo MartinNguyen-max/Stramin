@@ -6,12 +6,14 @@ import { ZoneSpinner } from "@/components/brand/zone-spinner";
 import { getCurrentUser } from "@/features/auth/current-user";
 import { loadBestEfforts } from "@/features/profile/best-efforts-data";
 import { BestEffortsCard } from "@/features/profile/components/best-efforts-card";
+import { LevelCard } from "@/features/profile/components/level-card";
 import { PowerCard } from "@/features/profile/components/power-card";
-import { PredictionsCard } from "@/features/profile/components/predictions-card";
-import { RunningLevel } from "@/features/profile/components/running-level";
+import { ProgressCard } from "@/features/profile/components/progress-card";
 import { getOrCreateProfile } from "@/features/profile/data";
+import { PROGRESS_MONTHS, progressOver } from "@/features/profile/progress";
 import { ConnectStravaButton } from "@/features/strava/components/connect-strava-button";
 import { EFFORT_SPORTS } from "@/lib/analytics/best-efforts";
+import { today } from "@/lib/dates";
 import type { Units } from "@/lib/preferences";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -102,8 +104,15 @@ async function ProfileContent() {
       </section>
 
       <PowerCard power={power} />
-      <RunningLevel efforts={efforts} units={units} />
-      <PredictionsCard efforts={efforts} units={units} />
+      <LevelCard efforts={efforts} units={units} />
+      {activities && (
+        <ProgressCard
+          periods={PROGRESS_MONTHS.map((months) =>
+            progressOver(activities, today(), months),
+          )}
+          units={units}
+        />
+      )}
     </>
   );
 }

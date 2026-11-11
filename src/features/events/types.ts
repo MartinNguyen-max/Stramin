@@ -25,4 +25,7 @@ export type EventView = {
   imagePath: string | null;
   /** Short-lived signed URL of the image. */
   imageUrl: string | null;
+  /** The part of the image that shows, in % (CSS object-position). */
+  imageX: number;
+  imageY: number;
 };

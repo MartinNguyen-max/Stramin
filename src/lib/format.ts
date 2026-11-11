@@ -19,6 +19,17 @@ export function formatHours(seconds: number, hourUnit: string): string {
   return `${formatDuration(seconds)} ${hourUnit}`;
 }
 
+/**
+ * A time difference with its unit (owner feedback 2026-11-12): "57 s", "11:57 min" or "1:05:30 h".
+ * `hourUnit` is the translated hour symbol ("h", Danish "t").
+ */
+export function formatTimeGap(seconds: number, hourUnit: string): string {
+  const total = Math.round(Math.abs(seconds));
+  if (total < 60) return `${total} s`;
+  if (total < 3600) return `${formatClock(total)} min`;
+  return `${formatClock(total)} ${hourUnit}`;
+}
+
 /** Formats seconds as a clock time: "1:10:40", "45:58" or "0:42". Used for workouts and best efforts. */
 export function formatClock(seconds: number): string {
   const total = Math.round(seconds);
@@ -30,6 +41,23 @@ export function formatClock(seconds: number): string {
     return `${hours}:${String(minutes).padStart(2, "0")}:${ss}`;
   }
   return `${minutes}:${ss}`;
+}
+
+/**
+ * Formats what someone types into a time field (owner feedback 2026-11-12): only the digits count,
+ * grouped in pairs from the right, so "1805" → "18:05", "330" → "3:30", "12930" → "1:29:30".
+ * At most 6 digits (99:59:59). Pasting "1:29:30" works too.
+ */
+export function formatTimeDigits(value: string): string {
+  const digits = value
+    .replace(/\D/g, "")
+    .replace(/^0+(?=\d{3})/, "")
+    .slice(0, 6);
+  if (digits.length <= 2) return digits;
+  const seconds = digits.slice(-2);
+  const minutes = digits.slice(-4, -2);
+  const hours = digits.slice(0, -4);
+  return hours ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
 }
 
 /** Parses "1:10:40", "45:58" or "58" (seconds) into seconds. Returns null for invalid input. */
@@ -82,6 +110,13 @@ export function formatSportDistance(
       : `${Math.round(meters).toLocaleString("en")} m`;
   }
   return formatDistance(meters, units);
+}
+
+/** A distance in a sentence: always km (mi), whole numbers from 10 ("50 km", "2.2 km"). */
+export function formatRoundDistance(meters: number, units: Units): string {
+  const value = units === "imperial" ? meters / METERS_PER_MILE : meters / 1000;
+  const unit = units === "imperial" ? "mi" : "km";
+  return `${value.toFixed(value >= 10 ? 0 : 1)} ${unit}`;
 }
 
 /** Pace per km (mi) for a distance and time, e.g. "5:21 /km". */

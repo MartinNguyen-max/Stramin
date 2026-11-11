@@ -12,14 +12,22 @@ import {
   type EffortSport,
 } from "@/lib/analytics/best-efforts";
 import type { GoalSport } from "@/lib/db/schema/goals";
-import { formatClock, formatSportPace, parseClock } from "@/lib/format";
+import {
+  formatClock,
+  formatSportPace,
+  formatTimeDigits,
+  parseClock,
+} from "@/lib/format";
 import type { Units } from "@/lib/preferences";
 import { cn } from "@/lib/utils";
 import { createGoal, type GoalFormState } from "../actions";
-import { isTargetAllowed, suggestTargets } from "../feedback";
+import { isTargetAllowed, legSuggestions, suggestTargets } from "../feedback";
+import type { GoalDraft } from "../form-data";
+import { isWithinLimits, MAX_TRANSITIONS, timeLimits } from "../limits";
 import {
   LEGS,
   type Leg,
+  legBasis,
   TRIATHLON_RACES,
   TRIATHLONS,
   type TriathlonRace,
@@ -48,6 +56,7 @@ export function GoalForm({
   distanceLabels,
   units,
   startOpen,
+  draft = null,
 }: {
   /** Current bests by sport and integer distance. */
   bests: Best[];
@@ -55,16 +64,36 @@ export function GoalForm({
   distanceLabels: Record<string, string>;
   units: Units;
   startOpen: boolean;
+  /** Filled in from the pace calculator's "Set as goal". */
+  draft?: GoalDraft | null;
 }) {
   const t = useTranslations("Goals");
   const tSports = useTranslations("Activities.sports");
-  const [open, setOpen] = useState(startOpen);
-  const [sport, setSport] = useState<GoalSport>("run");
-  const [distance, setDistance] = useState(5000);
-  const [race, setRace] = useState<TriathlonRace>("half");
-  const [time, setTime] = useState("");
-  const [splits, setSplits] = useState<SplitInputs>(EMPTY_SPLITS);
+  const [open, setOpen] = useState(startOpen || draft !== null);
+  const [sport, setSport] = useState<GoalSport>(draft?.sport ?? "run");
+  const [distance, setDistance] = useState(
+    draft?.distance ??
+      (draft && draft.sport !== "triathlon"
+        ? distanceKey(
+            EFFORT_DISTANCES[draft.sport][1] ??
+              EFFORT_DISTANCES[draft.sport][0],
+          )
+        : 5000),
+  );
+  const [race, setRace] = useState<TriathlonRace>(draft?.race ?? "half");
+  const [time, setTime] = useState(draft?.time ?? "");
+  const [splits, setSplits] = useState<SplitInputs>({
+    ...EMPTY_SPLITS,
+    ...draft?.splits,
+  });
   const [clientError, setClientError] = useState<string | null>(null);
+  // Errors show after pressing save, and go away as soon as anything changes (owner feedback
+  // 2026-11-12): no message while typing, and never an old one left behind.
+  const [showErrors, setShowErrors] = useState(false);
+  const clearErrors = () => {
+    setClientError(null);
+    setShowErrors(false);
+  };
 
   const [state, action, pending] = useActionState(
     async (prev: GoalFormState, formData: FormData) => {
@@ -100,22 +129,38 @@ export function GoalForm({
         : t(`errors.${state.error}`)
       : null;
 
-  /** Client check before sending; the server checks again. */
+  /** "Enter a time between 12:30 and 50:00." */
+  const outOfRange = (of: EffortSport, meters: number) => {
+    const { min, max } = timeLimits(of, meters);
+    return { min: formatClock(min), max: formatClock(max) };
+  };
+
+  /** Client check before sending; the server checks again (times must be plausible, `limits.ts`). */
   const validate = (): string | null => {
     if (sport === "triathlon") {
-      if (LEGS.some((leg) => !parseClock(splits[leg]))) {
-        return t("errors.timeInvalid");
+      for (const leg of LEGS) {
+        const seconds = parseClock(splits[leg]);
+        if (!seconds) return t("errors.timeInvalid");
+        const meters = TRIATHLONS[race].legs[leg];
+        if (!isWithinLimits(leg, meters, seconds)) {
+          return t("errors.outOfRangeLeg", {
+            sport: tSports(leg),
+            ...outOfRange(leg, meters),
+          });
+        }
       }
-      if (
-        splits.transitions.trim() &&
-        parseClock(splits.transitions) === null
-      ) {
-        return t("errors.timeInvalid");
+      if (splits.transitions.trim()) {
+        const seconds = parseClock(splits.transitions);
+        if (seconds === null) return t("errors.timeInvalid");
+        if (seconds > MAX_TRANSITIONS) return t("errors.transitionsTooLong");
       }
       return null;
     }
     const target = parseClock(time);
     if (!target) return t("errors.timeInvalid");
+    if (!isWithinLimits(sport, distance, target)) {
+      return t("errors.outOfRangeTime", outOfRange(sport, distance));
+    }
     if (!isTargetAllowed(target, best)) {
       return t("errors.notFaster", { time: formatClock(best ?? 0) });
     }
@@ -129,7 +174,9 @@ export function GoalForm({
         const error = validate();
         if (error) event.preventDefault();
         setClientError(error);
+        setShowErrors(true);
       }}
+      onChange={clearErrors}
       className="flex flex-col gap-4 rounded-2xl border bg-card p-4"
     >
       <h2 className="font-semibold">{t("add")}</h2>
@@ -151,6 +198,7 @@ export function GoalForm({
                 );
               }
               setTime("");
+              setSplits(EMPTY_SPLITS);
             }}
             className={selectClass}
           >
@@ -169,7 +217,10 @@ export function GoalForm({
               id="goal-distance"
               name="race"
               value={race}
-              onChange={(event) => setRace(event.target.value as TriathlonRace)}
+              onChange={(event) => {
+                setRace(event.target.value as TriathlonRace);
+                setSplits(EMPTY_SPLITS);
+              }}
               className={selectClass}
             >
               {TRIATHLON_RACES.map((option) => (
@@ -207,7 +258,11 @@ export function GoalForm({
         <TriathlonFields
           race={race}
           splits={splits}
-          onChange={setSplits}
+          onChange={(next) => {
+            setSplits(next);
+            clearErrors();
+          }}
+          bests={bests}
           bestFor={bestFor}
           distanceLabels={distanceLabels}
           units={units}
@@ -218,12 +273,15 @@ export function GoalForm({
           distance={distance}
           best={best}
           time={time}
-          onTime={setTime}
+          onTime={(next) => {
+            setTime(next);
+            clearErrors();
+          }}
           units={units}
         />
       )}
 
-      {(clientError ?? serverError) && (
+      {showErrors && (clientError ?? serverError) && (
         <p role="alert" className="text-sm text-destructive">
           {clientError ?? serverError}
         </p>
@@ -251,7 +309,57 @@ function legLabel(
   leg: Leg,
   meters: number,
 ): string {
-  return labels[`${leg}-${distanceKey(meters)}`] ?? "";
+  return (
+    labels[`${leg}-${distanceKey(meters)}`] ??
+    `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(meters / 1000)} km`
+  );
+}
+
+/** Suggested times as buttons with their pace; tapping one fills the field. */
+function Suggestions({
+  suggestions,
+  value,
+  onPick,
+  pace,
+}: {
+  suggestions: number[];
+  value: string;
+  onPick: (label: string) => void;
+  pace: (seconds: number) => string;
+}) {
+  const t = useTranslations("Goals");
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-sm">
+      <span className="text-muted-foreground">{t("form.suggestions")}:</span>
+      {suggestions.map((suggestion) => {
+        const label = formatClock(suggestion);
+        const selected = value === label;
+        return (
+          <button
+            key={suggestion}
+            type="button"
+            onClick={() => onPick(label)}
+            className={cn(
+              "rounded-full border px-3 py-1 tabular-nums transition-colors",
+              selected
+                ? "border-foreground bg-foreground text-background"
+                : "hover:bg-muted",
+            )}
+          >
+            <span className="font-medium">{label}</span>
+            <span
+              className={cn(
+                "ml-1.5 text-xs",
+                selected ? "text-background/75" : "text-muted-foreground",
+              )}
+            >
+              {pace(suggestion)}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 /** "= 3:37 /km" for a typed time, or nothing while it isn't a valid time yet. */
@@ -305,40 +413,12 @@ function SingleFields({
                 pace: pace(best),
               })}
             </p>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-muted-foreground">
-                {t("form.suggestions")}:
-              </span>
-              {suggestions.map((suggestion) => {
-                const label = formatClock(suggestion);
-                const selected = time === label;
-                return (
-                  <button
-                    key={suggestion}
-                    type="button"
-                    onClick={() => onTime(label)}
-                    className={cn(
-                      "rounded-full border px-3 py-1 tabular-nums transition-colors",
-                      selected
-                        ? "border-foreground bg-foreground text-background"
-                        : "hover:bg-muted",
-                    )}
-                  >
-                    <span className="font-medium">{label}</span>
-                    <span
-                      className={cn(
-                        "ml-1.5 text-xs",
-                        selected
-                          ? "text-background/75"
-                          : "text-muted-foreground",
-                      )}
-                    >
-                      {pace(suggestion)}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            <Suggestions
+              suggestions={suggestions}
+              value={time}
+              onPick={onTime}
+              pace={pace}
+            />
           </>
         ) : (
           <p className="text-muted-foreground">{t("form.noBest")}</p>
@@ -354,8 +434,7 @@ function SingleFields({
             required
             inputMode="numeric"
             value={time}
-            onChange={(event) => onTime(event.target.value)}
-            placeholder={t("form.targetPlaceholder")}
+            onChange={(event) => onTime(formatTimeDigits(event.target.value))}
             className="w-40"
           />
           <LivePace
@@ -375,6 +454,7 @@ function TriathlonFields({
   race,
   splits,
   onChange,
+  bests,
   bestFor,
   distanceLabels,
   units,
@@ -382,6 +462,7 @@ function TriathlonFields({
   race: TriathlonRace;
   splits: SplitInputs;
   onChange: (splits: SplitInputs) => void;
+  bests: Best[];
   bestFor: (sport: EffortSport, meters: number) => number | undefined;
   distanceLabels: Record<string, string>;
   units: Units;
@@ -400,6 +481,9 @@ function TriathlonFields({
       {LEGS.map((leg) => {
         const meters = TRIATHLONS[race].legs[leg];
         const best = bestFor(leg, meters);
+        const basis = legBasis(race, leg, meters, bests);
+        const pace = (seconds: number) =>
+          formatSportPace(leg, meters, seconds, units) ?? "";
         const id = `goal-${leg}`;
         return (
           <div key={leg} className="flex flex-col gap-1.5">
@@ -414,9 +498,11 @@ function TriathlonFields({
                 inputMode="numeric"
                 value={splits[leg]}
                 onChange={(event) =>
-                  onChange({ ...splits, [leg]: event.target.value })
+                  onChange({
+                    ...splits,
+                    [leg]: formatTimeDigits(event.target.value),
+                  })
                 }
-                placeholder={t(`triathlon.placeholder.${leg}`)}
                 className="w-40"
               />
               <LivePace
@@ -430,10 +516,18 @@ function TriathlonFields({
               {best
                 ? t("form.currentBest", {
                     time: formatClock(best),
-                    pace: formatSportPace(leg, meters, best, units) ?? "",
+                    pace: pace(best),
                   })
                 : t("triathlon.noBest")}
             </span>
+            {basis !== null && (
+              <Suggestions
+                suggestions={legSuggestions(basis)}
+                value={splits[leg]}
+                onPick={(label) => onChange({ ...splits, [leg]: label })}
+                pace={pace}
+              />
+            )}
           </div>
         );
       })}
@@ -447,9 +541,11 @@ function TriathlonFields({
           inputMode="numeric"
           value={splits.transitions}
           onChange={(event) =>
-            onChange({ ...splits, transitions: event.target.value })
+            onChange({
+              ...splits,
+              transitions: formatTimeDigits(event.target.value),
+            })
           }
-          placeholder={t("triathlon.placeholder.transitions")}
           className="w-40"
         />
       </div>

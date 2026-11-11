@@ -51,12 +51,12 @@ Each requirement has an ID (e.g. `ACC-1`), so the plan, code and tests can refer
 | HOME-1 | **Event countdowns at the top** (see EVT): one card per upcoming event with its title, date and **days left**. Adding, editing and removing an event is quick and done right there. | Must |
 | HOME-2 | Below the events: a **training calendar**. By default it shows the **current month**, split into weeks, **Monday–Sunday** (or Sunday–Saturday, SET-2). Each row is a week and shows the **week number**; each day shows its **date** (e.g. 4, 5, 6). | Must |
 | HOME-3 | Each day lists the workouts done that day, kept small: **title, distance, pace (speed for bike, pace per 100 m for swim) and time**. Each workout uses its sport color and links to the activity on Strava (ACT-4). | Must |
-| HOME-4 | A column on the far right shows the **total for each week**: total **hours first** ("5:50 h"), then per sport its **icon, time and distance** (H4, C1). Totals show swims in km; the calendar days keep meters. | Must |
-| HOME-5 | The **average week is the main number** (hours per week, then distance and hours per sport per week); the **period total** comes second (C2). Averages use **finished weeks only**; the current week is left out, with a note (H5, H6). | Must |
+| HOME-4 | A column on the far right shows the **total for each week**: total **hours first** ("5:50 h"), then per sport its **icon, distance and time** (H4, C1; distance first since 2026-11-12). Totals show swims in km; the calendar days keep meters. | Must |
+| HOME-5 | The **average week is the main number** (hours per week, then distance and hours per sport per week); the **period total** comes second (C2). Total and averages count the same **whole weeks** as the rows on screen (owner, 2026-11-12); averages use **finished weeks only** (H6), and the current week is shown on its own line, **"This week so far (day 3 of 7)"**, with its hours and sports (owner, 2026-11-12). | Must |
 | HOME-6 | **Period picker:** 1 month, 3 months, 6 months, 1 year, a **custom** period (from–to date) and **all time**. ‹ › always move **one month** (owner feedback H9). | Must |
-| HOME-7 | Up to 3 months: the full calendar (H7). Longer periods: the average week first, then a **week overview** grouped **by month**: each month shows its **average week**, each week its hours and distance per sport (H8, C3). Months fold; long periods (all time) start folded except the newest month (C4). Each month can be opened in the 1-month view. | Must |
+| HOME-7 | Up to 3 months: the full calendar (H7). Longer periods: the average week first, then a **card per month** with its **average week** (hours and every sport) and a small bar chart of its weeks (owner, 2026-11-12). Each month can be opened in the 1-month view. | Must |
 | HOME-8 | The chosen period type is **remembered** for the next visit (per device). | Must |
-| HOME-9 | On phones, the calendar is a **month grid** too (H10): each day shows sport dots and its time; under every week a line with its **hours and distance per sport** (M1); tapping a day lists its workouts below. The week overview uses sport icons, and months fold from 1 year (M2). | Must |
+| HOME-9 | On phones, the calendar is a **month grid** too (H10), with the **week total on the right** like on PC: hours and distance per sport (owner, 2026-11-12). Tapping a day lists its workouts below. Longer periods show the month cards in one column. | Must |
 | HOME-10 | Only the activities of the shown period are fetched (lazy loading), so the first load is fast. | Must |
 
 ## 4b. Activities (ACT)
@@ -102,12 +102,13 @@ A goal is a performance target, e.g. "5 km in 18:00". Goals have their own page.
 
 | ID | Requirement | Priority |
 |---|---|---|
-| GOAL-1 | A user can create and delete goals: a **sport**, **distance** (from BE-2) and **target time**, or a **half or full Ironman** triathlon with a time per discipline and optional transitions (owner feedback G1). | Must |
+| GOAL-1 | A user can create and delete goals: a **sport**, **distance** (from BE-2) and **target time**, or a **quarter, half or full Ironman** triathlon with a time per discipline and optional transitions (owner feedback G1). | Must |
 | GOAL-2 | A goal can optionally be linked to an event. | Future |
 | GOAL-3 | The goal shows the **gap** between the user's current best effort and the target, with the **pace beside every time** and the gap per km (e.g. "You need 3:47 /km instead of 4:22 /km: 34 s/km faster") (G2, G3). | Must |
 | GOAL-4 | The goal shows short, simple **feedback** with tips on how to reach it (e.g. *"Your volume is already good. Add one faster session per week."*), plus matching **workouts from the training catalog**. | Must |
 | GOAL-5 | **Suggested targets build on the current best:** when the user picks a distance, Stramin shows their current best and suggests faster targets (about 2 %, 5 % and 10 % faster, rounded). A target slower than the current best is not accepted ("You already did 20:00"). | Must |
 | GOAL-6 | **Equivalent performances:** for running goals, Stramin shows what the goal means at another distance (e.g. *"10 km in 40:00 usually needs a 5 km of about 19:15"*) and compares it with the user's own best at that distance. | Must |
+| GOAL-7 | A **pace calculator** as a tab of Goals, for run, bike, swim and triathlon: a pace (or speed) slider gives the finish time, compared with the user's best at that distance (green faster, red slower). "Set as goal" fills in the goal form (owner, 2026-11-12). | Must |
 
 ## 8. Training inspiration (TRN)
 

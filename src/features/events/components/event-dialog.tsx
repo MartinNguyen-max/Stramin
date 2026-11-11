@@ -1,8 +1,8 @@
 "use client";
 
-import { ImagePlus, Trash2 } from "lucide-react";
+import { ImagePlus, Move, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { ZoneSpinner } from "@/components/brand/zone-spinner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -36,6 +36,10 @@ export function EventDialog({
   const [removeImage, setRemoveImage] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [position, setPosition] = useState({
+    x: event?.imageX ?? 50,
+    y: event?.imageY ?? 50,
+  });
 
   useEffect(() => {
     if (!file) {
@@ -91,6 +95,8 @@ export function EventDialog({
 
         <form action={saveAction} className="flex flex-col gap-4">
           {event && <input type="hidden" name="id" value={event.id} />}
+          <input type="hidden" name="imageX" value={position.x} />
+          <input type="hidden" name="imageY" value={position.y} />
 
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="event-title">{t("fields.title")}</Label>
@@ -137,11 +143,11 @@ export function EventDialog({
           <div className="flex flex-col gap-1.5">
             <span className="text-sm font-medium">{t("fields.image")}</span>
             {preview && (
-              // biome-ignore lint/performance/noImgElement: a local preview (blob URL) or a short-lived signed URL.
-              <img
+              <ImagePositioner
                 src={preview}
-                alt=""
-                className="h-32 w-full rounded-xl object-cover"
+                position={position}
+                onChange={setPosition}
+                hint={t("moveImage")}
               />
             )}
             <div className="flex flex-wrap items-center gap-2">
@@ -155,6 +161,7 @@ export function EventDialog({
                   onChange={(e) => {
                     setFile(e.target.files?.[0] ?? null);
                     setRemoveImage(false);
+                    setPosition({ x: 50, y: 50 });
                   }}
                 />
               </label>
@@ -211,5 +218,87 @@ export function EventDialog({
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/**
+ * The image as it will look on the card (the card's 16:9 shape): drag it to choose which part shows
+ * (owner feedback 2026-11-12). Arrow keys move it too.
+ */
+function ImagePositioner({
+  src,
+  position,
+  onChange,
+  hint,
+}: {
+  src: string;
+  position: { x: number; y: number };
+  onChange: (position: { x: number; y: number }) => void;
+  hint: string;
+}) {
+  const drag = useRef<{ x: number; y: number; start: typeof position } | null>(
+    null,
+  );
+  const clamp = (value: number) =>
+    Math.round(Math.min(100, Math.max(0, value)));
+  const move = (dx: number, dy: number, start = position) =>
+    onChange({ x: clamp(start.x - dx), y: clamp(start.y - dy) });
+
+  return (
+    <div className="flex flex-col gap-1">
+      <div
+        role="slider"
+        tabIndex={0}
+        aria-label={hint}
+        aria-valuetext={`${position.x}% ${position.y}%`}
+        aria-valuenow={position.y}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        className="relative aspect-video w-full max-w-64 cursor-grab touch-none overflow-hidden rounded-2xl bg-black outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 active:cursor-grabbing"
+        onPointerDown={(e) => {
+          e.currentTarget.setPointerCapture(e.pointerId);
+          drag.current = { x: e.clientX, y: e.clientY, start: position };
+        }}
+        onPointerMove={(e) => {
+          if (!drag.current) return;
+          const box = e.currentTarget.getBoundingClientRect();
+          // Dragging the image right shows more of its left side, so the position goes down.
+          move(
+            ((e.clientX - drag.current.x) / box.width) * 100,
+            ((e.clientY - drag.current.y) / box.height) * 100,
+            drag.current.start,
+          );
+        }}
+        onPointerUp={() => {
+          drag.current = null;
+        }}
+        onKeyDown={(e) => {
+          const step = 5;
+          const keys: Record<string, [number, number]> = {
+            ArrowLeft: [step, 0],
+            ArrowRight: [-step, 0],
+            ArrowUp: [0, step],
+            ArrowDown: [0, -step],
+          };
+          const delta = keys[e.key];
+          if (!delta) return;
+          e.preventDefault();
+          move(delta[0], delta[1]);
+        }}
+      >
+        {/* biome-ignore lint/performance/noImgElement: a local preview (blob URL) or a short-lived signed URL. */}
+        <img
+          src={src}
+          alt=""
+          draggable={false}
+          className="pointer-events-none size-full object-cover opacity-80"
+          style={{ objectPosition: `${position.x}% ${position.y}%` }}
+        />
+        <span className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1 bg-black/45 py-1 text-[11px] font-medium text-white">
+          <Move className="size-3" />
+          {hint}
+        </span>
+      </div>
+    </div>
   );
 }

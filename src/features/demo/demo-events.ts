@@ -11,6 +11,8 @@ export function demoEvents(today: string): EventView[] {
       type: "run",
       imagePath: null,
       imageUrl: null,
+      imageX: 50,
+      imageY: 50,
     },
     {
       id: "demo-event-2",
@@ -19,6 +21,8 @@ export function demoEvents(today: string): EventView[] {
       type: "triathlon",
       imagePath: null,
       imageUrl: null,
+      imageX: 50,
+      imageY: 50,
     },
     {
       id: "demo-event-3",
@@ -27,6 +31,8 @@ export function demoEvents(today: string): EventView[] {
       type: "swim",
       imagePath: null,
       imageUrl: null,
+      imageX: 50,
+      imageY: 50,
     },
   ];
 }

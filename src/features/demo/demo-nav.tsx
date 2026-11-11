@@ -18,7 +18,10 @@ export function DemoNav() {
   return (
     <nav aria-label={t("label")} className="flex flex-wrap gap-1 text-sm">
       {PAGES.map(({ href, key }) => {
-        const active = pathname === href;
+        // Sub-pages (e.g. the pace calculator under Goals) keep their section active.
+        const active =
+          pathname === href ||
+          (href !== "/demo" && pathname.startsWith(`${href}/`));
         return (
           <Link
             key={key}

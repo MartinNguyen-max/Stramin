@@ -48,12 +48,18 @@ export function MobileCalendar({
   return (
     <div className="flex flex-col gap-3">
       <div className="overflow-hidden rounded-2xl border bg-card">
-        <div className="grid grid-cols-7 border-b bg-muted/50 py-1.5 text-center text-[11px] font-medium text-muted-foreground">
+        <div
+          className={cn(
+            ROW,
+            "border-b bg-muted/50 py-1.5 text-center text-[11px] font-medium text-muted-foreground",
+          )}
+        >
           {weeks[0].days.map((day) => (
             <span key={day.date}>
               {format.dateTime(toDisplayDate(day.date), { weekday: "narrow" })}
             </span>
           ))}
+          <span aria-hidden>Σ</span>
         </div>
         {weeks.map((week) => (
           <div key={week.start} className="border-b last:border-b-0">
@@ -69,7 +75,7 @@ export function MobileCalendar({
                   })}
                 </div>
               ))}
-            <div className="grid grid-cols-7">
+            <div className={ROW}>
               {week.days.map((day) => (
                 <DayButton
                   key={day.date}
@@ -78,8 +84,8 @@ export function MobileCalendar({
                   onSelect={() => setSelected(day.date)}
                 />
               ))}
+              <WeekTotal week={week} units={units} />
             </div>
-            <WeekStrip week={week} units={units} />
           </div>
         ))}
       </div>
@@ -111,35 +117,37 @@ export function MobileCalendar({
   );
 }
 
-/** "Wk 45   5:50 h   [swim] 3.2 km  [bike] 119 km  [run] 32.0 km" under each week (M1). */
-function WeekStrip({ week, units }: { week: CalendarWeek; units: Units }) {
+/** 7 days, then the week total on the right, like on PC (owner feedback 2026-11-12). */
+const ROW = "grid grid-cols-[repeat(7,minmax(0,1fr))_3.75rem]";
+
+/** The week total in the right column: hours, then each sport's distance with its icon. */
+function WeekTotal({ week, units }: { week: CalendarWeek; units: Units }) {
   const t = useTranslations("Calendar");
   const hours = useHours();
   return (
-    <div className="flex items-center gap-x-3 border-t border-dashed bg-muted/40 px-2 py-1 text-[11px] tabular-nums">
-      <span className="shrink-0 text-muted-foreground">
-        {t("week")} {week.number}
-      </span>
+    <span
+      title={t("weekNumber", { number: week.number })}
+      className="flex min-w-0 flex-col justify-center gap-0.5 bg-muted/40 px-1 py-1 text-[10px] leading-tight tabular-nums"
+    >
       {week.totals.count === 0 ? (
-        <span className="text-muted-foreground">–</span>
+        <span className="text-center text-muted-foreground">–</span>
       ) : (
         <>
-          <span className="shrink-0 font-bold">
+          <span className="text-[11px] font-bold">
             {hours(week.totals.totalSeconds)}
           </span>
-          <span className="flex min-w-0 flex-wrap gap-x-2.5 gap-y-0.5">
-            {trainedSports(week.totals).map((sport) => (
-              <SportDistance
-                key={sport}
-                sport={sport}
-                totals={week.totals}
-                units={units}
-              />
-            ))}
-          </span>
+          {trainedSports(week.totals).map((sport) => (
+            <SportDistance
+              key={sport}
+              sport={sport}
+              totals={week.totals}
+              units={units}
+              className="truncate"
+            />
+          ))}
         </>
       )}
-    </div>
+    </span>
   );
 }
 

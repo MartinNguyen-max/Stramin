@@ -6,16 +6,17 @@ import { ZoneSpinner } from "@/components/brand/zone-spinner";
 import { getCurrentUser } from "@/features/auth/current-user";
 import { GoalCard } from "@/features/goals/components/goal-card";
 import { GoalForm } from "@/features/goals/components/goal-form";
+import { GoalsTabs } from "@/features/goals/components/goals-tabs";
 import { type Goal, listGoals } from "@/features/goals/data";
-import { weeklyMetersBySport } from "@/features/goals/feedback";
+import {
+  draftFromParams,
+  goalDistanceLabels,
+  plainBests,
+} from "@/features/goals/form-data";
+import { trainingStats } from "@/features/goals/tips";
 import { loadBestEfforts } from "@/features/profile/best-efforts-data";
 import { getOrCreateProfile } from "@/features/profile/data";
-import { effortDistanceLabel } from "@/features/profile/distance-label";
-import {
-  distanceKey,
-  EFFORT_DISTANCES,
-  EFFORT_SPORTS,
-} from "@/lib/analytics/best-efforts";
+import { FTP_SHARE } from "@/lib/analytics/power";
 import { today } from "@/lib/dates";
 import type { Units, WeekStart } from "@/lib/preferences";
 
@@ -24,16 +25,26 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${t("title")} · Stramin` };
 }
 
-/** Goals (UI_SPEC §4): new goal form and one card per goal with feedback. */
-export default function GoalsPage() {
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+/**
+ * Goals (UI_SPEC §4): new goal form and one card per goal with feedback. A link from the pace
+ * calculator ("Set as goal") opens the form filled in.
+ */
+export default function GoalsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
   return (
     <Suspense fallback={<GoalsSkeleton />}>
-      <GoalsContent />
+      <GoalsContent searchParams={searchParams} />
     </Suspense>
   );
 }
 
-async function GoalsContent() {
+async function GoalsContent({ searchParams }: { searchParams: SearchParams }) {
+  const draft = draftFromParams(await searchParams);
   const t = await getTranslations("Goals");
   const tDistances = await getTranslations("Distances");
   const user = await getCurrentUser();
@@ -55,37 +66,27 @@ async function GoalsContent() {
   } catch (error) {
     console.error("[goals] unavailable", error);
   }
-  const { efforts, activities } = await loadBestEfforts(user);
+  const { efforts, activities, power } = await loadBestEfforts(user);
+  const twenty = power.find((entry) => entry.duration === 1200);
+  const ftp = twenty ? twenty.watts * FTP_SHARE : null;
 
-  const weeklyMeters = activities
-    ? weeklyMetersBySport(activities, today(), weekStart)
+  const stats = activities
+    ? trainingStats(activities, today(), weekStart)
     : null;
-  const names = {
+  const distanceLabels = goalDistanceLabels(locale, {
     halfMarathon: tDistances("halfMarathon"),
     marathon: tDistances("marathon"),
-  };
-  const distanceLabels: Record<string, string> = {};
-  for (const sport of EFFORT_SPORTS) {
-    for (const meters of EFFORT_DISTANCES[sport]) {
-      distanceLabels[`${sport}-${distanceKey(meters)}`] = effortDistanceLabel(
-        sport,
-        meters,
-        locale,
-        names,
-      );
-    }
-  }
-  const bests = efforts.map((effort) => ({
-    sport: effort.sport,
-    distance: distanceKey(effort.distance),
-    seconds: effort.seconds,
-  }));
+  });
+  const bests = plainBests(efforts);
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-sm text-muted-foreground">{t("intro")}</p>
+        <div className="pt-2">
+          <GoalsTabs base="/goals" />
+        </div>
         {!activities && (
           <p className="text-sm text-muted-foreground">{t("connectHint")}</p>
         )}
@@ -102,6 +103,7 @@ async function GoalsContent() {
             distanceLabels={distanceLabels}
             units={units}
             startOpen={goals.length === 0}
+            draft={draft}
           />
           {goals.length === 0 ? (
             <p className="text-sm text-muted-foreground">{t("empty")}</p>
@@ -112,7 +114,8 @@ async function GoalsContent() {
                   key={goal.id}
                   goal={goal}
                   efforts={efforts}
-                  weeklyMeters={weeklyMeters}
+                  stats={stats}
+                  ftp={ftp}
                   units={units}
                 />
               ))}

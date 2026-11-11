@@ -13,20 +13,49 @@ export async function listUpcomingEvents(
   user: CurrentUser,
   fromDate: string,
 ): Promise<EventView[]> {
-  const rows = await withRls(user.claims, (tx) =>
-    tx
-      .select()
-      .from(events)
-      .where(and(eq(events.userId, user.id), gte(events.eventDate, fromDate)))
-      .orderBy(asc(events.eventDate), asc(events.createdAt)),
+  const where = and(
+    eq(events.userId, user.id),
+    gte(events.eventDate, fromDate),
   );
+  let rows: ListedRow[];
+  try {
+    rows = await withRls(user.claims, (tx) =>
+      tx
+        .select()
+        .from(events)
+        .where(where)
+        .orderBy(asc(events.eventDate), asc(events.createdAt)),
+    );
+  } catch (error) {
+    // Without the image position columns (database not updated yet), still list the events.
+    console.error("[events] full list unavailable, using basics", error);
+    rows = await withRls(user.claims, (tx) =>
+      tx
+        .select({
+          id: events.id,
+          title: events.title,
+          eventDate: events.eventDate,
+          type: events.type,
+          imagePath: events.imagePath,
+        })
+        .from(events)
+        .where(where)
+        .orderBy(asc(events.eventDate), asc(events.createdAt)),
+    );
+  }
   const urls = await signedImageUrls(
     rows.flatMap((row) => (row.imagePath ? [row.imagePath] : [])),
   );
   return rows.map((row) => toView(row, urls));
 }
 
-function toView(row: EventRow, urls: Map<string, string>): EventView {
+type ListedRow = Pick<
+  EventRow,
+  "id" | "title" | "eventDate" | "type" | "imagePath"
+> &
+  Partial<Pick<EventRow, "imageX" | "imageY">>;
+
+function toView(row: ListedRow, urls: Map<string, string>): EventView {
   return {
     id: row.id,
     title: row.title,
@@ -34,6 +63,8 @@ function toView(row: EventRow, urls: Map<string, string>): EventView {
     type: row.type,
     imagePath: row.imagePath,
     imageUrl: row.imagePath ? (urls.get(row.imagePath) ?? null) : null,
+    imageX: row.imageX ?? 50,
+    imageY: row.imageY ?? 50,
   };
 }
 
@@ -73,6 +104,8 @@ type EventInput = {
   date: string;
   type: EventRow["type"];
   imagePath: string | null;
+  imageX: number;
+  imageY: number;
 };
 
 export async function insertEvent(
@@ -86,6 +119,8 @@ export async function insertEvent(
       eventDate: input.date,
       type: input.type,
       imagePath: input.imagePath,
+      imageX: input.imageX,
+      imageY: input.imageY,
     }),
   );
 }
@@ -103,6 +138,8 @@ export async function updateEvent(
         eventDate: input.date,
         type: input.type,
         imagePath: input.imagePath,
+        imageX: input.imageX,
+        imageY: input.imageY,
       })
       .where(and(eq(events.id, id), eq(events.userId, user.id))),
   );

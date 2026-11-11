@@ -95,7 +95,7 @@ All values are stored in **SI units** (meters, seconds, watts). Units are conver
 | `activities` | id, user_id, provider, provider_activity_id, name, sport, sport_type, is_indoor, start_time, start_local, moving_seconds, elapsed_seconds, distance_m, elevation_m, fetched_at | `sport` ∈ swim/bike/run/strength/other. Users can only **read** their own rows (RLS); only the server writes. `start_local` is Strava's local time as text ("2026-11-02T07:15:00Z"). **Built 2026-11-10.** |
 | *(Storage)* `streams/{user_id}/{activity_id}` | time, distance, heartrate, watts, altitude | Compressed file per activity, not in Postgres ([ADR 0008](decisions/0008-stream-storage.md)) |
 | `activity_best_efforts` | activity_id, user_id, sport, kind (distance/power), target, result, start_offset | One row per activity per distance/duration |
-| `events` | id, user_id, title, event_date, type, image_path, created_at | EVT. **Built 2026-11-10.** |
+| `events` | id, user_id, title, event_date, type, image_path, image_x, image_y (image position %), created_at | EVT. **Built 2026-11-10.** |
 | *(Storage)* bucket `event-images`, path `{user_id}/{file}` | Event background images (WebP, resized in the browser) | Private bucket; RLS: users only reach their own folder. Shown with short-lived signed URLs. |
 | `goals` | id, user_id, sport (run/bike/swim/triathlon), distance_m, target_seconds, swim/bike/run/transition_seconds (triathlon splits, null otherwise), created_at | GOAL. **Built 2026-11-10;** triathlon splits 2026-11-11. |
 | `personal_bests` | user_id, sport, distance_m (together the key), seconds, achieved_on, updated_at | **Manual** best efforts only (BE-7, [ADR 0011](decisions/0011-best-efforts-v1.md)). **Built 2026-11-10.** |

@@ -23,6 +23,8 @@ export async function saveEvent(
     date: formData.get("date") ?? "",
     type: formData.get("type") ?? "",
     imagePath: formData.get("imagePath") ?? "",
+    imageX: formData.get("imageX") ?? 50,
+    imageY: formData.get("imageY") ?? 50,
   });
   if (!parsed.success) {
     return { status: "error", error: firstEventError(parsed.error) };

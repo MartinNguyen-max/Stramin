@@ -24,6 +24,8 @@ export const eventSchema = z.object({
     .refine((value) => value === "" || IMAGE_PATH_RE.test(value), {
       error: "imageInvalid",
     }),
+  imageX: z.coerce.number().int().min(0).max(100).catch(50),
+  imageY: z.coerce.number().int().min(0).max(100).catch(50),
 });
 
 export type EventErrorKey =

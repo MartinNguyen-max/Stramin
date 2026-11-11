@@ -5,7 +5,7 @@ import { ZoneSpinner } from "@/components/brand/zone-spinner";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { buttonVariants } from "@/components/ui/button";
-import { HeroPhone, Showcase } from "@/features/landing/showcase";
+import { HeroDevices, LandingVideo } from "@/features/landing/showcase";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -22,9 +22,9 @@ export default function LandingPage() {
     <>
       <SiteHeader wide />
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-24 px-4 pt-10 pb-24 sm:px-6 sm:pt-16">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-20 px-4 pt-10 pb-24 sm:px-6 sm:pt-16">
         {/* Hero */}
-        <section className="grid items-center gap-12 lg:grid-cols-[1.2fr_1fr]">
+        <section className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
           <div className="flex flex-col items-start gap-6">
             <span className="rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground">
               {t("hero.badge")}
@@ -62,17 +62,13 @@ export default function LandingPage() {
               </Link>
             </p>
           </div>
-          {/* On phones the calendar section right below shows the same screen. */}
-          <div className="hidden lg:block">
-            <Suspense fallback={<ShowcaseSpinner />}>
-              <HeroPhone />
-            </Suspense>
-          </div>
+          {/* Home on PC and phone (on phones only the phone). */}
+          <Suspense fallback={<ShowcaseSpinner />}>
+            <HeroDevices />
+          </Suspense>
         </section>
 
-        <Suspense fallback={<ShowcaseSpinner />}>
-          <Showcase />
-        </Suspense>
+        <LandingVideo />
 
         {/* Privacy */}
         <section className="flex flex-col gap-6 rounded-2xl border bg-card p-6 sm:p-10">

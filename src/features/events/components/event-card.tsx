@@ -49,13 +49,15 @@ export function EventCard({
     );
 
   return (
-    <div className={cn(CARD, "text-white")}>
+    <div className={cn(CARD, "bg-black text-white")}>
       {event.imageUrl ? (
         // biome-ignore lint/performance/noImgElement: short-lived signed URLs; next/image's optimizer can't cache them.
         <img
           src={event.imageUrl}
           alt=""
-          className="absolute inset-0 size-full object-cover"
+          // Slightly darkened (80 % over black), so the text stays readable (owner feedback 2026-11-12).
+          className="absolute inset-0 size-full bg-black object-cover opacity-75"
+          style={{ objectPosition: `${event.imageX}% ${event.imageY}%` }}
         />
       ) : (
         <div className={cn("absolute inset-0", BACKGROUND[event.type])} />

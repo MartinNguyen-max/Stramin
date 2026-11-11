@@ -3,20 +3,20 @@ import { getStravaStatus, loadEffortData } from "@/features/activities/data";
 import type { CurrentUser } from "@/features/auth/current-user";
 import {
   type BestEffort,
+  type EffortActivity,
   type EffortSport,
   estimateBestEfforts,
   type ManualEffort,
   mergeBestEfforts,
 } from "@/lib/analytics/best-efforts";
-import type { CalendarActivity } from "@/lib/analytics/calendar";
 import { bestPowerAcross, type PowerBest } from "@/lib/analytics/power";
 import { withRls } from "@/lib/db/rls";
 import { personalBests } from "@/lib/db/schema";
 
 export type BestEffortsResult = {
   efforts: BestEffort[];
-  /** All activities (for volume checks), or null when Strava isn't connected. */
-  activities: CalendarActivity[] | null;
+  /** All activities (volume checks, progress), or null when Strava isn't connected. */
+  activities: EffortActivity[] | null;
   /** False when the manual values can't be read (the table doesn't exist yet). */
   manualAvailable: boolean;
   /** Best bike power per duration (BE-3), from rides with a power meter. */

@@ -223,45 +223,107 @@ export type CalendarWeek = {
 export type MonthGroup = {
   month: string;
   weeks: CalendarWeek[];
-  finishedWeeks: number;
-  /** The average of the finished weeks, or null when none is finished. */
+  /** The month's average week (`averageWeek`), or null before any day of it counts. */
   average: Totals | null;
 };
 
 export type Calendar = {
   period: CalendarPeriod;
   weeks: CalendarWeek[];
-  /** Only days inside the period (HOME-5). */
+  /**
+   * All days of the weeks shown, like the week totals and the average week, so the numbers always
+   * match the rows on screen (HOME-5, owner feedback 2026-11-12).
+   */
   totals: Totals;
   /** The weeks grouped by month, with each month's average week (for the week overview). */
   groups: MonthGroup[];
-  /** Weeks shown that are over (the current week isn't finished, H6). */
+  /** Weeks shown that are over. */
   finishedWeeks: number;
-  /** The average of the finished weeks, or null when none is finished (H5, H6). */
+  /**
+   * The week with today, when it's shown, and which day of it today is (1–7). Shown on its own as
+   * "this week so far" (owner feedback 2026-11-12); it joins the averages once it's over.
+   */
+  currentWeek: {
+    week: CalendarWeek;
+    day: number;
+    /**
+     * A usual day: the seconds the finished weeks shown had on average on each weekday (7 numbers, in
+     * week order). Null without a finished week.
+     */
+    usualDays: number[] | null;
+    /** The usual seconds by today (the sum of `usualDays` up to `day`), or null. */
+    averageSoFar: number | null;
+  } | null;
+  /** The average of the finished weeks shown (`averageWeek`), or null when none is finished (H5, H6). */
   weeklyAverage: Totals | null;
   density: Density;
 };
 
-/** Average of week totals: every number divided by the number of weeks. */
-export function averageTotals(weeks: Totals[]): Totals | null {
-  if (weeks.length === 0) return null;
+function isFinished(week: CalendarWeek, todayDate: string): boolean {
+  return week.days[6].date < todayDate;
+}
+
+/** Training seconds of one day. */
+export function daySeconds(day: CalendarDay): number {
+  return day.activities.reduce(
+    (sum, activity) => sum + activity.movingSeconds,
+    0,
+  );
+}
+
+/**
+ * The current week and how it compares (owner feedback 2026-11-12): the finished weeks' usual day per
+ * weekday, so heavy weekends don't make every Monday look low.
+ */
+function currentWeekOf(
+  current: CalendarWeek,
+  weeks: CalendarWeek[],
+  todayDate: string,
+): Calendar["currentWeek"] {
+  const day = current.days.findIndex((d) => d.date === todayDate) + 1;
+  const finished = weeks.filter((week) => isFinished(week, todayDate));
+  if (finished.length === 0) {
+    return { week: current, day, usualDays: null, averageSoFar: null };
+  }
+  const usualDays = current.days.map(
+    (_, index) =>
+      finished.reduce((sum, week) => sum + daySeconds(week.days[index]), 0) /
+      finished.length,
+  );
+  const averageSoFar = usualDays
+    .slice(0, day)
+    .reduce((sum, seconds) => sum + seconds, 0);
+  return { week: current, day, usualDays, averageSoFar };
+}
+
+/**
+ * The average week: the totals of the finished weeks divided by their number (H6). The current week
+ * isn't in it until it's over; it's shown on its own instead (owner feedback 2026-11-12, after trying
+ * "days so far": with heavy weekends that average dipped every Monday). Null when none is finished.
+ */
+export function averageWeek(
+  weeks: CalendarWeek[],
+  todayDate: string,
+): Totals | null {
   const sum = emptyCalendarTotals();
+  let weight = 0;
   for (const week of weeks) {
-    for (const sport of Object.keys(
-      sum.seconds,
-    ) as (keyof Totals["seconds"])[]) {
-      sum.seconds[sport] += week.seconds[sport];
-      sum.meters[sport] += week.meters[sport];
+    if (!isFinished(week, todayDate)) continue;
+    weight += 1;
+    for (const sport of Object.keys(sum.seconds) as Sport[]) {
+      sum.seconds[sport] += week.totals.seconds[sport];
+      sum.meters[sport] += week.totals.meters[sport];
     }
-    sum.totalSeconds += week.totalSeconds;
-    sum.count += week.count;
+    sum.totalSeconds += week.totals.totalSeconds;
+    sum.count += week.totals.count;
   }
-  for (const sport of Object.keys(sum.seconds) as (keyof Totals["seconds"])[]) {
-    sum.seconds[sport] /= weeks.length;
-    sum.meters[sport] /= weeks.length;
+  if (weight === 0) return null;
+  for (const sport of Object.keys(sum.seconds) as Sport[]) {
+    sum.seconds[sport] /= weight;
+    sum.meters[sport] /= weight;
   }
-  sum.totalSeconds /= weeks.length;
-  sum.count /= weeks.length;
+  sum.totalSeconds /= weight;
+  sum.count /= weight;
   return sum;
 }
 
@@ -300,7 +362,7 @@ export function buildCalendar(
       const dayActivities = byDate.get(date) ?? [];
       for (const activity of dayActivities) {
         add(weekTotals, activity);
-        if (inPeriod) add(totals, activity);
+        add(totals, activity);
       }
       if (inPeriod && (date.endsWith("-01") || date === period.from)) {
         const month = monthOf(date);
@@ -324,22 +386,20 @@ export function buildCalendar(
     });
   }
 
-  // Averages use finished weeks only: the current week isn't over yet (H6).
-  const finished = weeks.filter((week) => isFinished(week, todayDate));
+  const current = weeks.find((week) =>
+    week.days.some((day) => day.date === todayDate),
+  );
 
   return {
     period,
     weeks,
     totals,
     groups: groupByMonth(weeks, period, todayDate),
-    finishedWeeks: finished.length,
-    weeklyAverage: averageTotals(finished.map((week) => week.totals)),
+    finishedWeeks: weeks.filter((week) => isFinished(week, todayDate)).length,
+    currentWeek: current ? currentWeekOf(current, weeks, todayDate) : null,
+    weeklyAverage: averageWeek(weeks, todayDate),
     density: densityFor(weeks.length),
   };
-}
-
-function isFinished(week: CalendarWeek, todayDate: string): boolean {
-  return week.days[6].date < todayDate;
 }
 
 /** The weeks by month, each month with its average week (C3). See `MonthGroup`. */
@@ -357,15 +417,13 @@ function groupByMonth(
     const month = middle < first ? first : middle > last ? last : middle;
     let group = groups.at(-1);
     if (group?.month !== month) {
-      group = { month, weeks: [], finishedWeeks: 0, average: null };
+      group = { month, weeks: [], average: null };
       groups.push(group);
     }
     group.weeks.push(week);
   }
   for (const group of groups) {
-    const finished = group.weeks.filter((week) => isFinished(week, todayDate));
-    group.finishedWeeks = finished.length;
-    group.average = averageTotals(finished.map((week) => week.totals));
+    group.average = averageWeek(group.weeks, todayDate);
   }
   return groups;
 }

@@ -12,14 +12,20 @@ import {
 import { parseClock } from "@/lib/format";
 import { deleteGoalRow, insertGoal, type NewGoal } from "./data";
 import { isTargetAllowed } from "./feedback";
-import { LEGS, type Splits, TRIATHLON_RACES } from "./triathlon";
+import { isWithinLimits, MAX_TRANSITIONS } from "./limits";
+import { LEGS, type Splits, TRIATHLON_RACES, TRIATHLONS } from "./triathlon";
 
 export type GoalFormState =
   | { status: "idle" }
   | { status: "saved" }
   | {
       status: "error";
-      error: "timeInvalid" | "notFaster" | "unavailable" | "generic";
+      error:
+        | "timeInvalid"
+        | "notFaster"
+        | "outOfRange"
+        | "unavailable"
+        | "generic";
       /** For "notFaster": the current best in seconds. */
       best?: number;
     };
@@ -42,27 +48,31 @@ const triathlonSchema = z.object({
 /** Reads a triathlon goal: a time per discipline, transitions optional (owner feedback G1). */
 function parseTriathlon(
   formData: FormData,
-): NewGoal | "generic" | "timeInvalid" {
+): NewGoal | "generic" | "timeInvalid" | "outOfRange" {
   const parsed = triathlonSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return "generic";
   const splits: Splits = { swim: 0, bike: 0, run: 0, transitions: 0 };
   for (const leg of LEGS) {
     const seconds = parseClock(parsed.data[leg]);
     if (!seconds) return "timeInvalid";
+    if (!isWithinLimits(leg, TRIATHLONS[parsed.data.race].legs[leg], seconds)) {
+      return "outOfRange";
+    }
     splits[leg] = seconds;
   }
   const transitions = parsed.data.transitions?.trim();
   if (transitions) {
     const seconds = parseClock(transitions);
     if (seconds === null) return "timeInvalid";
+    if (seconds > MAX_TRANSITIONS) return "outOfRange";
     splits.transitions = seconds;
   }
   return { sport: "triathlon", race: parsed.data.race, splits };
 }
 
 /**
- * Creates a goal (GOAL-1). A single-sport target must be faster than the current best (GOAL-5);
- * a triathlon has no best to compare the whole race with.
+ * Creates a goal (GOAL-1). Every time must be plausible (`limits.ts`); a single-sport target must
+ * also be faster than the current best (GOAL-5). A triathlon has no best for the whole race.
  */
 export async function createGoal(
   _prev: GoalFormState,
@@ -85,6 +95,9 @@ export async function createGoal(
     const { sport, distance } = parsed.data;
     const target = parseClock(parsed.data.time);
     if (!target) return { status: "error", error: "timeInvalid" };
+    if (!isWithinLimits(sport, distance, target)) {
+      return { status: "error", error: "outOfRange" };
+    }
 
     const { efforts } = await loadBestEfforts(user);
     const best = findEffort(efforts, sport, distance)?.seconds;

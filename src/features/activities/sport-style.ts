@@ -42,7 +42,8 @@ export const SPORT_TEXT: Record<Sport, string> = {
   swim: "text-zone-1",
   bike: "text-zone-2",
   run: "text-zone-5",
-  strength: "text-zone-3",
+  // The zone-3 yellow is too pale for text on light backgrounds (owner feedback 2026-11-12).
+  strength: "text-amber-600 dark:text-zone-3",
   other: "text-muted-foreground",
 };
 

@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import {
   date,
   index,
+  integer,
   pgPolicy,
   pgTable,
   text,
@@ -29,6 +30,12 @@ export const events = pgTable(
     type: text("type", { enum: EVENT_TYPES }).notNull().default("triathlon"),
     /** Path in the private `event-images` bucket, or null for the default background (EVT-2). */
     imagePath: text("image_path"),
+    /**
+     * Which part of the image shows on the card, as CSS object-position in % (0–100, middle = 50).
+     * The user drags the image in the dialog (owner feedback 2026-11-12).
+     */
+    imageX: integer("image_x").notNull().default(50),
+    imageY: integer("image_y").notNull().default(50),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

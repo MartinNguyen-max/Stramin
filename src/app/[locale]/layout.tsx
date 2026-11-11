@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Rubik } from "next/font/google";
 import { notFound } from "next/navigation";
 import { locale as rootLocale } from "next/root-params";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import { ServiceWorker } from "@/components/service-worker";
 import { ThemeProvider } from "@/components/theme-provider";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
@@ -35,8 +36,17 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Stramin",
     description: t("description"),
+    // Installed on an iPhone home screen it opens full screen, like an app (M11).
+    appleWebApp: { capable: true, title: "Stramin", statusBarStyle: "default" },
   };
 }
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+    { media: "(prefers-color-scheme: dark)", color: "#14141A" },
+  ],
+};
 
 export default async function RootLayout({
   children,
@@ -63,6 +73,7 @@ export default async function RootLayout({
           >
             {children}
           </ThemeProvider>
+          <ServiceWorker />
         </NextIntlClientProvider>
       </body>
     </html>
