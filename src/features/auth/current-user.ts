@@ -11,6 +11,8 @@ export type CurrentUser = {
   email: string | undefined;
   /** What we call the user (ACC-5). Undefined for older accounts without a name. */
   name: string | undefined;
+  /** True once the user has seen the short introduction (stored on the login). */
+  onboarded: boolean;
   /** Validated JWT claims, used to run database queries as this user (`withRls`). */
   claims: AuthClaims;
 };
@@ -33,6 +35,9 @@ export async function getCurrentUser(): Promise<CurrentUser> {
     id: claims.sub,
     email: typeof claims.email === "string" ? claims.email : undefined,
     name: displayName(claims.user_metadata),
+    onboarded:
+      (claims.user_metadata as Record<string, unknown> | undefined)
+        ?.onboarded === true,
     claims: claims as AuthClaims,
   };
 }

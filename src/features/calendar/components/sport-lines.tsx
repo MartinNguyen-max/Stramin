@@ -56,8 +56,11 @@ export function SportIcon({
   );
 }
 
-/** "[icon] 2:00 h · 8.0 km": hours first, the distance beside (week totals, C1). */
-export function SportTimeLine({
+/**
+ * "[icon] 8.0 km · 2:00 h": the distance first, then the time, like the average week (week totals and
+ * period total, owner feedback 2026-11-12). Strength and other: only the time.
+ */
+export function SportLine({
   sport,
   totals,
   units,
@@ -67,13 +70,14 @@ export function SportTimeLine({
   units: Units;
 }) {
   const hours = useHours();
+  const time = hours(totals.seconds[sport]);
   const distance = totalDistance(sport, totals, units);
   return (
     <span className="flex items-center gap-1.5 tabular-nums">
       <SportIcon sport={sport} />
-      <span className="text-foreground">{hours(totals.seconds[sport])}</span>
+      <span className="text-foreground">{distance ?? time}</span>
       {distance && (
-        <span className="truncate text-muted-foreground">· {distance}</span>
+        <span className="truncate text-muted-foreground">· {time}</span>
       )}
     </span>
   );

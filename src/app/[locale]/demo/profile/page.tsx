@@ -5,10 +5,12 @@ import { Suspense } from "react";
 import { demoBestEfforts } from "@/features/demo/demo-efforts";
 import { DemoSpinner } from "@/features/demo/demo-spinner";
 import { BestEffortsCard } from "@/features/profile/components/best-efforts-card";
+import { LevelCard } from "@/features/profile/components/level-card";
 import { PowerCard } from "@/features/profile/components/power-card";
-import { PredictionsCard } from "@/features/profile/components/predictions-card";
-import { RunningLevel } from "@/features/profile/components/running-level";
+import { ProgressCard } from "@/features/profile/components/progress-card";
+import { PROGRESS_MONTHS, progressOver } from "@/features/profile/progress";
 import { EFFORT_SPORTS } from "@/lib/analytics/best-efforts";
+import { today } from "@/lib/dates";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Profile");
@@ -27,7 +29,7 @@ export default function DemoProfilePage() {
 async function DemoProfile() {
   await connection();
   const t = await getTranslations("Profile");
-  const { efforts, power } = await demoBestEfforts();
+  const { efforts, power, activities } = await demoBestEfforts();
   return (
     <>
       <section className="flex flex-col gap-3">
@@ -50,8 +52,15 @@ async function DemoProfile() {
         </div>
       </section>
       <PowerCard power={power} />
-      <RunningLevel efforts={efforts} units="metric" />
-      <PredictionsCard efforts={efforts} units="metric" />
+      <LevelCard efforts={efforts} units="metric" />
+      {activities && (
+        <ProgressCard
+          periods={PROGRESS_MONTHS.map((months) =>
+            progressOver(activities, today(), months),
+          )}
+          units="metric"
+        />
+      )}
     </>
   );
 }

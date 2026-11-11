@@ -3,17 +3,21 @@ import { useLocale, useTranslations } from "next-intl";
 import { SPORT_BG } from "@/features/activities/sport-style";
 import { effortDistanceLabel } from "@/features/profile/distance-label";
 import { workoutsFor } from "@/features/training/workouts";
-import { findEffort } from "@/lib/analytics/best-efforts";
-import {
-  formatClock,
-  formatPaceDifference,
-  formatSportDistance,
-  formatSportPace,
-} from "@/lib/format";
+import { useTimeGap } from "@/i18n/use-hours";
+import { formatClock, formatSportPace } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { TriathlonGoal } from "../data";
-import { goalFeedback, volumeCheck } from "../feedback";
-import { LEGS, type Leg, runOffTheBike, TRIATHLONS } from "../triathlon";
+import { goalFeedback } from "../feedback";
+import { triathlonTips } from "../tips";
+import {
+  freshTime,
+  freshTimeNeeded,
+  LEGS,
+  type Leg,
+  RACE_DAY_FACTOR,
+  raceDayTime,
+  TRIATHLONS,
+} from "../triathlon";
 import { DeleteGoalButton } from "./delete-goal-button";
 import type { GoalCardProps } from "./goal-card";
 import { GoalTips, GoalWorkouts } from "./goal-parts";
@@ -23,19 +27,23 @@ type LegStatus = {
   distance: number;
   target: number;
   best?: number;
-  /** How much faster the target is than the best, as a share of the best (> 0 = still to go). */
+  /** True when there's no best at the distance and `best` is predicted from the others. */
+  predicted: boolean;
+  /** The best, made slower for race day (`raceDayTime`). */
+  raceDay?: number;
+  /** How much faster the target is than the race-day time, as a share (> 0 = still to go). */
   share: number | null;
 };
 
 /**
- * A half or full distance triathlon goal (owner feedback 2026-11-11, G1): a row per discipline with
- * its target and pace next to the best effort at that distance, then tips for the discipline with the
- * biggest gap and for running off the bike.
+ * A half or full Ironman goal (G1): a row per discipline with its target and pace, and what the best
+ * at that distance is worth on race day (owner feedback 2026-11-12: everything happens the same day).
+ * One short tip for the discipline with the most to gain, then workouts for it.
  */
 export function TriathlonGoalCard({
   goal,
   efforts,
-  weeklyMeters,
+  stats,
   units,
   readOnly = false,
   trainingBase = "/training",
@@ -51,89 +59,39 @@ export function TriathlonGoalCard({
   };
   const label = (leg: Leg, meters: number) =>
     effortDistanceLabel(leg, meters, locale, names);
-  const pace = (leg: Leg, meters: number, seconds: number) =>
-    formatSportPace(leg, meters, seconds, units) ?? "";
   const race = TRIATHLONS[goal.race];
+  const factor = RACE_DAY_FACTOR[goal.race];
 
   const legs: LegStatus[] = LEGS.map((leg) => {
     const distance = race.legs[leg];
     const target = goal.splits[leg];
-    const best = findEffort(efforts, leg, distance)?.seconds;
+    const fresh = freshTime(leg, distance, efforts);
+    const best = fresh?.seconds;
+    const raceDay =
+      best === undefined ? undefined : raceDayTime(goal.race, leg, best);
     return {
       leg,
       distance,
       target,
       best,
-      share: best === undefined ? null : (best - target) / best,
+      predicted: fresh?.predicted ?? false,
+      raceDay,
+      share: raceDay === undefined ? null : (raceDay - target) / raceDay,
     };
   });
-  const withBest = legs.filter((leg) => leg.best !== undefined);
   const focus = legs
     .filter((leg) => leg.share !== null && leg.share > 0)
     .sort((a, b) => (b.share ?? 0) - (a.share ?? 0))[0];
 
-  const tips: string[] = [];
-  if (withBest.length === 0) {
-    tips.push(t("noBests"));
-  } else if (focus?.best !== undefined) {
-    tips.push(
-      t("biggestGap", {
-        sport: tSports(focus.leg),
-        target: pace(focus.leg, focus.distance, focus.target),
-        current: pace(focus.leg, focus.distance, focus.best),
-        diff:
-          formatPaceDifference(
-            focus.leg,
-            focus.distance,
-            focus.best,
-            focus.target,
-            units,
-          ) ?? "",
-      }),
-    );
-  } else {
-    tips.push(t("allReached"));
-  }
-
-  const run = legs.find((leg) => leg.leg === "run");
-  if (run?.best !== undefined) {
-    const [from, to] = runOffTheBike(run.best);
-    tips.push(
-      t("runOffBike", {
-        best: formatClock(run.best),
-        from: formatClock(from),
-        to: formatClock(to),
-      }),
-    );
-    tips.push(
-      t(run.target < from ? "runFaster" : "runFits", {
-        time: formatClock(run.target),
-      }),
-    );
-  }
-
-  const focusMeters = focus && weeklyMeters ? weeklyMeters[focus.leg] : null;
-  const volume = focus
-    ? volumeCheck(focus.leg, focus.distance, focusMeters)
-    : null;
-  if (focus && volume) {
-    tips.push(
-      volume.enough
-        ? tGoals("volume.good", {
-            value: formatSportDistance(focus.leg, volume.perWeek, units),
-          })
-        : tGoals("volume.low", {
-            value: formatSportDistance(focus.leg, volume.perWeek, units),
-            target: formatSportDistance(focus.leg, volume.recommended, units),
-          }),
-    );
-  }
-
   const workouts = focus
     ? goalFeedback(
-        { sport: focus.leg, distance: focus.distance, target: focus.target },
+        {
+          sport: focus.leg,
+          distance: focus.distance,
+          target: freshTimeNeeded(goal.race, focus.leg, focus.target),
+        },
         efforts,
-        focusMeters,
+        stats ? stats[focus.leg].metersPerWeek : null,
       )
         .efforts.flatMap((effort) => workoutsFor(focus.leg, effort))
         .slice(0, 3)
@@ -174,11 +132,8 @@ export function TriathlonGoalCard({
             status={leg}
             name={tSports(leg.leg)}
             distanceLabel={label(leg.leg, leg.distance)}
-            targetPace={pace(leg.leg, leg.distance, leg.target)}
-            bestPace={
-              leg.best === undefined
-                ? null
-                : pace(leg.leg, leg.distance, leg.best)
+            targetPace={
+              formatSportPace(leg.leg, leg.distance, leg.target, units) ?? ""
             }
           />
         ))}
@@ -191,8 +146,14 @@ export function TriathlonGoalCard({
           </li>
         )}
       </ul>
+      <p className="text-xs text-muted-foreground">
+        {t("raceDayNote", {
+          bike: Math.round((factor.bike - 1) * 100),
+          run: Math.round((factor.run - 1) * 100),
+        })}
+      </p>
 
-      <GoalTips tips={tips} />
+      <GoalTips tips={triathlonTips(goal.race, legs, stats)} units={units} />
       <GoalWorkouts workouts={workouts} trainingBase={trainingBase} />
     </article>
   );
@@ -203,15 +164,14 @@ function LegRow({
   name,
   distanceLabel,
   targetPace,
-  bestPace,
 }: {
   status: LegStatus;
   name: string;
   distanceLabel: string;
   targetPace: string;
-  bestPace: string | null;
 }) {
   const t = useTranslations("Goals.triathlon");
+  const gapText = useTimeGap();
   const reached = status.share !== null && status.share <= 0;
   return (
     <li className="flex flex-col gap-0.5 px-3 py-2 text-sm">
@@ -230,14 +190,14 @@ function LegRow({
       </span>
       <span className="flex items-baseline justify-between gap-3 pl-4 text-xs text-muted-foreground tabular-nums">
         <span>
-          {status.best === undefined
+          {status.best === undefined || status.raceDay === undefined
             ? t("noBest")
-            : t("best", {
-                time: formatClock(status.best),
-                pace: bestPace ?? "",
+            : t(status.predicted ? "raceDayPredicted" : "raceDay", {
+                best: formatClock(status.best),
+                raceDay: formatClock(status.raceDay),
               })}
         </span>
-        {status.best !== undefined &&
+        {status.raceDay !== undefined &&
           (reached ? (
             <span className="flex items-center gap-1 text-foreground">
               <CircleCheck className="size-3.5 text-zone-2" />
@@ -245,7 +205,7 @@ function LegRow({
             </span>
           ) : (
             <span>
-              {t("toGo", { time: formatClock(status.best - status.target) })}
+              {t("toGo", { time: gapText(status.raceDay - status.target) })}
             </span>
           ))}
       </span>

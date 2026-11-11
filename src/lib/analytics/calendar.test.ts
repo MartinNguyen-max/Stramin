@@ -167,7 +167,7 @@ describe("buildCalendar", () => {
     expect(calendar.weeks[0].start).toBe("2026-11-01");
   });
 
-  test("puts workouts on their local day and totals weeks and the period", () => {
+  test("puts workouts on their local day and totals the weeks shown", () => {
     const activities = [
       activity({ startLocal: "2026-10-27T07:00:00Z", sport: "bike" }),
       activity({ startLocal: "2026-11-02T18:00:00Z" }),
@@ -186,32 +186,59 @@ describe("buildCalendar", () => {
     ];
     const calendar = buildCalendar(activities, november, "monday", TODAY);
 
-    // 27 Oct is visible (first row) but outside the period.
+    // 27 Oct is outside the month but in the first row: it counts, like in the week total.
     expect(calendar.weeks[0].days[1].activities).toHaveLength(1);
     expect(calendar.weeks[0].totals.meters.bike).toBe(10_000);
-    expect(calendar.totals.meters.bike).toBe(0);
+    expect(calendar.totals.meters.bike).toBe(10_000);
 
     // Sorted by start time within the day.
     const monday = calendar.weeks[1].days[0];
     expect(monday.activities.map((a) => a.sport)).toEqual(["swim", "run"]);
     expect(calendar.weeks[1].totals.totalSeconds).toBe(3600 + 1800 + 3600);
 
-    expect(calendar.totals.count).toBe(3);
+    // 20 Dec isn't in a row shown.
+    expect(calendar.totals.count).toBe(4);
     expect(calendar.totals.meters.run).toBe(10_000);
     expect(calendar.totals.seconds.strength).toBe(3600);
   });
 
-  test("averages only finished weeks", () => {
+  test("averages finished weeks; the current week is on its own", () => {
     const activities = [
       activity({ startLocal: "2026-10-27T07:00:00Z", movingSeconds: 3600 }),
       activity({ startLocal: "2026-11-03T07:00:00Z", movingSeconds: 7200 }),
-      // This week (10 Nov) isn't finished: not in the average.
+      // This week (today is Tuesday 10 Nov): not in the average, shown as "so far".
       activity({ startLocal: "2026-11-10T07:00:00Z", movingSeconds: 36_000 }),
     ];
     const calendar = buildCalendar(activities, november, "monday", TODAY);
     expect(calendar.finishedWeeks).toBe(2);
     expect(calendar.weeklyAverage?.totalSeconds).toBe((3600 + 7200) / 2);
     expect(calendar.weeklyAverage?.meters.run).toBe(10_000);
+    expect(calendar.currentWeek?.week.start).toBe("2026-11-09");
+    expect(calendar.currentWeek?.day).toBe(2);
+    expect(calendar.currentWeek?.week.totals.totalSeconds).toBe(36_000);
+    // By Tuesday, the finished weeks had 3600 (Tue 27 Oct) and 7200 (Tue 3 Nov): 5400 on average.
+    expect(calendar.currentWeek?.averageSoFar).toBe((3600 + 7200) / 2);
+    // A usual Tuesday: 5400 s; the other weekdays had no training.
+    expect(calendar.currentWeek?.usualDays).toEqual([0, 5400, 0, 0, 0, 0, 0]);
+  });
+
+  test("compares with the same days of the finished weeks only", () => {
+    const activities = [
+      // A Sunday long ride in a finished week: not part of "by Tuesday".
+      activity({ startLocal: "2026-11-08T07:00:00Z", movingSeconds: 18_000 }),
+    ];
+    const calendar = buildCalendar(activities, november, "monday", TODAY);
+    expect(calendar.currentWeek?.averageSoFar).toBe(0);
+  });
+
+  test("no current week when the period is in the past", () => {
+    const calendar = buildCalendar(
+      [],
+      resolvePeriod({ view: "1m", month: "2026-09" }, TODAY),
+      "monday",
+      TODAY,
+    );
+    expect(calendar.currentWeek).toBeNull();
   });
 
   test("groups weeks by the month that holds most of their days", () => {
@@ -241,7 +268,6 @@ describe("buildCalendar", () => {
       "2026-11-02",
       "2026-11-09",
     ]);
-    expect(novemberGroup.finishedWeeks).toBe(1);
     expect(novemberGroup.average?.totalSeconds).toBe(0);
   });
 

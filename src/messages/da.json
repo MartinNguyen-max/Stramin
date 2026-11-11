@@ -25,35 +25,15 @@
     },
     "showcase": {
       "sample": "Eksempeldata",
-      "calendar": {
-        "eyebrow": "Kalender",
-        "title": "Al din træning, måned for måned",
-        "text": "Hver træning på sin dag med distance, tempo og tid. Ugens total til højre, gennemsnitsugen nederst, og fra én måned til hele historikken."
-      },
-      "events": {
-        "eyebrow": "Nedtælling",
-        "title": "Ved altid, hvor længe der er til løbsdagen",
-        "text": "Tilføj dine løb med et billede, og tæl ned til dem øverst på siden."
-      },
-      "level": {
-        "eyebrow": "Dit niveau",
-        "title": "Bedste præstationer, forventede tider og watt",
-        "text": "Dine hurtigste tider fra Strava, hvad du kan løbe i et løb, dine watt og din FTP, og de tempoer, du skal træne i."
-      },
-      "training": {
-        "eyebrow": "Træning",
-        "title": "Træninger med dine egne tempoer",
-        "text": "Vælg roligt, moderat eller hårdt. Hver blok viser det tempo eller den zone, der passer til dig. Tryk på en træning for at se trinnene."
-      },
-      "goals": {
-        "eyebrow": "Mål",
-        "title": "Mål, der starter, hvor du er",
-        "text": "Sæt et mål, der er hurtigere end din bedste, og få enkle tips og de træninger, der hjælper dig derhen."
-      }
+      "greeting": "Velkommen, Martin"
     },
     "cta": {
       "title": "Se din egen træning sådan her",
       "text": "Gratis, privat og lavet til triatleter. Det tager et minut at forbinde Strava."
+    },
+    "video": {
+      "title": "Stramin på 30 sekunder",
+      "text": "Fra Strava til din kalender, dine mål, tempoberegneren og din udvikling."
     }
   },
   "Footer": {
@@ -231,16 +211,20 @@
     "weekNumber": "Uge {number}",
     "openMonth": "Åbn denne måned",
     "periodTotal": "Total for perioden",
-    "workouts": "{count, plural, =0 {Ingen træninger} one {# træning} other {# træninger}}",
     "allTimeSince": "Alt (siden {date})",
     "viewOnStrava": "View on Strava",
     "averageWeek": "Gennemsnitlig uge",
-    "averageNote": "Gennemsnittet bruger de {count, plural, one {# færdige uge} other {# færdige uger}}, der vises. Den aktuelle uge tæller først med, når den er slut.",
+    "averageNote": "Ud fra {count, plural, =0 {ingen færdige uger} one {# færdig uge} other {# færdige uger}}. Denne uge tæller med i gennemsnittet, når den er slut.",
     "noFinishedWeek": "Ingen uge i perioden er slut endnu, så der er intet ugentligt gennemsnit.",
     "restDay": "Ingen træning denne dag.",
     "importWaiting": "Henter dine træninger fra Strava…",
-    "hours": "Timer",
-    "perWeekWorkouts": "pr. uge · {count} træninger"
+    "averageWeekPeriod": "Gennemsnitlig uge for perioden",
+    "total": "I alt",
+    "thisWeek": "Denne uge · dag {day} af 7",
+    "ofAverage": "af {average}",
+    "ahead": "{diff} foran",
+    "behind": "{diff} bagud",
+    "usualByDay": "Normalt på dag {day}: {time}"
   },
   "Events": {
     "title": "Events",
@@ -283,7 +267,8 @@
       "unavailable": "Events kan ikke gemmes lige nu. Prøv igen senere.",
       "generic": "Noget gik galt. Prøv igen."
     },
-    "daysLeftLabel": "{count, plural, one {dag tilbage} other {dage tilbage}}"
+    "daysLeftLabel": "{count, plural, one {dag tilbage} other {dage tilbage}}",
+    "moveImage": "Træk for at flytte billedet"
   },
   "Demo": {
     "title": "Eksempeldata",
@@ -337,10 +322,8 @@
       "estimate": "Skøn"
     },
     "level": {
-      "title": "Dit løbeniveau",
       "vdot": "VDOT {value}",
       "basis": "Ud fra din {distance} på {time}.",
-      "explain": "VDOT er et mål for løbeform fra Jack Daniels' Running Formula. Dine træningstempoer følger af det.",
       "per400": "{time} pr. 400 m",
       "noRuns": "Tilføj en bedste præstation i løb for at se dit niveau og dine træningstempoer.",
       "paces": {
@@ -351,10 +334,12 @@
         "interval": "Interval",
         "repetition": "Gentagelser"
       },
-      "predictions": "Forventede løbstider",
-      "predictionsNote": "Hvad dit niveau forudsiger med den rette træning. Længere løb kræver også den ugentlige mængde.",
       "yourBest": "Din bedste: {time}",
-      "pacesTitle": "Træningstempoer"
+      "combinedTitle": "Dit niveau og forventede tider",
+      "combinedNote": "Hvad dine bedste præstationer forudsiger med den rette træning. Vind, bakker, våddragt og åbent vand ændrer tiderne.",
+      "methodRun": "Beregnet med VDOT fra Jack Daniels' Running Formula (kun løb).",
+      "methodRiegel": "Beregnet med Riegels formel.",
+      "pacesTitleRun": "Træningstempoer for løb (fra din VDOT)"
     },
     "power": {
       "title": "Watt på cyklen",
@@ -370,14 +355,32 @@
       }
     },
     "predictions": {
-      "title": "Forventede tider på cykel og i vand",
       "basis": "Ud fra din {distance} på {time} ({pace}).",
-      "yourBest": "Din bedste: {time}",
       "noEfforts": {
         "bike": "Tilføj en bedste præstation på cykel for at se forventede tider.",
         "swim": "Tilføj en bedste præstation i svømning for at se forventede tider."
+      }
+    },
+    "progress": {
+      "title": "Din udvikling",
+      "intro": "Dig nu sammenlignet med dig den {date}.",
+      "months": {
+        "3": "3 mdr.",
+        "6": "6 mdr.",
+        "12": "1 år"
       },
-      "note": "Beregnet med Riegels formel ud fra din stærkeste præstation. Vind, bakker, læ, våddragt og åbent vand ændrer løbstiderne."
+      "trainingTitle": "Træning pr. uge (gns. af 12 uger)",
+      "effortsTitle": "Bedste præstationer",
+      "total": "I alt",
+      "new": "Ny",
+      "noEfforts": "Ingen bedste præstationer endnu.",
+      "note": "Ud fra dine Strava-aktiviteter. Tider, du selv har tastet ind, er ikke med, da de ikke har en historik.",
+      "noChange": "Ingen nye bedste tider siden da.",
+      "unchanged": "{count, plural, one {# anden distance uændret} other {# andre distancer uændrede}}.",
+      "legendBefore": "Dengang ({date})",
+      "legendNow": "Nu",
+      "faster": "▼ {diff} hurtigere",
+      "slower": "▲ {diff} langsommere"
     }
   },
   "Training": {
@@ -521,10 +524,9 @@
       "sport": "Sport",
       "distance": "Distance",
       "currentBest": "Din bedste: {time} · {pace}",
-      "noBest": "Ingen bedste præstation endnu på denne distance, så alle mål er fine.",
+      "noBest": "Ingen bedste præstation på denne distance endnu.",
       "suggestions": "Forslag",
-      "target": "Måltid",
-      "targetPlaceholder": "fx 18:00",
+      "target": "Ønsket sluttid",
       "save": "Sæt mål",
       "cancel": "Annuller"
     },
@@ -532,32 +534,22 @@
       "timeInvalid": "Skriv en tid som 18:00 eller 1:29:30.",
       "notFaster": "Du har allerede klaret {time}. Vælg en hurtigere tid.",
       "unavailable": "Mål kan ikke gemmes lige nu. Prøv igen senere.",
-      "generic": "Noget gik galt. Prøv igen."
+      "generic": "Noget gik galt. Prøv igen.",
+      "outOfRange": "En af tiderne er ikke realistisk. Tjek den igen.",
+      "outOfRangeTime": "Skriv en tid mellem {min} og {max}.",
+      "outOfRangeLeg": "{sport}: skriv en tid mellem {min} og {max}.",
+      "transitionsTooLong": "Skift kan højst tage 30:00."
     },
     "card": {
       "goal": "{distance} på {time}",
-      "currentBest": "Din bedste {time} · {pace}",
-      "toGo": "{time} tilbage ({percent})",
       "achieved": "Mål nået! Tid til et nyt.",
       "noBest": "Ingen bedste præstation endnu på denne distance. Tilføj en på din profil.",
       "delete": "Slet",
       "confirmDelete": "Vil du slette det?",
-      "goalPace": "Måltempo {pace}",
-      "paceGap": "Du skal holde {target} i stedet for {current}: {diff} hurtigere."
-    },
-    "gap": {
-      "close": "Tæt på. Et par fokuserede uger kan gøre det.",
-      "season": "Realistisk på en sæson (8–16 ugers stabil træning).",
-      "big": "Et stort skridt. Overvej et delmål på {time} ({pace})."
-    },
-    "speed": {
-      "equivalent": "{time} på {distance} ≈ {needed} ({pace}) på {reference}.",
-      "slower": "Din {reference} ({best}, {pace}) er langsommere end det. Arbejd med farten.",
-      "supports": "Din {reference} ({best}, {pace}) understøtter allerede målet. Fokuser på at holde tempoet længere."
-    },
-    "volume": {
-      "low": "Du ligger på {value} om ugen. Byg op mod {target}, højst 10 % mere pr. uge.",
-      "good": "Din mængde ({value} om ugen) er god til denne distance. Læg én kvalitetstræning ind om ugen."
+      "rowBest": "Din bedste",
+      "rowGoal": "Mål",
+      "rowGap": "Mangler",
+      "faster": "{diff} hurtigere"
     },
     "workouts": "Træninger, der hjælper",
     "empty": "Ingen mål endnu. Sæt dit første.",
@@ -570,23 +562,158 @@
       "transitions": "Skift (T1 + T2)",
       "total": "Samlet: {time}",
       "noBest": "Ingen bedste præstation på denne distance endnu.",
-      "best": "Bedste {time} · {pace}",
       "toGo": "{time} tilbage",
       "reached": "Allerede nået",
-      "noBests": "Tilføj bedste præstationer for svøm, cykel og løb på din profil for at sammenligne hver disciplin.",
-      "biggestGap": "Største hul: {sport}. Du skal holde {target} i stedet for {current} ({diff} hurtigere).",
-      "allReached": "Dine bedste præstationer matcher allerede hver disciplin. Nu skal de sættes sammen på løbsdagen.",
-      "runOffBike": "Løb efter cyklingen er typisk 5–10 % langsommere end et friskt løb: din bedste tid på {best} peger på cirka {from}–{to}.",
-      "runFaster": "Dit løbsmål ({time}) er hurtigere end det. Øv dig i at løbe efter cyklen (brick-træning).",
-      "runFits": "Dit løbsmål ({time}) passer til det.",
-      "placeholder": {
-        "swim": "fx 38:00",
-        "bike": "fx 2:40:00",
-        "run": "fx 1:45:00",
-        "transitions": "fx 6:00"
+      "transitionsField": "Skift (T1 + T2, valgfrit)",
+      "raceDay": "Bedste {best} ≈ {raceDay} på dagen",
+      "raceDayNote": "På dagen regnes der med træthed, fordi det hele sker samme dag: ca. +{bike} % på cyklen og +{run} % i løbet.",
+      "quarter": "Kvart Ironman",
+      "raceDayPredicted": "Forventet {best} ≈ {raceDay} på dagen"
+    },
+    "tips": {
+      "volume": {
+        "run": "De sidste 3 måneder har du løbet {perWeek} om ugen. Til dette mål: prøv ca. {target}.",
+        "bike": "De sidste 3 måneder har du cyklet {perWeek} om ugen. Til dette mål: prøv ca. {target}.",
+        "swim": "De sidste 3 måneder har du svømmet {perWeek} om ugen. Til dette mål: prøv ca. {target}."
       },
-      "transitionsField": "Skift (T1 + T2, valgfrit)"
-    }
+      "trend": {
+        "run": "Dit løb er faldet de sidste 4 uger: {recent} om ugen mod {average} før.",
+        "bike": "Din cykling er faldet de sidste 4 uger: {recent} om ugen mod {average} før.",
+        "swim": "Din svømning er faldet de sidste 4 uger: {recent} om ugen mod {average} før."
+      },
+      "frequency": {
+        "run": "Du løber ca. {count}× om ugen. Prøv {target}×: hyppighed betyder mest.",
+        "bike": "Du cykler ca. {count}× om ugen. Prøv {target}×.",
+        "swim": "Du svømmer ca. {count}× om ugen. Prøv {target}×: vandfornemmelsen kommer af at svømme tit."
+      },
+      "consistency": {
+        "run": "Du har løbet i {weeks} af de sidste {total} uger. Jævne uger slår store uger.",
+        "bike": "Du har cyklet i {weeks} af de sidste {total} uger. Jævne uger slår store uger.",
+        "swim": "Du har svømmet i {weeks} af de sidste {total} uger. Jævne uger slår store uger."
+      },
+      "comeback": {
+        "run": "Du har ikke løbet i {days} dage. Start roligt, og byg op over 2–3 uger.",
+        "bike": "Du har ikke cyklet i {days} dage. Start roligt, og byg op over 2–3 uger.",
+        "swim": "Du har ikke svømmet i {days} dage. Start roligt, og byg op over 2–3 uger."
+      },
+      "longSession": {
+        "run": "Dit længste løb de sidste 3 måneder: {longest}. Byg op mod {needed}.",
+        "bike": "Din længste tur de sidste 3 måneder: {longest}. Byg op mod {needed}.",
+        "swim": "Din længste svømning de sidste 3 måneder: {longest}. Byg op mod {needed} i ét stræk."
+      },
+      "speedLimit": "Din {reference} ({best}) er langsommere end målet kræver (ca. {needed}). Farten kommer først.",
+      "enduranceLimit": "Din {reference} er allerede hurtig nok. Byg udholdenhed, så du kan holde farten længere.",
+      "workout5k": "Nøgletræning: 5–6 × 1 km i ca. {pace} med 2–3 minutters rolig pause.",
+      "workout10k": "Nøgletræning: 4–5 × 2 km i ca. {pace} (tærskel).",
+      "workoutHalf": "Nøgletræning: 3 × 10 minutter i ca. {pace} (tærskel) og et langt løb hver uge.",
+      "workoutMarathon": "Nøgletræning: lange løb med 2 × 20 minutter i målfart ({pace}).",
+      "fuelRun": "Øv dig i at tage energi hvert 30.–45. minut på de lange løb.",
+      "workoutBikeShort": "Nøgletræning: 2 × 20 minutter tæt på din tærskel. Målfart: {speed}.",
+      "workoutBikeLong": "Nøgletræning: en lang tur om ugen i roligt, jævnt tempo (zone 2).",
+      "fuelBike": "Øv dig i at spise og drikke på cyklen: ca. 60 g kulhydrat i timen.",
+      "workoutSwim": "Nøgletræning: 10 × 100 m i ca. {pace} med 15 s pause.",
+      "technique": "Brug én svømmetræning om ugen på teknik (fx catch-up og single-arm).",
+      "openWater": "Øv i åbent vand med våddragt: sigtning og starten koster tid.",
+      "gapClose": "Tæt på. Et par fokuserede uger kan gøre det.",
+      "gapSeason": "Realistisk over en sæson (8–16 uger).",
+      "gapBig": "Et stort skridt. Gå efter {time} først.",
+      "easy": "Hold ca. 80 % af træningen rolig, så du kan give den gas, når det tæller.",
+      "recoveryWeek": "Øg højst ca. 10 % om ugen, og tag en lettere uge hver 3.–4. uge.",
+      "needFresh": "{sport}: for at klare {target} på dagen skal du have en udhvilet tid på ca. {fresh} på {distance}.",
+      "allReached": "Dine bedste tider holder også på dagen. Nu handler det om at samle det.",
+      "noBests": "Tilføj bedste præstationer for svøm, cykel og løb på din profil for at sammenligne hver disciplin.",
+      "brick": "Løb 15–20 minutter lige efter en cykeltur én gang om ugen (brick).",
+      "nutrition": "Øv dig i at spise og drikke på de lange ture. På dagen betyder det lige så meget som formen.",
+      "workoutBikeShortWatts": "Nøgletræning: 2 × 20 minutter ved ca. {low}–{high} W (tæt på din tærskel). Målfart: {speed}.",
+      "workoutBikeLongWatts": "Nøgletræning: en lang tur om ugen ved ca. {low}–{high} W (zone 2)."
+    },
+    "calculator": {
+      "title": "Tempoberegner",
+      "intro": "Prøv et tempo, og se sluttiden ved siden af din egen bedste.",
+      "sport": "Sport",
+      "distance": "Distance",
+      "other": "Anden",
+      "customKm": "Distance i km",
+      "customM": "Distance i m",
+      "pace": "Tempo",
+      "speed": "Fart",
+      "finish": "Sluttid",
+      "best": "Din bedste: {time}",
+      "predicted": "Forventet ud fra dine bedste: {time}",
+      "raceDay": "Dine bedste på dagen: {time}",
+      "noBest": "Ingen bedste præstation at sammenligne med endnu.",
+      "same": "Samme som din tid",
+      "fasterBest": "{diff} hurtigere end din bedste",
+      "slowerBest": "{diff} langsommere end din bedste",
+      "fasterPredicted": "{diff} hurtigere end forventet",
+      "slowerPredicted": "{diff} langsommere end forventet",
+      "fasterRaceDay": "{diff} hurtigere end dine bedste på dagen",
+      "slowerRaceDay": "{diff} langsommere end dine bedste på dagen",
+      "setGoal": "Sæt som mål"
+    },
+    "tabs": {
+      "goals": "Mine mål",
+      "calculator": "Tempoberegner"
+    },
+    "tipsShort": {
+      "volume": {
+        "run": "Løb mere: ca. {target} om ugen",
+        "bike": "Cykl mere: ca. {target} om ugen",
+        "swim": "Svøm mere: ca. {target} om ugen"
+      },
+      "trend": {
+        "run": "Dit løb er faldet på det sidste",
+        "bike": "Din cykling er faldet på det sidste",
+        "swim": "Din svømning er faldet på det sidste"
+      },
+      "frequency": {
+        "run": "Løb {target}× om ugen",
+        "bike": "Cykl {target}× om ugen",
+        "swim": "Svøm {target}× om ugen"
+      },
+      "consistency": {
+        "run": "Løb hver uge",
+        "bike": "Cykl hver uge",
+        "swim": "Svøm hver uge"
+      },
+      "comeback": {
+        "run": "Start roligt med løb igen",
+        "bike": "Start roligt med cykling igen",
+        "swim": "Start roligt med svømning igen"
+      },
+      "longSession": {
+        "run": "Længere langtur: {needed}",
+        "bike": "Længere cykeltur: {needed}",
+        "swim": "Længere svømning: {needed}"
+      },
+      "speedLimit": "Farten først",
+      "enduranceLimit": "Byg udholdenhed",
+      "workout5k": "Nøgle: 1 km-intervaller i {pace}",
+      "workout10k": "Nøgle: 2 km tærskel i {pace}",
+      "workoutHalf": "Nøgle: tærskel i {pace} + langtur",
+      "workoutMarathon": "Nøgle: målfart {pace} på langturene",
+      "fuelRun": "Øv energi på langturene",
+      "workoutBikeShort": "Nøgle: 2 × 20 min tærskel",
+      "workoutBikeLong": "Nøgle: lang tur i zone 2",
+      "fuelBike": "Øv energi på cyklen",
+      "workoutSwim": "Nøgle: 10 × 100 m i {pace}",
+      "technique": "Ét teknikpas om ugen",
+      "openWater": "Øv i åbent vand",
+      "gapClose": "Tæt på målet",
+      "gapSeason": "Realistisk på en sæson",
+      "gapBig": "Delmål først: {time}",
+      "easy": "Hold 80 % roligt",
+      "recoveryWeek": "En lettere uge hver 3.–4. uge",
+      "needFresh": "{sport}: kræver ca. {fresh} udhvilet",
+      "allReached": "Dine tider holder på dagen",
+      "noBests": "Tilføj dine bedste præstationer",
+      "brick": "Brick-træning hver uge",
+      "nutrition": "Øv mad og drikke",
+      "workoutBikeShortWatts": "Nøgle: 2 × 20 min ved {low}–{high} W",
+      "workoutBikeLongWatts": "Nøgle: lang tur ved {low}–{high} W"
+    },
+    "readMore": "Læs mere",
+    "readLess": "Vis mindre"
   },
   "Strava": {
     "connect": "Forbind med Strava",
@@ -617,5 +744,27 @@
   },
   "Units": {
     "hour": "t"
+  },
+  "Onboarding": {
+    "welcome": {
+      "title": "Velkommen til Stramin, {name}",
+      "text": "Forbind Strava, så dukker din svømning, cykling, løb og styrketræning op her. Den første import tager et minut."
+    },
+    "calendar": {
+      "title": "Din træningskalender",
+      "text": "Hver træning på sin dag, ugens total til højre og din gennemsnitlige uge øverst. Skift mellem 1 måned og hele historikken."
+    },
+    "goals": {
+      "title": "Mål og tempoberegner",
+      "text": "Sæt et mål for en distance eller en Ironman, og få et par korte tips. Prøv tempoer i beregneren, og sæt et som mål."
+    },
+    "profile": {
+      "title": "Dit niveau og din udvikling",
+      "text": "Profil viser dine bedste præstationer, forventede løbstider, og hvordan du har udviklet dig de sidste måneder."
+    },
+    "next": "Næste",
+    "skip": "Spring over",
+    "done": "Kom i gang",
+    "progress": "Trin {step} af {total}"
   }
 }

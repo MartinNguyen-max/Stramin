@@ -25,35 +25,15 @@
     },
     "showcase": {
       "sample": "Example data",
-      "calendar": {
-        "eyebrow": "Calendar",
-        "title": "Every workout, month by month",
-        "text": "Each workout on its day with distance, pace and time. Week totals on the right, the average week at the bottom, and from one month to all time."
-      },
-      "events": {
-        "eyebrow": "Countdowns",
-        "title": "Always know how long until race day",
-        "text": "Add your races with a photo and count down to them right at the top."
-      },
-      "level": {
-        "eyebrow": "Your level",
-        "title": "Best efforts, predictions and power",
-        "text": "Your fastest times from Strava, what you can run in a race, your bike power and FTP, and the paces to train at."
-      },
-      "training": {
-        "eyebrow": "Training",
-        "title": "Workouts with your own paces",
-        "text": "Pick easy, moderate or hard. Every block shows the pace or zone that fits you. Tap a workout to see the steps."
-      },
-      "goals": {
-        "eyebrow": "Goals",
-        "title": "Goals that start where you are",
-        "text": "Set a target faster than your best, and get simple tips and the workouts that help you get there."
-      }
+      "greeting": "Welcome, Martin"
     },
     "cta": {
       "title": "See your own training like this",
       "text": "Free, private and made for triathletes. Connecting Strava takes a minute."
+    },
+    "video": {
+      "title": "Stramin in 30 seconds",
+      "text": "From Strava to your calendar, goals, pace calculator and progress."
     }
   },
   "Footer": {
@@ -231,16 +211,20 @@
     "weekNumber": "Week {number}",
     "openMonth": "Open this month",
     "periodTotal": "Total for the period",
-    "workouts": "{count, plural, =0 {No workouts} one {# workout} other {# workouts}}",
     "allTimeSince": "All time (since {date})",
     "viewOnStrava": "View on Strava",
     "averageWeek": "Average week",
-    "averageNote": "Averages use the {count, plural, one {# finished week} other {# finished weeks}} shown. The current week isn't counted until it's over.",
-    "noFinishedWeek": "No week in this period is over yet, so there's no weekly average.",
+    "averageNote": "Based on {count, plural, =0 {no finished weeks} one {# finished week} other {# finished weeks}}. This week joins the average once it is over.",
+    "noFinishedWeek": "No week in this period is over yet, so there is no weekly average.",
     "restDay": "No training this day.",
     "importWaiting": "Getting your workouts from Strava…",
-    "hours": "Hours",
-    "perWeekWorkouts": "per week · {count} workouts"
+    "averageWeekPeriod": "Average week for the period",
+    "total": "Total",
+    "thisWeek": "This week · day {day} of 7",
+    "ofAverage": "of {average}",
+    "ahead": "{diff} ahead",
+    "behind": "{diff} behind",
+    "usualByDay": "Usually by day {day}: {time}"
   },
   "Events": {
     "title": "Events",
@@ -283,7 +267,8 @@
       "unavailable": "Events can't be saved right now. Please try again later.",
       "generic": "Something went wrong. Please try again."
     },
-    "daysLeftLabel": "{count, plural, one {day left} other {days left}}"
+    "daysLeftLabel": "{count, plural, one {day left} other {days left}}",
+    "moveImage": "Drag to move the image"
   },
   "Demo": {
     "title": "Example data",
@@ -337,10 +322,8 @@
       "estimate": "Estimate"
     },
     "level": {
-      "title": "Your running level",
       "vdot": "VDOT {value}",
       "basis": "From your {distance} in {time}.",
-      "explain": "VDOT is a running fitness score from Jack Daniels' Running Formula. Your training paces follow from it.",
       "per400": "{time} per 400 m",
       "noRuns": "Add a running best effort to see your level and training paces.",
       "paces": {
@@ -351,10 +334,12 @@
         "interval": "Interval",
         "repetition": "Repetition"
       },
-      "predictions": "Predicted race times",
-      "predictionsNote": "What your level predicts with the right training. Longer races also need the weekly volume to match.",
       "yourBest": "Your best: {time}",
-      "pacesTitle": "Training paces"
+      "combinedTitle": "Your level and predicted times",
+      "combinedNote": "What your bests predict with the right training. Wind, hills, wetsuits and open water change race times.",
+      "methodRun": "Predicted with VDOT from Jack Daniels' Running Formula (running only).",
+      "methodRiegel": "Predicted with Riegel's formula.",
+      "pacesTitleRun": "Running training paces (from your VDOT)"
     },
     "power": {
       "title": "Bike power",
@@ -370,14 +355,32 @@
       }
     },
     "predictions": {
-      "title": "Bike and swim predictions",
       "basis": "From your {distance} in {time} ({pace}).",
-      "yourBest": "Your best: {time}",
       "noEfforts": {
         "bike": "Add a bike best effort to see predictions.",
         "swim": "Add a swim best effort to see predictions."
+      }
+    },
+    "progress": {
+      "title": "Your progress",
+      "intro": "You now compared with you on {date}.",
+      "months": {
+        "3": "3 mo",
+        "6": "6 mo",
+        "12": "1 yr"
       },
-      "note": "Predicted with Riegel's formula from your strongest effort. Wind, hills, drafting, wetsuits and open water change race times."
+      "trainingTitle": "Training per week (12-week average)",
+      "effortsTitle": "Best efforts",
+      "total": "Total",
+      "new": "New",
+      "noEfforts": "No best efforts yet.",
+      "note": "From your Strava activities. Your own entered times aren't included, as they have no history.",
+      "noChange": "No new bests since then.",
+      "unchanged": "{count, plural, one {# other distance unchanged} other {# other distances unchanged}}.",
+      "legendBefore": "Then ({date})",
+      "legendNow": "Now",
+      "faster": "▼ {diff} faster",
+      "slower": "▲ {diff} slower"
     }
   },
   "Training": {
@@ -521,10 +524,9 @@
       "sport": "Sport",
       "distance": "Distance",
       "currentBest": "Your best: {time} · {pace}",
-      "noBest": "No best effort yet at this distance, so any target is fine.",
+      "noBest": "No best effort at this distance yet.",
       "suggestions": "Suggested targets",
       "target": "Target time",
-      "targetPlaceholder": "e.g. 18:00",
       "save": "Set goal",
       "cancel": "Cancel"
     },
@@ -532,32 +534,22 @@
       "timeInvalid": "Enter a time like 18:00 or 1:29:30.",
       "notFaster": "You already did {time}. Pick a faster time.",
       "unavailable": "Goals can't be saved right now. Please try again later.",
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "outOfRange": "One of the times isn't realistic. Please check it.",
+      "outOfRangeTime": "Enter a time between {min} and {max}.",
+      "outOfRangeLeg": "{sport}: enter a time between {min} and {max}.",
+      "transitionsTooLong": "Transitions can take at most 30:00."
     },
     "card": {
       "goal": "{distance} in {time}",
-      "currentBest": "Your best {time} · {pace}",
-      "toGo": "{time} to go ({percent})",
       "achieved": "Goal reached! Time for a new one.",
       "noBest": "No best effort yet at this distance. Add one on your profile.",
       "delete": "Delete",
       "confirmDelete": "Really delete?",
-      "goalPace": "Goal pace {pace}",
-      "paceGap": "You need {target} instead of {current}: {diff} faster."
-    },
-    "gap": {
-      "close": "Close. A few focused weeks can do it.",
-      "season": "Realistic in a season (8–16 weeks of steady training).",
-      "big": "A big step. Consider an in-between goal of {time} ({pace})."
-    },
-    "speed": {
-      "equivalent": "{time} on {distance} ≈ {needed} ({pace}) on {reference}.",
-      "slower": "Your {reference} ({best}, {pace}) is slower than that. Work on speed.",
-      "supports": "Your {reference} ({best}, {pace}) already supports this goal. Focus on holding the pace for longer."
-    },
-    "volume": {
-      "low": "You average {value} per week. Build towards {target}, adding at most 10 % per week.",
-      "good": "Your volume ({value} per week) is good for this distance. Add one quality session per week."
+      "rowBest": "Your best",
+      "rowGoal": "Goal",
+      "rowGap": "To go",
+      "faster": "{diff} faster"
     },
     "workouts": "Workouts that help",
     "empty": "No goals yet. Set your first one.",
@@ -570,23 +562,158 @@
       "transitions": "Transitions (T1 + T2)",
       "total": "Total: {time}",
       "noBest": "No best effort at this distance yet.",
-      "best": "Best {time} · {pace}",
       "toGo": "{time} to go",
       "reached": "Already there",
-      "noBests": "Add best efforts for swim, bike and run on your profile to compare each discipline.",
-      "biggestGap": "Biggest gap: {sport}. You need {target} instead of {current} ({diff} faster).",
-      "allReached": "Your best efforts already match every discipline. Now put them together on race day.",
-      "runOffBike": "Running after the bike is usually 5–10 % slower than a fresh run: your best of {best} suggests about {from}–{to}.",
-      "runFaster": "Your run goal ({time}) is faster than that. Practise running off the bike (brick sessions).",
-      "runFits": "Your run goal ({time}) fits that.",
-      "placeholder": {
-        "swim": "e.g. 38:00",
-        "bike": "e.g. 2:40:00",
-        "run": "e.g. 1:45:00",
-        "transitions": "e.g. 6:00"
+      "transitionsField": "Transitions (T1 + T2, optional)",
+      "raceDay": "Best {best} ≈ {raceDay} on race day",
+      "raceDayNote": "Race day counts with fatigue, because it's all on the same day: about +{bike} % on the bike and +{run} % on the run.",
+      "quarter": "Quarter Ironman",
+      "raceDayPredicted": "Predicted {best} ≈ {raceDay} on race day"
+    },
+    "tips": {
+      "volume": {
+        "run": "Over the last 3 months you've run {perWeek} a week. For this goal, aim for about {target}.",
+        "bike": "Over the last 3 months you've ridden {perWeek} a week. For this goal, aim for about {target}.",
+        "swim": "Over the last 3 months you've swum {perWeek} a week. For this goal, aim for about {target}."
       },
-      "transitionsField": "Transitions (T1 + T2, optional)"
-    }
+      "trend": {
+        "run": "Your running dropped in the last 4 weeks: {recent} a week, down from {average}.",
+        "bike": "Your riding dropped in the last 4 weeks: {recent} a week, down from {average}.",
+        "swim": "Your swimming dropped in the last 4 weeks: {recent} a week, down from {average}."
+      },
+      "frequency": {
+        "run": "You run about {count}× a week. Try {target}×: how often matters most.",
+        "bike": "You ride about {count}× a week. Try {target}×.",
+        "swim": "You swim about {count}× a week. Try {target}×: feel for the water comes from swimming often."
+      },
+      "consistency": {
+        "run": "You ran in {weeks} of the last {total} weeks. Steady weeks beat big ones.",
+        "bike": "You rode in {weeks} of the last {total} weeks. Steady weeks beat big ones.",
+        "swim": "You swam in {weeks} of the last {total} weeks. Steady weeks beat big ones."
+      },
+      "comeback": {
+        "run": "You haven't run for {days} days. Start easy and build up over 2–3 weeks.",
+        "bike": "You haven't ridden for {days} days. Start easy and build up over 2–3 weeks.",
+        "swim": "You haven't swum for {days} days. Start easy and build up over 2–3 weeks."
+      },
+      "longSession": {
+        "run": "Your longest run in 3 months: {longest}. Build towards {needed}.",
+        "bike": "Your longest ride in 3 months: {longest}. Build towards {needed}.",
+        "swim": "Your longest swim in 3 months: {longest}. Build towards {needed} in one go."
+      },
+      "speedLimit": "Your {reference} ({best}) is slower than this goal needs (about {needed}). Speed comes first.",
+      "enduranceLimit": "Your {reference} is already fast enough. Build endurance to hold the pace for longer.",
+      "workout5k": "Key session: 5–6 × 1 km at about {pace}, with 2–3 minutes easy between.",
+      "workout10k": "Key session: 4–5 × 2 km at about {pace} (threshold).",
+      "workoutHalf": "Key session: 3 × 10 minutes at about {pace} (threshold), and a long run every week.",
+      "workoutMarathon": "Key session: long runs with 2 × 20 minutes at goal pace ({pace}).",
+      "fuelRun": "Practise taking energy every 30–45 minutes on your long runs.",
+      "workoutBikeShort": "Key session: 2 × 20 minutes close to your threshold. Goal speed: {speed}.",
+      "workoutBikeLong": "Key session: one long ride a week at an easy, even effort (zone 2).",
+      "fuelBike": "Practise eating and drinking on the bike: about 60 g of carbs an hour.",
+      "workoutSwim": "Key session: 10 × 100 m at about {pace}, 15 s rest.",
+      "technique": "Spend one swim a week on technique (e.g. catch-up and single-arm drills).",
+      "openWater": "Practise in open water with a wetsuit: sighting and the start cost time.",
+      "gapClose": "Close. A few focused weeks can do it.",
+      "gapSeason": "Realistic over a season (8–16 weeks).",
+      "gapBig": "A big step. Aim for {time} first.",
+      "easy": "Keep about 80 % of your training easy, so you can go hard when it counts.",
+      "recoveryWeek": "Add at most about 10 % a week, and take an easier week every 3–4 weeks.",
+      "needFresh": "{sport}: to manage {target} on race day, you need about {fresh} over {distance} when fresh.",
+      "allReached": "Your bests hold up on race day too. Now it's about putting it together.",
+      "noBests": "Add best efforts for swim, bike and run on your profile to compare each discipline.",
+      "brick": "Once a week, run 15–20 minutes straight after a ride (a brick).",
+      "nutrition": "Practise eating and drinking on long sessions. On race day it matters as much as fitness.",
+      "workoutBikeShortWatts": "Key session: 2 × 20 minutes at about {low}–{high} W (close to your threshold). Goal speed: {speed}.",
+      "workoutBikeLongWatts": "Key session: one long ride a week at about {low}–{high} W (zone 2)."
+    },
+    "calculator": {
+      "title": "Pace calculator",
+      "intro": "Try a pace and see the finish time, next to your own best.",
+      "sport": "Sport",
+      "distance": "Distance",
+      "other": "Other",
+      "customKm": "Distance in km",
+      "customM": "Distance in m",
+      "pace": "Pace",
+      "speed": "Speed",
+      "finish": "Finish time",
+      "best": "Your best: {time}",
+      "predicted": "Predicted from your bests: {time}",
+      "raceDay": "Your bests on race day: {time}",
+      "noBest": "No best effort to compare with yet.",
+      "same": "Same as your time",
+      "fasterBest": "{diff} faster than your best",
+      "slowerBest": "{diff} slower than your best",
+      "fasterPredicted": "{diff} faster than predicted",
+      "slowerPredicted": "{diff} slower than predicted",
+      "fasterRaceDay": "{diff} faster than your bests on race day",
+      "slowerRaceDay": "{diff} slower than your bests on race day",
+      "setGoal": "Set as goal"
+    },
+    "tabs": {
+      "goals": "My goals",
+      "calculator": "Pace calculator"
+    },
+    "tipsShort": {
+      "volume": {
+        "run": "Run more: about {target} a week",
+        "bike": "Ride more: about {target} a week",
+        "swim": "Swim more: about {target} a week"
+      },
+      "trend": {
+        "run": "Your running has dropped lately",
+        "bike": "Your riding has dropped lately",
+        "swim": "Your swimming has dropped lately"
+      },
+      "frequency": {
+        "run": "Run {target}× a week",
+        "bike": "Ride {target}× a week",
+        "swim": "Swim {target}× a week"
+      },
+      "consistency": {
+        "run": "Run every week",
+        "bike": "Ride every week",
+        "swim": "Swim every week"
+      },
+      "comeback": {
+        "run": "Start running easy again",
+        "bike": "Start riding easy again",
+        "swim": "Start swimming easy again"
+      },
+      "longSession": {
+        "run": "Longer long run: {needed}",
+        "bike": "Longer long ride: {needed}",
+        "swim": "Longer swim: {needed}"
+      },
+      "speedLimit": "Speed first",
+      "enduranceLimit": "Build endurance",
+      "workout5k": "Key: 1 km repeats at {pace}",
+      "workout10k": "Key: 2 km threshold at {pace}",
+      "workoutHalf": "Key: threshold at {pace} + long run",
+      "workoutMarathon": "Key: goal pace {pace} on long runs",
+      "fuelRun": "Practise fuelling on long runs",
+      "workoutBikeShort": "Key: 2 × 20 min at threshold",
+      "workoutBikeLong": "Key: a long zone-2 ride",
+      "fuelBike": "Practise fuelling on the bike",
+      "workoutSwim": "Key: 10 × 100 m at {pace}",
+      "technique": "One technique swim a week",
+      "openWater": "Practise in open water",
+      "gapClose": "Close to your goal",
+      "gapSeason": "Realistic in a season",
+      "gapBig": "In-between goal first: {time}",
+      "easy": "Keep 80 % easy",
+      "recoveryWeek": "An easier week every 3–4 weeks",
+      "needFresh": "{sport}: needs about {fresh} fresh",
+      "allReached": "Your bests hold up on race day",
+      "noBests": "Add your best efforts",
+      "brick": "A brick session every week",
+      "nutrition": "Practise eating and drinking",
+      "workoutBikeShortWatts": "Key: 2 × 20 min at {low}–{high} W",
+      "workoutBikeLongWatts": "Key: long ride at {low}–{high} W"
+    },
+    "readMore": "Read more",
+    "readLess": "Show less"
   },
   "Strava": {
     "connect": "Connect with Strava",
@@ -617,5 +744,27 @@
   },
   "Units": {
     "hour": "h"
+  },
+  "Onboarding": {
+    "welcome": {
+      "title": "Welcome to Stramin, {name}",
+      "text": "Connect Strava and your swim, bike, run and strength training shows up here. The first import takes a minute."
+    },
+    "calendar": {
+      "title": "Your training calendar",
+      "text": "Every workout on its day, the week's total on the right, and your average week at the top. Switch between 1 month and all time."
+    },
+    "goals": {
+      "title": "Goals and the pace calculator",
+      "text": "Set a goal for a distance or an Ironman and get a few short tips. Try paces in the calculator and set one as a goal."
+    },
+    "profile": {
+      "title": "Your level and progress",
+      "text": "Profile shows your best efforts, predicted race times, and how you've improved over the last months."
+    },
+    "next": "Next",
+    "skip": "Skip",
+    "done": "Get started",
+    "progress": "Step {step} of {total}"
   }
 }

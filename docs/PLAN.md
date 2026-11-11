@@ -75,6 +75,14 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 
 ✅ **Done when:** the owner has reviewed the new Home and pages on a preview, and the migrations are applied.
 
+### M3.7 – Owner feedback 2026-11-12 *(local, one change at a time; see [REVIEW](REVIEW.md) #49–67)*
+- [x] Average week on top, month cards for 6M/1Y/All, "this week so far", phone week total on the right
+- [x] Goals: plausible times, time fields that format themselves, triathlon with race-day fatigue, quarter Ironman, short tips with "Read more"
+- [x] Pace calculator tab (all sports and triathlon, compared with your bests, "Set as goal")
+- [x] Profile: one level card for all sports, "Your progress" (3/6/12 months)
+- [x] PWA (install, offline page), onboarding for new users, landing page with PC and phone screens
+- [ ] Owner: commit, push and merge `feat/feedback-3`; `supabase db push --remote` only if not done for the goal splits
+
 ### M3.6 – Owner feedback 2026-11-11 *(work mode; see [feedback](feedback/2026-11-11.md))*
 - [x] Calendar: hours first with sport icons, swims in km in totals, the average week as the main number, week overview grouped by month with each month's average week, folding months (HOME-4, 5, 7)
 - [x] Phone: hours + distance per week under every week; month cards with averages and icons (HOME-9)

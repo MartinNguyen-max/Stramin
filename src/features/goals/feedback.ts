@@ -21,6 +21,12 @@ function roundingStep(seconds: number): number {
   return 60;
 }
 
+/** A time rounded to a "nice" step (5 s, 15 s or 1 min, by length). */
+export function roundTime(seconds: number): number {
+  const step = roundingStep(seconds);
+  return Math.round(seconds / step) * step;
+}
+
 /** Suggested targets 2 %, 5 % and 10 % faster than the best, rounded, always faster than it (GOAL-5). */
 export function suggestTargets(best: number): number[] {
   const result: number[] = [];
@@ -29,6 +35,16 @@ export function suggestTargets(best: number): number[] {
     const step = roundingStep(raw);
     let target = Math.round(raw / step) * step;
     if (target >= best) target -= step;
+    if (!result.includes(target)) result.push(target);
+  }
+  return result;
+}
+
+/** Triathlon leg suggestions around a realistic time: 3 % faster, the time itself, 5 % slower. */
+export function legSuggestions(basis: number): number[] {
+  const result: number[] = [];
+  for (const factor of [0.97, 1, 1.05]) {
+    const target = roundTime(basis * factor);
     if (!result.includes(target)) result.push(target);
   }
   return result;
@@ -179,17 +195,6 @@ export function goalFeedback(
     if (suggested.length === 0) suggested.push("hard", "easy");
   }
   return { gap, speed, volume, efforts: suggested };
-}
-
-/** `averageWeeklyMeters` for swim, bike and run at once (triathlon goals need all three). */
-export function weeklyMetersBySport(
-  activities: CalendarActivity[],
-  todayDate: string,
-  weekStartDay: WeekStartDay,
-): Record<EffortSport, number> {
-  const average = (sport: EffortSport) =>
-    averageWeeklyMeters(activities, sport, todayDate, weekStartDay);
-  return { run: average("run"), bike: average("bike"), swim: average("swim") };
 }
 
 /** Average weekly distance of a sport over the last `weeks` finished weeks (feedback-rules.md §4). */

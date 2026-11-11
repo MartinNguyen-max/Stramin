@@ -14,6 +14,7 @@ import {
   readCalendarRequest,
 } from "@/features/calendar/components/calendar-section";
 import { EventsSection } from "@/features/events/components/events-section";
+import { Onboarding } from "@/features/onboarding/onboarding";
 import { getOrCreateProfile } from "@/features/profile/data";
 import { StravaNotice } from "@/features/strava/components/strava-notice";
 import { StravaStatusBar } from "@/features/strava/components/strava-status-bar";
@@ -67,6 +68,7 @@ async function HomeContent({
       <h1 className="text-xl font-semibold tracking-tight">
         {t("greeting", { name: user.name ?? user.email ?? "" })}
       </h1>
+      {!user.onboarded && <Onboarding name={user.name ?? ""} />}
       <StravaNotice code={params.strava} />
       <EventsSection user={user} />
       {strava.connected && <StravaStatusBar status={strava} />}

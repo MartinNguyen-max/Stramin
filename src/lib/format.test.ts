@@ -5,8 +5,11 @@ import {
   formatDuration,
   formatHours,
   formatPaceDifference,
+  formatRoundDistance,
   formatSportDistance,
   formatSportPace,
+  formatTimeDigits,
+  formatTimeGap,
   formatTotalDistance,
   parseClock,
 } from "./format";
@@ -20,6 +23,43 @@ describe("formatHours", () => {
 
   test("59.6 minutes round up to an hour", () => {
     expect(formatHours(3580, "h")).toBe("1:00 h");
+  });
+});
+
+describe("formatRoundDistance", () => {
+  test("whole km from 10, else one decimal", () => {
+    expect(formatRoundDistance(50_000, "metric")).toBe("50 km");
+    expect(formatRoundDistance(31_800, "metric")).toBe("32 km");
+    expect(formatRoundDistance(2168, "metric")).toBe("2.2 km");
+  });
+});
+
+describe("formatTimeGap", () => {
+  test("seconds, minutes or hours, always with a unit", () => {
+    expect(formatTimeGap(41, "t")).toBe("41 s");
+    expect(formatTimeGap(11 * 60 + 57, "t")).toBe("11:57 min");
+    expect(formatTimeGap(3930, "h")).toBe("1:05:30 h");
+  });
+});
+
+describe("formatTimeDigits", () => {
+  test("digits fill seconds, then minutes, then hours", () => {
+    expect(formatTimeDigits("18")).toBe("18");
+    expect(formatTimeDigits("330")).toBe("3:30");
+    expect(formatTimeDigits("1805")).toBe("18:05");
+    expect(formatTimeDigits("12930")).toBe("1:29:30");
+    expect(formatTimeDigits("103000")).toBe("10:30:00");
+  });
+
+  test("ignores colons and other characters, and stops at 6 digits", () => {
+    expect(formatTimeDigits("1:29:30")).toBe("1:29:30");
+    expect(formatTimeDigits("18:0")).toBe("1:80");
+    expect(formatTimeDigits("1234567")).toBe("12:34:56");
+    expect(formatTimeDigits("")).toBe("");
+  });
+
+  test("leading zeros don't make an hour", () => {
+    expect(formatTimeDigits("01805")).toBe("18:05");
   });
 });
 
