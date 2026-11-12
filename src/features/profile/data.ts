@@ -32,18 +32,16 @@ export async function getOrCreateProfile(
   });
 }
 
-export async function saveSettings(
+/** Saves one or more settings at once; the profile exists (Settings creates it). Runs as the user (RLS). */
+export async function updatePreferences(
   user: CurrentUser,
-  settings: Settings,
+  patch: Partial<Settings>,
 ): Promise<void> {
   await withRls(user.claims, (tx) =>
     tx
-      .insert(profiles)
-      .values({ userId: user.id, ...settings })
-      .onConflictDoUpdate({
-        target: profiles.userId,
-        set: { ...settings, updatedAt: new Date() },
-      }),
+      .update(profiles)
+      .set({ ...patch, updatedAt: new Date() })
+      .where(eq(profiles.userId, user.id)),
   );
 }
 

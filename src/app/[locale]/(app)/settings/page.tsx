@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { ThemeSwitch } from "@/components/theme-switch";
 import { buttonVariants } from "@/components/ui/button";
 import { getStravaStatus } from "@/features/activities/data";
 import { signOut } from "@/features/auth/actions";
@@ -22,7 +21,13 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function SettingsPage() {
   return (
     <Suspense
-      fallback={<div className="h-96 animate-pulse rounded-2xl bg-muted" />}
+      fallback={
+        <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 motion-safe:animate-pulse">
+          <div className="h-8 w-48 rounded-lg bg-muted" />
+          <div className="h-80 rounded-2xl bg-muted" />
+          <div className="h-48 rounded-2xl bg-muted" />
+        </div>
+      }
     >
       <SettingsContent />
     </Suspense>
@@ -33,22 +38,22 @@ async function SettingsContent() {
   const t = await getTranslations("Settings");
   const tApp = await getTranslations("App");
   const user = await getCurrentUser();
-  const strava = await getStravaStatus(user.id);
   const locale = (await getLocale()) as Settings["locale"];
 
-  let initial: Settings = { units: "metric", weekStart: "monday", locale };
-  let databaseAvailable = true;
-  try {
-    const profile = await getOrCreateProfile(user, locale);
-    initial = {
-      units: profile.units,
-      weekStart: profile.weekStart,
-      locale: profile.locale,
-    };
-  } catch (error) {
-    console.error("[settings] profile unavailable", error);
-    databaseAvailable = false;
-  }
+  const [strava, profile] = await Promise.all([
+    getStravaStatus(user.id),
+    getOrCreateProfile(user, locale).catch((error) => {
+      console.error("[settings] profile unavailable", error);
+      return null;
+    }),
+  ]);
+  const databaseAvailable = profile !== null;
+  // The language shown is the page's own (the URL), which is what the user sees.
+  const initial: Settings = {
+    units: profile?.units ?? "metric",
+    weekStart: profile?.weekStart ?? "monday",
+    locale,
+  };
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
@@ -61,9 +66,6 @@ async function SettingsContent() {
         ) : (
           <p className="text-sm text-destructive">{t("databaseUnavailable")}</p>
         )}
-        <div className="border-t pt-4">
-          <ThemeSwitch />
-        </div>
       </section>
 
       <section className="flex flex-col gap-4 rounded-2xl border bg-card p-6">

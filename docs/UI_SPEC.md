@@ -164,7 +164,7 @@ Your running level: VDOT 50.6
 
 | Section | Content | Req |
 |---|---|---|
-| **Preferences** | Units · Week start · Language · Indoor/outdoor · **Theme** (Device / Light / Dark, applied at once, saved on the device) | SET-1..4 |
+| **Preferences** | Units · Week start · Language · **Theme** (Device / Light / Dark, saved on the device) as pill buttons that apply at once, no Save button; "Saved ✓" after a change. Indoor/outdoor later. | SET-1..4 |
 | **Connections** | Strava: "Connect with Strava" (orange), or "Connected as {name}", last sync, **Refresh** and **Disconnect** (asks once more; deletes the Strava workouts). Garmin: coming soon. | SET-5, CON-2, CON-5 |
 | **Privacy** | Export data · Delete account · Privacy policy | PRIV-1, PRIV-2, PRIV-5 |
 | **Account** | Name · Log out | ACC-5, ACC-2 |

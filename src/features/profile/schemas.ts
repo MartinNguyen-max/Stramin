@@ -9,8 +9,3 @@ export const settingsSchema = z.object({
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
-
-export type SettingsFormState =
-  | { status: "idle" }
-  | { status: "saved" }
-  | { status: "error" };
