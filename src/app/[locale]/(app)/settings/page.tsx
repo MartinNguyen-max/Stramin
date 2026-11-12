@@ -62,7 +62,11 @@ async function SettingsContent() {
       <section className="flex flex-col gap-4 rounded-2xl border bg-card p-6">
         <h2 className="font-semibold">{t("preferences")}</h2>
         {databaseAvailable ? (
-          <SettingsForm initial={initial} />
+          <SettingsForm
+            // New values from the server (e.g. after a save) start the form fresh.
+            key={`${initial.units}-${initial.weekStart}-${initial.locale}`}
+            initial={initial}
+          />
         ) : (
           <p className="text-sm text-destructive">{t("databaseUnavailable")}</p>
         )}

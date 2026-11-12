@@ -177,7 +177,8 @@
     "language": {
       "label": "Sprog",
       "en": "English",
-      "da": "Dansk"
+      "da": "Dansk",
+      "switching": "Skifter sprog…"
     },
     "connections": {
       "title": "Forbindelser",
@@ -192,7 +193,8 @@
       "system": "Som enheden",
       "light": "Lys",
       "dark": "Mørk"
-    }
+    },
+    "saving": "Gemmer…"
   },
   "Calendar": {
     "title": "Træningskalender",
