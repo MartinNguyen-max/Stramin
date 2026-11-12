@@ -3,6 +3,20 @@
 > Decisions Claude made in **work mode** while the owner was away (CLAUDE.md → Work mode).
 > Each one can be discussed and changed. When a point is settled, move it out of this list (or delete it).
 
+## Batch 2026-11-12 (batch 6): owner feedback from the installed app ([feedback/2026-11-12-batch6.md](feedback/2026-11-12-batch6.md))
+
+| # | Decision | Why | Alternatives |
+|---|---|---|---|
+| 72 | **Light app icon** everywhere it's installed (home screen 192/512, maskable, Apple 180, favicon): white background, dark needle, the light logo. Splash background white; service worker cache bumped to v2. *iPhone: remove and re-add the home screen app to see the new icon.* | Owner: "it should have been the light logo". | Follow the phone's theme (not possible for home screen icons). |
+| 73 | **"This week" card only on 1M.** | Owner request. | – |
+| 74 | **Triathlon goal card, minimal:** per leg the target, its pace, and the time needed **fresh** over that distance ("When fresh, you should manage about 3:03:00 over Marathon"); the swim says it comes first (no fatigue). Gone: best / predicted race-day times, "Already there", "to go", the fatigue note, the scored tips and the workout chips. | A predicted time said "already reached" for a 3.8 km swim never done. "Keep it minimal". | Keep the race-day comparison but only for real bests. |
+| 75 | **Triathlon volume line per discipline, a realistic next step:** "Over the last 3 months you've swum 2.2 km a week … aim for about 2.6 km": +20 % on what you do now (at least 40 % of the target, at most the target), only for disciplines under 85 % of the target. Targets lowered for amateurs: full 6 km swim / 180 km bike / 40 km run a week; half 4.5 / 130 / 30; quarter 3 / 80 / 25. | "9 km swim per week is not good"; the owner liked "you did X, try Y". | The full target at once (before); +10 % (feels like no change). |
+| 76 | **Calculator: the pace difference** next to the time difference ("9 s slower · 0:02 /km slower"; bike in km/h, swim per 100 m), and the reference's pace ("Your best: 20:41 · 4:08 /km"). | Owner request. | Only the pace. |
+| 77 | **Calculator, triathlon: "Your best on race day" vs "Predicted on race day"**, with an ⓘ that explains it: the best over that distance (or "no best yet, we use your predicted time … less accurate") plus the fatigue added (+5 % bike / +15 % run in a full). | The user must see when a number is only a prediction. | A warning color; hide predicted legs. |
+| 78 | **Opened sections close when you leave a page** (Read more, Show steps, training paces, the calculator's ⓘ): a small `Details` component that closes on hide. Sliders and chosen distances are kept. | Next.js (Cache Components) keeps the last pages alive, so opened things stayed open. The Next docs recommend this per-element reset. | Reset whole pages on every navigation (`bfcacheId`): also resets the calculator. |
+| 79 | **Phone tab bar bigger and higher:** 64 px tall, bigger icons and labels, above the iPhone home bar (`viewport-fit=cover` so the safe area is known, plus at least 8 px). | "Hard to hit" in the installed app. | A floating pill bar. |
+| 80 | **Average week on the phone:** total on its own line, the 4 sport cards in one row (icon, name, distance, hours), like on PC. "Skøn" → **"Strava · anslået"** with a hover text: the time is Stramin's estimate from the Strava activity, not Strava's exact best effort. | Owner feedback. | 2 × 2 grid (before). |
+
 ## Batch 2026-11-10: new Home, Goals, Training, Profile (M2.5)
 
 ### Product and design

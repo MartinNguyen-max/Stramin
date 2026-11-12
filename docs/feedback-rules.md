@@ -2,6 +2,8 @@
 
 > **Changed 2026-11-12 (owner feedback):** the card shows the rules below as **one** short, abstract line, not as several tips: the speed check decides "You have the distance. Now build speed." or "You have the speed. Now build endurance."; without it, the volume check decides between that speed line and "Build up your weekly distance." The status, in-between goal and equivalent-time texts are no longer shown. Triathlon legs compare the target with the best **on race day** (`RACE_DAY_FACTOR` in `src/features/goals/triathlon.ts`).
 
+> **Changed 2026-11-12 (batch 6):** triathlon goals show no scored tips any more: per discipline only the fresh time needed (`freshTimeNeeded`) and, when it trains under 85 % of the target, a volume line with a step of about +20 % (`nextVolume` in `tips.ts`). Triathlon targets per week: quarter 3 / 80 / 25 km, half 4.5 / 130 / 30 km, full 6 / 180 / 40 km (swim / bike / run). The triathlon rows in §6 (most to gain, nutrition, brick) no longer apply.
+
 > **Status:** v1 (2026-11-10), written in work mode, to be reviewed by the owner.
 > Simple, explainable rules. No AI. Implemented in `src/features/goals/feedback.ts` (unit tested).
 
@@ -85,4 +87,4 @@ Every tip gets a **score** from the user's own data (lower = more relevant). The
 | 3.8 / 4.2 | Open water / technique | Swims ≥ 1.9 km, triathlon / all swims | "Practise in open water with a wetsuit." |
 | 5 / 5.5 | 80/20, recovery week | Always | "Keep about 80 % easy." / "Add at most ~10 % a week; an easier week every 3–4 weeks." |
 
-**Target volume:** running grows with the goal's level: 25 / 35 / 45 / 55 km a week for 5 km / 10 km / half / marathon at VDOT 45, plus about 1.5 km per VDOT point above (a 1:20 half ≈ 65 km). Bike and swim use §4. Triathlon per week: half 6 km swim, 150 km bike, 30 km run; full 9 / 220 / 45 km. Long sessions: run 12 / 18 / 30 km (10 km / half / marathon), bike 60 km (40 km) or 75 % of 90 / 180 km, swim the race distance (from 1.9 km).
+**Target volume:** running grows with the goal's level: 25 / 35 / 45 / 55 km a week for 5 km / 10 km / half / marathon at VDOT 45, plus about 1.5 km per VDOT point above (a 1:20 half ≈ 65 km). Bike and swim use §4. Triathlon per week (batch 6): quarter 3 km swim, 80 km bike, 25 km run; half 4.5 / 130 / 30 km; full 6 / 180 / 40 km. Long sessions: run 12 / 18 / 30 km (10 km / half / marathon), bike 60 km (40 km) or 75 % of 90 / 180 km, swim the race distance (from 1.9 km).

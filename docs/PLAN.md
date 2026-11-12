@@ -75,6 +75,13 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 
 ✅ **Done when:** the owner has reviewed the new Home and pages on a preview, and the migrations are applied.
 
+### M3.8 – Owner feedback 2026-11-12, batch 6 *(work mode, straight on main; see [feedback](feedback/2026-11-12-batch6.md), [REVIEW](REVIEW.md) #72–80)*
+- [x] Light app icon, "this week" only on 1M, bigger phone tab bar, average week in one row on phones
+- [x] Triathlon goal: fresh time needed per leg + realistic volume steps only
+- [x] Calculator: pace difference; where the race-day time comes from (ⓘ)
+- [x] Opened sections close when you leave a page
+- [x] Predicted times from recent training (item 4): not now, too complex (owner)
+
 ### M3.7 – Owner feedback 2026-11-12 *(local, one change at a time; see [REVIEW](REVIEW.md) #49–67)*
 - [x] Average week on top, month cards for 6M/1Y/All, "this week so far", phone week total on the right
 - [x] Goals: plausible times, time fields that format themselves, triathlon with race-day fatigue, quarter Ironman, short tips with "Read more"
