@@ -75,6 +75,12 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 
 ✅ **Done when:** the owner has reviewed the new Home and pages on a preview, and the migrations are applied.
 
+### M3.9 – Triathlon tip and performance *(see [REVIEW](REVIEW.md) #81–85)*
+- [x] Fresh time per leg as a tip
+- [x] Reads in parallel, 30 s browser cache, smaller JavaScript
+- [ ] Owner: check Supabase JWT signing keys (asymmetric keys make every login check local)
+- [ ] Maybe: best efforts stored per user at sync time
+
 ### M3.8 – Owner feedback 2026-11-12, batch 6 *(work mode, straight on main; see [feedback](feedback/2026-11-12-batch6.md), [REVIEW](REVIEW.md) #72–80)*
 - [x] Light app icon, "this week" only on 1M, bigger phone tab bar, average week in one row on phones
 - [x] Triathlon goal: fresh time needed per leg + realistic volume steps only

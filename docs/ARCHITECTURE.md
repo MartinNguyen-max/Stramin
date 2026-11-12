@@ -109,6 +109,12 @@ All values are stored in **SI units** (meters, seconds, watts). Units are conver
 - Since M3/M4 (2026-11-10), pages read activities from the `activities` table (as the user, RLS), never from Strava (NFR-3). The calendar reads only the visible weeks (HOME-10).
 - The Vercel functions run in **Dublin (`dub1`)**, next to the Supabase database (`eu-west-1`), so each database round trip is short.
 
+### Performance (2026-11-12)
+- **Reads in parallel:** each page starts its independent reads together (`Promise.all`: preferences via `getPreferences`, goals, best efforts, Strava status) instead of one after another.
+- **Browser cache of 30 s** (`experimental.staleTimes.dynamic`): going back to a tab within 30 s shows it at once. Server Actions that change data call `refresh()`; login, logout and name changes set cookies, which clears it too.
+- **Small client bundles:** client components never import zod (`auth/form-state.ts` holds the zod-free constants) or the Supabase browser client (the event image upload is loaded with `import()` only when used). About 0.8 MB of JavaScript per page instead of 1.18 MB (uncompressed).
+- **Not yet:** best efforts are still computed from the whole history on every Profile/Goals/Training visit. Storing them per user at sync time is the next step if those pages are still slow (needs a migration).
+
 ### Small per-device preferences
 - The calendar's **period type** (HOME-8) is stored in a cookie, `stramin-calendar` (1 year), set by a Server Action. It's a view setting that can differ between phone and desktop, so it isn't stored in the database.
 

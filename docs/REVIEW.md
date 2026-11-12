@@ -3,13 +3,23 @@
 > Decisions Claude made in **work mode** while the owner was away (CLAUDE.md → Work mode).
 > Each one can be discussed and changed. When a point is settled, move it out of this list (or delete it).
 
+## Batch 2026-11-12 (batch 7): triathlon tip and performance
+
+| # | Decision | Why | Alternatives |
+|---|---|---|---|
+| 81 | *(Owner)* **The fresh time per leg is a tip**, first under the legs ("Cykel: udhvilet skal du kunne klare ca. 4:45:43 på 180 km (37,8 km/t)"), for bike and run; the leg rows only show target · pace. | Owner request. | – |
+| 82 | **Page reads in parallel** (`Promise.all`) on Home, Goals, calculator, Training and Profile. | Each read waited for the one before (profile → goals → Strava status → workouts). | One combined database transaction per page (more code, small extra gain). |
+| 83 | **30 s browser cache for pages** (`staleTimes.dynamic: 30`): switching back to a tab within 30 s needs no server call. Saving settings now calls `refresh()`. | Every tab switch asked the server again (measured on the demo). | No cache (before); 5 minutes (stale Strava data). *A sync in the background shows up within 30 s.* |
+| 84 | **Smaller JavaScript:** zod and the Supabase browser client no longer ship with every page (–32 %, 1.18 → 0.8 MB uncompressed). | Faster first load on phones. | – |
+| 85 | **Not done (yet): best efforts stored in the database** at sync time. | Needs a migration, hooks in 8 sync paths and the 7-day rule (ADR 0009); the gain can't be measured without production data. Proposed as the next step if Profile/Goals still feel slow. | Do it now. |
+
 ## Batch 2026-11-12 (batch 6): owner feedback from the installed app ([feedback/2026-11-12-batch6.md](feedback/2026-11-12-batch6.md))
 
 | # | Decision | Why | Alternatives |
 |---|---|---|---|
 | 72 | **Light app icon** everywhere it's installed (home screen 192/512, maskable, Apple 180, favicon): white background, dark needle, the light logo. Splash background white; service worker cache bumped to v2. *iPhone: remove and re-add the home screen app to see the new icon.* | Owner: "it should have been the light logo". | Follow the phone's theme (not possible for home screen icons). |
 | 73 | **"This week" card only on 1M.** | Owner request. | – |
-| 74 | **Triathlon goal card, minimal:** per leg the target, its pace, and the time needed **fresh** over that distance ("When fresh, you should manage about 3:03:00 over Marathon"); the swim says it comes first (no fatigue). Gone: best / predicted race-day times, "Already there", "to go", the fatigue note, the scored tips and the workout chips. | A predicted time said "already reached" for a 3.8 km swim never done. "Keep it minimal". | Keep the race-day comparison but only for real bests. |
+| 74 | *(Owner, changed 2026-11-12)* **Triathlon goal card, minimal:** per leg the target and its pace; the time needed **fresh** over that distance is the first tip under the legs ("Bike: when fresh, you should manage about 4:45:43 over 180 km (37.8 km/h)"), for bike and run (the swim comes first, no fatigue). Gone: best / predicted race-day times, "Already there", "to go", the fatigue note, the scored tips and the workout chips. | A predicted time said "already reached" for a 3.8 km swim never done. "Keep it minimal". | Keep the race-day comparison but only for real bests. |
 | 75 | **Triathlon volume line per discipline, a realistic next step:** "Over the last 3 months you've swum 2.2 km a week … aim for about 2.6 km": +20 % on what you do now (at least 40 % of the target, at most the target), only for disciplines under 85 % of the target. Targets lowered for amateurs: full 6 km swim / 180 km bike / 40 km run a week; half 4.5 / 130 / 30; quarter 3 / 80 / 25. | "9 km swim per week is not good"; the owner liked "you did X, try Y". | The full target at once (before); +10 % (feels like no change). |
 | 76 | **Calculator: the pace difference** next to the time difference ("9 s slower · 0:02 /km slower"; bike in km/h, swim per 100 m), and the reference's pace ("Your best: 20:41 · 4:08 /km"). | Owner request. | Only the pace. |
 | 77 | **Calculator, triathlon: "Your best on race day" vs "Predicted on race day"**, with an ⓘ that explains it: the best over that distance (or "no best yet, we use your predicted time … less accurate") plus the fatigue added (+5 % bike / +15 % run in a full). | The user must see when a number is only a prediction. | A warning color; hide predicted legs. |
