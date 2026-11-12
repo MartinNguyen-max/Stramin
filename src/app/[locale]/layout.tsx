@@ -42,6 +42,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
+  // Lets the page use the whole screen in the installed iPhone app, so env(safe-area-inset-*) works
+  // and the bottom tab bar can sit above the home bar (owner feedback 2026-11-12, batch 6).
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#fafafa" },
     { media: "(prefers-color-scheme: dark)", color: "#14141A" },
