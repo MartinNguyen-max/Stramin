@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { ZoneSpinner } from "@/components/brand/zone-spinner";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { getCurrentUser } from "@/features/auth/current-user";
 import { Calculator } from "@/features/goals/components/calculator";
 import { GoalsTabs } from "@/features/goals/components/goals-tabs";
@@ -59,9 +59,5 @@ async function CalculatorContent() {
 
 function CalculatorSkeleton() {
   const t = useTranslations("Goals");
-  return (
-    <div className="flex flex-1 items-center justify-center py-24">
-      <ZoneSpinner size={72} label={t("loading")} />
-    </div>
-  );
+  return <PageSkeleton layout="calculator" label={t("loading")} />;
 }

@@ -25,7 +25,7 @@ export default function DemoHomePage({
   searchParams,
 }: PageProps<"/[locale]/demo">) {
   return (
-    <Suspense fallback={<DemoSpinner />}>
+    <Suspense fallback={<DemoSpinner layout="home" />}>
       <DemoHome searchParams={searchParams} />
     </Suspense>
   );

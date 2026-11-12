@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 /** Demo of the profile: best efforts from the demo history (read-only) and the running level. */
 export default function DemoProfilePage() {
   return (
-    <Suspense fallback={<DemoSpinner />}>
+    <Suspense fallback={<DemoSpinner layout="profile" />}>
       <DemoProfile />
     </Suspense>
   );

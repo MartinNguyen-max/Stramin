@@ -20,7 +20,7 @@ export default function DemoTrainingPage({
   searchParams,
 }: PageProps<"/[locale]/demo/training">) {
   return (
-    <Suspense fallback={<DemoSpinner />}>
+    <Suspense fallback={<DemoSpinner layout="training" />}>
       <DemoTraining searchParams={searchParams} />
     </Suspense>
   );

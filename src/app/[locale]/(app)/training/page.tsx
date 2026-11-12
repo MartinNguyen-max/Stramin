@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { ZoneSpinner } from "@/components/brand/zone-spinner";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { getCurrentUser } from "@/features/auth/current-user";
 import { loadBestEfforts } from "@/features/profile/best-efforts-data";
 import { getPreferences } from "@/features/profile/data";
@@ -55,9 +55,5 @@ async function TrainingContent({
 
 function TrainingSkeleton() {
   const t = useTranslations("Calendar");
-  return (
-    <div className="flex flex-1 items-center justify-center py-24">
-      <ZoneSpinner size={72} label={t("loading")} />
-    </div>
-  );
+  return <PageSkeleton layout="training" label={t("loading")} />;
 }

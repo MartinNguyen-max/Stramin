@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { ZoneSpinner } from "@/components/brand/zone-spinner";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { ConnectCard } from "@/features/activities/components/connect-card";
 import {
   getStravaStatus,
@@ -96,9 +97,5 @@ function ImportWaiting() {
 /** Shown while the session and the training data load. */
 function HomeSkeleton() {
   const t = useTranslations("Home");
-  return (
-    <div className="flex flex-1 items-center justify-center py-24">
-      <ZoneSpinner size={72} label={t("loading")} />
-    </div>
-  );
+  return <PageSkeleton layout="home" label={t("loading")} />;
 }

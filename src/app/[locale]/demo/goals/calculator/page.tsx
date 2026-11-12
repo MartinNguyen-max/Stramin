@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 /** Demo of the pace calculator with the demo best efforts. */
 export default function DemoCalculatorPage() {
   return (
-    <Suspense fallback={<DemoSpinner />}>
+    <Suspense fallback={<DemoSpinner layout="calculator" />}>
       <DemoCalculator />
     </Suspense>
   );
