@@ -39,7 +39,10 @@ export function TrainingCalendar({ calendar, units }: CalendarProps) {
   return (
     <div className="flex flex-col gap-4">
       <PeriodSummary calendar={calendar} units={units} />
-      <ThisWeekCard calendar={calendar} units={units} />
+      {/* "This week" only on 1 month (owner feedback 2026-11-12, batch 6). */}
+      {calendar.period.view === "1m" && (
+        <ThisWeekCard calendar={calendar} units={units} />
+      )}
       {calendar.density === "weeks" ? (
         <MonthCards calendar={calendar} units={units} />
       ) : (
@@ -380,9 +383,10 @@ function PeriodSummary({ calendar, units }: CalendarProps) {
 
       {weeklyAverage ? (
         // One row of grey cards on wide screens (owner feedback 2026-11-12): the total hours largest,
-        // then each sport's distance in its color and its hours per week.
-        <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-flow-col lg:grid-cols-none lg:auto-cols-fr">
-          <li className="col-span-2 flex flex-col gap-0.5 rounded-xl bg-muted/50 p-3 sm:col-span-1">
+        // then each sport's distance in its color and its hours per week. On phones the total gets its
+        // own line and the sports sit side by side in one row, like on PC (batch 6).
+        <ul className="grid grid-cols-4 gap-1.5 sm:grid-cols-3 sm:gap-2 lg:grid-flow-col lg:grid-cols-none lg:auto-cols-fr">
+          <li className="col-span-full flex items-baseline justify-between gap-0.5 rounded-xl bg-muted/50 p-3 sm:col-span-1 sm:flex-col sm:justify-start">
             <span className="text-xs font-medium text-muted-foreground">
               {t("total")}
             </span>
@@ -534,21 +538,21 @@ function AverageCard({
   const distance = totalDistance(sport, average, units);
   const trained = average.seconds[sport] > 0;
   return (
-    <li className="flex flex-col gap-0.5 rounded-xl bg-muted/50 p-3">
-      <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+    <li className="flex min-w-0 flex-col items-center gap-0.5 rounded-xl bg-muted/50 px-1 py-2.5 text-center sm:items-start sm:p-3 sm:text-left">
+      <span className="flex max-w-full flex-col items-center gap-1 text-[11px] font-medium text-muted-foreground sm:flex-row sm:gap-1.5 sm:text-xs">
         <SportIcon sport={sport} />
-        {label}
+        <span className="max-w-full truncate">{label}</span>
       </span>
       <span
         className={cn(
-          "text-2xl font-bold tabular-nums",
+          "text-lg font-bold whitespace-nowrap tabular-nums sm:text-2xl",
           trained ? SPORT_TEXT[sport] : "text-muted-foreground",
         )}
       >
         {!trained ? "–" : (distance ?? hours(average.seconds[sport]))}
       </span>
       {trained && distance && (
-        <span className="text-lg font-semibold tabular-nums">
+        <span className="text-sm font-semibold whitespace-nowrap tabular-nums sm:text-lg">
           {hours(average.seconds[sport])}
         </span>
       )}

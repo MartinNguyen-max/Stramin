@@ -1,6 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { Details } from "@/components/ui/details";
 import { SPORT_BG } from "@/features/activities/sport-style";
 import { ZONE_BG, type Zone } from "@/features/training/zones";
 import {
@@ -140,13 +141,13 @@ export function LevelCard({
       <p className="text-xs text-muted-foreground">{t("combinedNote")}</p>
 
       {run && (
-        <details className="group/paces border-t pt-3">
+        <Details className="group/paces border-t pt-3">
           <summary className="flex w-fit cursor-pointer list-none items-center gap-1 text-sm font-medium [&::-webkit-details-marker]:hidden">
             <ChevronDown className="size-4 transition-transform group-open/paces:rotate-180" />
             {t("pacesTitleRun")}
           </summary>
           <Paces level={run.level} units={units} />
-        </details>
+        </Details>
       )}
     </section>
   );

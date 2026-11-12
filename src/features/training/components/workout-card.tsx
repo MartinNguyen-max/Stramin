@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
+import { Details } from "@/components/ui/details";
 import { useHours } from "@/i18n/use-hours";
 import {
   formatClock,
@@ -54,7 +55,7 @@ export function WorkoutCard({ workout, paces, units }: Props) {
         });
 
   return (
-    <details
+    <Details
       id={workout.id}
       className={cn(
         "group scroll-mt-24 rounded-2xl border border-t-4 bg-card",
@@ -106,7 +107,7 @@ export function WorkoutCard({ workout, paces, units }: Props) {
           />
         ))}
       </ol>
-    </details>
+    </Details>
   );
 }
 
