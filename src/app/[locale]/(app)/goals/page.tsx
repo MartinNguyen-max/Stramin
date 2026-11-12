@@ -15,10 +15,9 @@ import {
 } from "@/features/goals/form-data";
 import { trainingStats } from "@/features/goals/tips";
 import { loadBestEfforts } from "@/features/profile/best-efforts-data";
-import { getOrCreateProfile } from "@/features/profile/data";
+import { getPreferences } from "@/features/profile/data";
 import { FTP_SHARE } from "@/lib/analytics/power";
 import { today } from "@/lib/dates";
-import type { Units, WeekStart } from "@/lib/preferences";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Goals");
@@ -50,23 +49,15 @@ async function GoalsContent({ searchParams }: { searchParams: SearchParams }) {
   const user = await getCurrentUser();
   const locale = (await getLocale()) as "en" | "da";
 
-  let units: Units = "metric";
-  let weekStart: WeekStart = "monday";
-  try {
-    const profile = await getOrCreateProfile(user, locale);
-    units = profile.units;
-    weekStart = profile.weekStart;
-  } catch (error) {
-    console.error("[goals] profile unavailable", error);
-  }
-
-  let goals: Goal[] | null = null;
-  try {
-    goals = await listGoals(user);
-  } catch (error) {
-    console.error("[goals] unavailable", error);
-  }
-  const { efforts, activities, power } = await loadBestEfforts(user);
+  const [{ units, weekStart }, goals, { efforts, activities, power }] =
+    await Promise.all([
+      getPreferences(user, locale),
+      listGoals(user).catch((error): Goal[] | null => {
+        console.error("[goals] unavailable", error);
+        return null;
+      }),
+      loadBestEfforts(user),
+    ]);
   const twenty = power.find((entry) => entry.duration === 1200);
   const ftp = twenty ? twenty.watts * FTP_SHARE : null;
 

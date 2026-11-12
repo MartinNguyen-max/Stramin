@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import type { CurrentUser } from "@/features/auth/current-user";
 import { withRls } from "@/lib/db/rls";
 import { type Profile, profiles } from "@/lib/db/schema";
+import type { Units, WeekStart } from "@/lib/preferences";
 import type { Settings } from "./schemas";
 
 /**
@@ -44,4 +45,21 @@ export async function saveSettings(
         set: { ...settings, updatedAt: new Date() },
       }),
   );
+}
+
+/**
+ * Units and week start for a page, with defaults when the database can't be read, so a page still
+ * renders. Pages start it alongside their other reads (`Promise.all`) instead of before them.
+ */
+export async function getPreferences(
+  user: CurrentUser,
+  locale: Settings["locale"],
+): Promise<{ units: Units; weekStart: WeekStart }> {
+  try {
+    const profile = await getOrCreateProfile(user, locale);
+    return { units: profile.units, weekStart: profile.weekStart };
+  } catch (error) {
+    console.error("[profile] profile unavailable, using defaults", error);
+    return { units: "metric", weekStart: "monday" };
+  }
 }

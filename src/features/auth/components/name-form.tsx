@@ -9,7 +9,7 @@ import {
   MAX_NAME_LENGTH,
   NAME_HTML_PATTERN,
   type NameFormState,
-} from "../schemas";
+} from "../form-state";
 
 /** Change the name in Settings (ACC-5). */
 export function NameForm({ initial }: { initial: string | undefined }) {

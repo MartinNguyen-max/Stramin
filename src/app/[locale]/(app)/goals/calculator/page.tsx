@@ -8,8 +8,7 @@ import { Calculator } from "@/features/goals/components/calculator";
 import { GoalsTabs } from "@/features/goals/components/goals-tabs";
 import { goalDistanceLabels, plainBests } from "@/features/goals/form-data";
 import { loadBestEfforts } from "@/features/profile/best-efforts-data";
-import { getOrCreateProfile } from "@/features/profile/data";
-import type { Units } from "@/lib/preferences";
+import { getPreferences } from "@/features/profile/data";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Goals.tabs");
@@ -31,13 +30,10 @@ async function CalculatorContent() {
   const user = await getCurrentUser();
   const locale = (await getLocale()) as "en" | "da";
 
-  let units: Units = "metric";
-  try {
-    units = (await getOrCreateProfile(user, locale)).units;
-  } catch (error) {
-    console.error("[calculator] profile unavailable", error);
-  }
-  const { efforts } = await loadBestEfforts(user);
+  const [{ units }, { efforts }] = await Promise.all([
+    getPreferences(user, locale),
+    loadBestEfforts(user),
+  ]);
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">

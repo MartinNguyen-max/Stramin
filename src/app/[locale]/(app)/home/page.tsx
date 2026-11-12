@@ -15,10 +15,9 @@ import {
 } from "@/features/calendar/components/calendar-section";
 import { EventsSection } from "@/features/events/components/events-section";
 import { Onboarding } from "@/features/onboarding/onboarding";
-import { getOrCreateProfile } from "@/features/profile/data";
+import { getPreferences } from "@/features/profile/data";
 import { StravaNotice } from "@/features/strava/components/strava-notice";
 import { StravaStatusBar } from "@/features/strava/components/strava-status-bar";
-import type { Units, WeekStart } from "@/lib/preferences";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Home");
@@ -45,20 +44,13 @@ async function HomeContent({
   const user = await getCurrentUser();
   const locale = (await getLocale()) as "en" | "da";
 
-  // The profile holds units and week start. If the database is unavailable, fall back to defaults.
-  let units: Units = "metric";
-  let weekStart: WeekStart = "monday";
-  try {
-    const profile = await getOrCreateProfile(user, locale);
-    units = profile.units;
-    weekStart = profile.weekStart;
-  } catch (error) {
-    console.error("[home] profile unavailable", error);
-  }
-
   const params = await searchParams;
-  const request = await readCalendarRequest(params);
-  const strava = await getStravaStatus(user.id);
+  // Independent reads run at the same time (performance, 2026-11-12).
+  const [{ units, weekStart }, request, strava] = await Promise.all([
+    getPreferences(user, locale),
+    readCalendarRequest(params),
+    getStravaStatus(user.id),
+  ]);
   const importing =
     strava.connected &&
     (strava.importState === "pending" || strava.importState === "running");

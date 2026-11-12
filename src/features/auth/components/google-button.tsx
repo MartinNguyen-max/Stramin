@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { signInWithGoogle } from "../actions";
-import { initialAuthState } from "../schemas";
+import { initialAuthState } from "../form-state";
 
 /**
  * "Continue with Google", styled after Google's branding guidelines: the official colored G,

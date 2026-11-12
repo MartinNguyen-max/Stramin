@@ -1,5 +1,6 @@
 "use server";
 
+import { refresh } from "next/cache";
 import { getCurrentUser } from "@/features/auth/current-user";
 import { localeFromForm } from "@/i18n/form-locale";
 import { redirect } from "@/i18n/navigation";
@@ -24,6 +25,8 @@ export async function updateSettings(
     return { status: "error" };
   }
 
+  // Pages kept in the browser for 30 s (staleTimes) must show the new units and week start.
+  refresh();
   if (parsed.data.locale !== localeFromForm(formData, "currentLocale")) {
     redirect({ href: "/settings", locale: parsed.data.locale });
   }

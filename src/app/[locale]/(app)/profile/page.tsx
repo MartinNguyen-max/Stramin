@@ -9,12 +9,11 @@ import { BestEffortsCard } from "@/features/profile/components/best-efforts-card
 import { LevelCard } from "@/features/profile/components/level-card";
 import { PowerCard } from "@/features/profile/components/power-card";
 import { ProgressCard } from "@/features/profile/components/progress-card";
-import { getOrCreateProfile } from "@/features/profile/data";
+import { getPreferences } from "@/features/profile/data";
 import { PROGRESS_MONTHS, progressOver } from "@/features/profile/progress";
 import { ConnectStravaButton } from "@/features/strava/components/connect-strava-button";
 import { EFFORT_SPORTS } from "@/lib/analytics/best-efforts";
 import { today } from "@/lib/dates";
-import type { Units } from "@/lib/preferences";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Profile");
@@ -35,14 +34,8 @@ async function ProfileContent() {
   const user = await getCurrentUser();
   const locale = (await getLocale()) as "en" | "da";
 
-  let units: Units = "metric";
-  try {
-    units = (await getOrCreateProfile(user, locale)).units;
-  } catch (error) {
-    console.error("[profile] profile unavailable", error);
-  }
-  const { efforts, activities, manualAvailable, power } =
-    await loadBestEfforts(user);
+  const [{ units }, { efforts, activities, manualAvailable, power }] =
+    await Promise.all([getPreferences(user, locale), loadBestEfforts(user)]);
   const name = user.name ?? user.email ?? "";
 
   return (

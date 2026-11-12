@@ -31,9 +31,11 @@ export type BestEffortsResult = {
 export async function loadBestEfforts(
   user: CurrentUser,
 ): Promise<BestEffortsResult> {
-  const status = await getStravaStatus(user.id);
+  // The own values load while the Strava status is checked (performance, 2026-11-12).
   const [data, manual] = await Promise.all([
-    status.connected ? loadEffortData(user) : null,
+    getStravaStatus(user.id).then((status) =>
+      status.connected ? loadEffortData(user) : null,
+    ),
     listManualEfforts(user).catch((error) => {
       console.error("[best efforts] manual values unavailable", error);
       return null;

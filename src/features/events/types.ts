@@ -14,6 +14,9 @@ export const MAX_EVENT_TITLE = 60;
 /** Storage bucket for event background images (EVT-2). Private; paths are "{user_id}/{uuid}.webp". */
 export const EVENT_IMAGE_BUCKET = "event-images";
 
+/** Image types an event background may have (EVT-2). */
+export const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/png,image/webp";
+
 /** An event as the UI needs it. */
 export type EventView = {
   id: string;

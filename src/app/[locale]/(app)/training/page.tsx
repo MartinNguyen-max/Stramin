@@ -5,13 +5,12 @@ import { Suspense } from "react";
 import { ZoneSpinner } from "@/components/brand/zone-spinner";
 import { getCurrentUser } from "@/features/auth/current-user";
 import { loadBestEfforts } from "@/features/profile/best-efforts-data";
-import { getOrCreateProfile } from "@/features/profile/data";
+import { getPreferences } from "@/features/profile/data";
 import {
   readTrainingFilters,
   TrainingView,
 } from "@/features/training/components/training-view";
 import { personalPaces } from "@/features/training/plan";
-import type { Units } from "@/lib/preferences";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Training");
@@ -38,13 +37,10 @@ async function TrainingContent({
   const locale = (await getLocale()) as "en" | "da";
   const { sport, effort } = readTrainingFilters(await searchParams);
 
-  let units: Units = "metric";
-  try {
-    units = (await getOrCreateProfile(user, locale)).units;
-  } catch (error) {
-    console.error("[training] profile unavailable", error);
-  }
-  const { efforts } = await loadBestEfforts(user);
+  const [{ units }, { efforts }] = await Promise.all([
+    getPreferences(user, locale),
+    loadBestEfforts(user),
+  ]);
 
   return (
     <TrainingView
