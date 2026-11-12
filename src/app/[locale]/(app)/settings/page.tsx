@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { ThemeSwitch } from "@/components/theme-switch";
 import { buttonVariants } from "@/components/ui/button";
 import { getStravaStatus } from "@/features/activities/data";
 import { signOut } from "@/features/auth/actions";
@@ -60,6 +61,9 @@ async function SettingsContent() {
         ) : (
           <p className="text-sm text-destructive">{t("databaseUnavailable")}</p>
         )}
+        <div className="border-t pt-4">
+          <ThemeSwitch />
+        </div>
       </section>
 
       <section className="flex flex-col gap-4 rounded-2xl border bg-card p-6">

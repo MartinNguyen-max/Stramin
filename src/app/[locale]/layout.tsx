@@ -6,6 +6,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { ServiceWorker } from "@/components/service-worker";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeTabIcon } from "@/components/theme-switch";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
@@ -75,6 +76,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <ThemeTabIcon />
           </ThemeProvider>
           <ServiceWorker />
         </NextIntlClientProvider>

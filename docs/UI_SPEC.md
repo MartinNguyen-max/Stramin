@@ -164,7 +164,7 @@ Your running level: VDOT 50.6
 
 | Section | Content | Req |
 |---|---|---|
-| **Preferences** | Units · Week start · Language · Indoor/outdoor | SET-1..4 |
+| **Preferences** | Units · Week start · Language · Indoor/outdoor · **Theme** (Device / Light / Dark, applied at once, saved on the device) | SET-1..4 |
 | **Connections** | Strava: "Connect with Strava" (orange), or "Connected as {name}", last sync, **Refresh** and **Disconnect** (asks once more; deletes the Strava workouts). Garmin: coming soon. | SET-5, CON-2, CON-5 |
 | **Privacy** | Export data · Delete account · Privacy policy | PRIV-1, PRIV-2, PRIV-5 |
 | **Account** | Name · Log out | ACC-5, ACC-2 |
@@ -204,6 +204,6 @@ Your running level: VDOT 50.6
 | **Profile: progress** | "Your progress": 3 mo / 6 mo / 1 yr; "you now compared with you on 12 May 2026"; a legend (grey = then, color = now); per row (total hours, each sport's weekly distance, 12-week averages) two bars with values and ▲/▼ % in green/red; best efforts that changed as "1:51:20 → 1:50:53" with a green/red pill ("27 s faster") or "new", and "9 other distances unchanged". From Strava activities only. | – |
 | **Onboarding** | The first time on Home: a dialog with 4 steps (welcome, calendar, goals and calculator, profile), dots, "Skip" and "Next"/"Get started". Never again after closing. | – |
 | **Loading** | Skeleton loading: grey boxes in the shape of the page (pulsing, still with "reduce motion") with the zone spinner on a small card on top (`src/components/page-skeleton.tsx`). | NFR |
-| **Install (PWA)** | Add to home screen: the light Stramin icon (always; the browser tab icon follows the device theme), opens full screen at Home; without a connection an offline page ("You're offline", try again). | M11 |
+| **Install (PWA)** | Add to home screen: the light Stramin icon (always; the browser tab icon follows the theme), opens full screen at Home; without a connection an offline page ("You're offline", try again). | M11 |
 | **Landing** | Short (owner, 2026-11-12): the hero shows the real Home (greeting, countdown cards, average week, calendar) in a browser window with the phone in front (only the phone on phones); then "Stramin in 30 seconds" (a video with a poster; the voiced MP4 when it exists, else the silent recording, see [video-script.md](video-script.md)); then privacy and "Sign up free". | L1, L2 |
 | **Event image** | In the event dialog the image shows in the card's shape; drag it (or use the arrow keys) to choose which part shows. Saved with the event. | EVT-2 |

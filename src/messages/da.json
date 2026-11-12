@@ -186,6 +186,12 @@
     "account": {
       "title": "Konto",
       "email": "E-mail"
+    },
+    "theme": {
+      "label": "Tema",
+      "system": "Som enheden",
+      "light": "Lys",
+      "dark": "Mørk"
     }
   },
   "Calendar": {

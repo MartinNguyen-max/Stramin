@@ -186,6 +186,12 @@
     "account": {
       "title": "Account",
       "email": "Email"
+    },
+    "theme": {
+      "label": "Theme",
+      "system": "Device",
+      "light": "Light",
+      "dark": "Dark"
     }
   },
   "Calendar": {
