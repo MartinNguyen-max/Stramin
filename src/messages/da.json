@@ -319,7 +319,8 @@
         "unavailable": "Det kan ikke gemmes lige nu. Prøv igen senere.",
         "generic": "Noget gik galt. Prøv igen."
       },
-      "estimate": "Skøn"
+      "estimate": "anslået",
+      "estimateHint": "Ikke Stravas egen bedste præstation: Stramin har regnet tiden ud fra aktiviteten (pauser tæller med)."
     },
     "level": {
       "vdot": "VDOT {value}",
@@ -561,14 +562,11 @@
       "full": "Ironman",
       "transitions": "Skift (T1 + T2)",
       "total": "Samlet: {time}",
-      "noBest": "Ingen bedste præstation på denne distance endnu.",
-      "toGo": "{time} tilbage",
-      "reached": "Allerede nået",
       "transitionsField": "Skift (T1 + T2, valgfrit)",
-      "raceDay": "Bedste {best} ≈ {raceDay} på dagen",
-      "raceDayNote": "På dagen regnes der med træthed, fordi det hele sker samme dag: ca. +{bike} % på cyklen og +{run} % i løbet.",
       "quarter": "Kvart Ironman",
-      "raceDayPredicted": "Forventet {best} ≈ {raceDay} på dagen"
+      "fresh": "Udhvilet skal du kunne klare ca. {time} på {distance} ({pace})",
+      "freshSame": "Svømningen er først, så du er udhvilet: samme tid",
+      "noBest": "Ingen bedste præstation på denne distance endnu."
     },
     "tips": {
       "volume": {
@@ -619,11 +617,6 @@
       "gapBig": "Et stort skridt. Gå efter {time} først.",
       "easy": "Hold ca. 80 % af træningen rolig, så du kan give den gas, når det tæller.",
       "recoveryWeek": "Øg højst ca. 10 % om ugen, og tag en lettere uge hver 3.–4. uge.",
-      "needFresh": "{sport}: for at klare {target} på dagen skal du have en udhvilet tid på ca. {fresh} på {distance}.",
-      "allReached": "Dine bedste tider holder også på dagen. Nu handler det om at samle det.",
-      "noBests": "Tilføj bedste præstationer for svøm, cykel og løb på din profil for at sammenligne hver disciplin.",
-      "brick": "Løb 15–20 minutter lige efter en cykeltur én gang om ugen (brick).",
-      "nutrition": "Øv dig i at spise og drikke på de lange ture. På dagen betyder det lige så meget som formen.",
       "workoutBikeShortWatts": "Nøgletræning: 2 × 20 minutter ved ca. {low}–{high} W (tæt på din tærskel). Målfart: {speed}.",
       "workoutBikeLongWatts": "Nøgletræning: en lang tur om ugen ved ca. {low}–{high} W (zone 2)."
     },
@@ -638,18 +631,28 @@
       "pace": "Tempo",
       "speed": "Fart",
       "finish": "Sluttid",
-      "best": "Din bedste: {time}",
-      "predicted": "Forventet ud fra dine bedste: {time}",
-      "raceDay": "Dine bedste på dagen: {time}",
+      "best": "Din bedste: {time} · {pace}",
+      "predicted": "Forventet ud fra dine bedste: {time} · {pace}",
+      "raceDay": "Din bedste på dagen: {time} · {pace}",
       "noBest": "Ingen bedste præstation at sammenligne med endnu.",
       "same": "Samme som din tid",
       "fasterBest": "{diff} hurtigere end din bedste",
       "slowerBest": "{diff} langsommere end din bedste",
       "fasterPredicted": "{diff} hurtigere end forventet",
       "slowerPredicted": "{diff} langsommere end forventet",
-      "fasterRaceDay": "{diff} hurtigere end dine bedste på dagen",
-      "slowerRaceDay": "{diff} langsommere end dine bedste på dagen",
-      "setGoal": "Sæt som mål"
+      "fasterRaceDay": "{diff} hurtigere end din bedste på dagen",
+      "slowerRaceDay": "{diff} langsommere end din bedste på dagen",
+      "setGoal": "Sæt som mål",
+      "raceDayPredicted": "Forventet på dagen: {time} · {pace}",
+      "fasterRaceDayPredicted": "{diff} hurtigere end forventet på dagen",
+      "slowerRaceDayPredicted": "{diff} langsommere end forventet på dagen",
+      "fasterPace": "{diff} hurtigere",
+      "slowerPace": "{diff} langsommere",
+      "howCalculated": "Sådan er tiden regnet ud",
+      "infoBest": "Din bedste på {distance} er {time}.",
+      "infoPredicted": "Du har ingen bedste på {distance} endnu, så vi bruger din forventede tid ({time}) ud fra dine andre bedste. Den er mindre præcis.",
+      "infoFatigue": "Oveni lægges ca. {percent} % træthed, fordi det hele sker samme dag.",
+      "infoNoFatigue": "Svømningen er først, så der lægges ingen træthed oveni."
     },
     "tabs": {
       "goals": "Mine mål",
@@ -704,11 +707,6 @@
       "gapBig": "Delmål først: {time}",
       "easy": "Hold 80 % roligt",
       "recoveryWeek": "En lettere uge hver 3.–4. uge",
-      "needFresh": "{sport}: kræver ca. {fresh} udhvilet",
-      "allReached": "Dine tider holder på dagen",
-      "noBests": "Tilføj dine bedste præstationer",
-      "brick": "Brick-træning hver uge",
-      "nutrition": "Øv mad og drikke",
       "workoutBikeShortWatts": "Nøgle: 2 × 20 min ved {low}–{high} W",
       "workoutBikeLongWatts": "Nøgle: lang tur ved {low}–{high} W"
     },

@@ -8,7 +8,7 @@ import { trainingPaces, vdot } from "@/lib/analytics/running";
 import { type WeekStartDay, weekStartOf } from "@/lib/analytics/weekly";
 import { addDays, daysBetween } from "@/lib/dates";
 import { gapFor, recommendedVolume, speedCheck } from "./feedback";
-import { freshTimeNeeded, type Leg, type TriathlonRace } from "./triathlon";
+import { LEGS, type Leg, type TriathlonRace } from "./triathlon";
 
 /**
  * Training tips for a goal (owner feedback 2026-11-12: "only 1–3 good, relevant and specific tips,
@@ -138,11 +138,14 @@ export function targetVolume(
   return Math.round(km / 5) * 5000;
 }
 
-/** Weekly distance per discipline that fits a half or full Ironman. */
+/**
+ * Weekly distance per discipline that fits a triathlon, for amateurs (owner feedback 2026-11-12,
+ * batch 6: 9 km of swimming a week was too much).
+ */
 const TRIATHLON_VOLUME: Record<TriathlonRace, Record<Leg, number>> = {
-  quarter: { swim: 4000, bike: 100_000, run: 25_000 },
-  half: { swim: 6000, bike: 150_000, run: 30_000 },
-  full: { swim: 9000, bike: 220_000, run: 45_000 },
+  quarter: { swim: 3000, bike: 80_000, run: 25_000 },
+  half: { swim: 4500, bike: 130_000, run: 30_000 },
+  full: { swim: 6000, bike: 180_000, run: 40_000 },
 };
 
 /** A value in a tip sentence; the card formats it. */
@@ -184,12 +187,7 @@ export type TipKey =
   | "gapSeason"
   | "gapBig"
   | "easy"
-  | "recoveryWeek"
-  | "needFresh"
-  | "allReached"
-  | "noBests"
-  | "brick"
-  | "nutrition";
+  | "recoveryWeek";
 
 export type Tip = {
   key: TipKey;
@@ -443,64 +441,38 @@ export function goalTips(
   return sortTips(tips);
 }
 
-/** A triathlon leg as the card sees it. */
-export type LegForTips = {
-  leg: Leg;
-  distance: number;
-  target: number;
-  best?: number;
-  /** How much faster the target is than the race-day time (> 0 = still to go), or null. */
-  share: number | null;
-};
-
-/** All tips for a triathlon goal, most relevant first. */
+/**
+ * Triathlon tips (owner feedback 2026-11-12, batch 6: "keep it minimal"): only one volume line per
+ * discipline, from the last 3 months, with a realistic next step instead of the full target at once.
+ * In race order; disciplines that already train enough are left out.
+ */
 export function triathlonTips(
   race: TriathlonRace,
-  legs: LegForTips[],
   stats: TrainingStats | null,
 ): Tip[] {
-  const tips: Tip[] = [];
-  const focus = legs
-    .filter((leg) => leg.share !== null && leg.share > 0)
-    .sort((a, b) => (b.share ?? 0) - (a.share ?? 0))[0];
-
-  if (legs.every((leg) => leg.best === undefined)) {
-    tips.push({ key: "noBests", score: 0.5 });
-  } else if (focus) {
-    tips.push({
-      key: "needFresh",
-      score: 0.5,
-      values: {
-        sport: { kind: "sport", sport: focus.leg },
-        target: { kind: "time", seconds: focus.target },
-        fresh: {
-          kind: "time",
-          seconds: freshTimeNeeded(race, focus.leg, focus.target),
-        },
-        distance: { kind: "label", sport: focus.leg, meters: focus.distance },
+  if (!stats) return [];
+  return LEGS.flatMap((leg): Tip[] => {
+    const perWeek = stats[leg].metersPerWeek;
+    const next = nextVolume(perWeek, TRIATHLON_VOLUME[race][leg]);
+    if (next === null) return [];
+    return [
+      {
+        key: `volume.${leg}`,
+        score: 1,
+        values: { perWeek: dist(leg, perWeek), target: dist(leg, next) },
       },
-    });
-  } else {
-    tips.push({ key: "allReached", score: 4 });
-  }
+    ];
+  });
+}
 
-  if (stats) {
-    for (const leg of legs) {
-      tips.push(
-        ...trainingTips(
-          leg.leg,
-          stats[leg.leg],
-          TRIATHLON_VOLUME[race][leg.leg],
-          longSessionFor(leg.leg, leg.distance),
-        ),
-      );
-    }
-  }
-  tips.push({ key: "brick", score: 2.9 });
-  tips.push({ key: "nutrition", score: race === "full" ? 2.8 : 3.6 });
-  tips.push({ key: "openWater", score: 3.8 });
-  tips.push({ key: "easy", score: 5 }, { key: "recoveryWeek", score: 5.5 });
-  return sortTips(tips);
+/**
+ * The next weekly distance to aim for: about 20 % more than now (at least 40 % of the target, so a
+ * near-zero start still gets a useful number), never more than the target. Null when the volume is
+ * already within 85 % of the target.
+ */
+export function nextVolume(perWeek: number, target: number): number | null {
+  if (perWeek >= target * 0.85) return null;
+  return Math.min(target, Math.max(perWeek * 1.2, target * 0.4));
 }
 
 /** Most relevant first, each key once. */

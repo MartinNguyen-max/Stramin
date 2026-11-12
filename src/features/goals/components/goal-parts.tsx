@@ -1,5 +1,6 @@
 import { ChevronDown, Lightbulb } from "lucide-react";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
+import { Details } from "@/components/ui/details";
 import { effortDistanceLabel } from "@/features/profile/distance-label";
 import type { TrainingBase } from "@/features/training/components/training-view";
 import type { Workout } from "@/features/training/workouts";
@@ -31,7 +32,7 @@ export function GoalTips({ tips, units }: { tips: Tip[]; units: Units }) {
   return (
     <div className="flex flex-col gap-1.5">
       <TipList tips={tips.slice(0, SHORT_TIPS)} units={units} short />
-      <details className="group/tips">
+      <Details className="group/tips">
         <summary className="flex w-fit cursor-pointer list-none items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground [&::-webkit-details-marker]:hidden">
           <ChevronDown className="size-3.5 transition-transform group-open/tips:rotate-180" />
           <span className="group-open/tips:hidden">{t("readMore")}</span>
@@ -40,12 +41,13 @@ export function GoalTips({ tips, units }: { tips: Tip[]; units: Units }) {
         <div className="pt-1.5">
           <TipList tips={tips.slice(0, DETAILED_TIPS)} units={units} />
         </div>
-      </details>
+      </Details>
     </div>
   );
 }
 
-function TipList({
+/** Tips as full sentences (or a few words with `short`). */
+export function TipList({
   tips,
   units,
   short = false,

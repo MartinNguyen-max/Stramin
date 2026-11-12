@@ -1,52 +1,28 @@
-import { CircleCheck } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { SPORT_BG } from "@/features/activities/sport-style";
 import { effortDistanceLabel } from "@/features/profile/distance-label";
-import { workoutsFor } from "@/features/training/workouts";
-import { useTimeGap } from "@/i18n/use-hours";
 import { formatClock, formatSportPace } from "@/lib/format";
+import type { Units } from "@/lib/preferences";
 import { cn } from "@/lib/utils";
 import type { TriathlonGoal } from "../data";
-import { goalFeedback } from "../feedback";
 import { triathlonTips } from "../tips";
-import {
-  freshTime,
-  freshTimeNeeded,
-  LEGS,
-  type Leg,
-  RACE_DAY_FACTOR,
-  raceDayTime,
-  TRIATHLONS,
-} from "../triathlon";
+import { freshTimeNeeded, LEGS, type Leg, TRIATHLONS } from "../triathlon";
 import { DeleteGoalButton } from "./delete-goal-button";
 import type { GoalCardProps } from "./goal-card";
-import { GoalTips, GoalWorkouts } from "./goal-parts";
-
-type LegStatus = {
-  leg: Leg;
-  distance: number;
-  target: number;
-  best?: number;
-  /** True when there's no best at the distance and `best` is predicted from the others. */
-  predicted: boolean;
-  /** The best, made slower for race day (`raceDayTime`). */
-  raceDay?: number;
-  /** How much faster the target is than the race-day time, as a share (> 0 = still to go). */
-  share: number | null;
-};
+import { TipList } from "./goal-parts";
 
 /**
- * A half or full Ironman goal (G1): a row per discipline with its target and pace, and what the best
- * at that distance is worth on race day (owner feedback 2026-11-12: everything happens the same day).
- * One short tip for the discipline with the most to gain, then workouts for it.
+ * A triathlon goal (G1), kept minimal (owner feedback 2026-11-12, batch 6): a row per discipline with
+ * its target and pace, and the time you should manage over that distance when fresh, because race day
+ * comes with fatigue ("3:30 in an Ironman ≈ a 3:03 marathon"). Below it, one weekly volume line per
+ * discipline that trains too little. No predicted times, no "already reached": a prediction isn't a
+ * result.
  */
 export function TriathlonGoalCard({
   goal,
-  efforts,
   stats,
   units,
   readOnly = false,
-  trainingBase = "/training",
 }: GoalCardProps & { goal: TriathlonGoal }) {
   const t = useTranslations("Goals.triathlon");
   const tGoals = useTranslations("Goals");
@@ -60,42 +36,7 @@ export function TriathlonGoalCard({
   const label = (leg: Leg, meters: number) =>
     effortDistanceLabel(leg, meters, locale, names);
   const race = TRIATHLONS[goal.race];
-  const factor = RACE_DAY_FACTOR[goal.race];
-
-  const legs: LegStatus[] = LEGS.map((leg) => {
-    const distance = race.legs[leg];
-    const target = goal.splits[leg];
-    const fresh = freshTime(leg, distance, efforts);
-    const best = fresh?.seconds;
-    const raceDay =
-      best === undefined ? undefined : raceDayTime(goal.race, leg, best);
-    return {
-      leg,
-      distance,
-      target,
-      best,
-      predicted: fresh?.predicted ?? false,
-      raceDay,
-      share: raceDay === undefined ? null : (raceDay - target) / raceDay,
-    };
-  });
-  const focus = legs
-    .filter((leg) => leg.share !== null && leg.share > 0)
-    .sort((a, b) => (b.share ?? 0) - (a.share ?? 0))[0];
-
-  const workouts = focus
-    ? goalFeedback(
-        {
-          sport: focus.leg,
-          distance: focus.distance,
-          target: freshTimeNeeded(goal.race, focus.leg, focus.target),
-        },
-        efforts,
-        stats ? stats[focus.leg].metersPerWeek : null,
-      )
-        .efforts.flatMap((effort) => workoutsFor(focus.leg, effort))
-        .slice(0, 3)
-    : [];
+  const tips = triathlonTips(goal.race, stats);
 
   return (
     <article className="flex flex-col gap-3 rounded-2xl border bg-card p-4">
@@ -126,15 +67,16 @@ export function TriathlonGoalCard({
       </header>
 
       <ul className="flex flex-col divide-y rounded-xl border">
-        {legs.map((leg) => (
+        {LEGS.map((leg) => (
           <LegRow
-            key={leg.leg}
-            status={leg}
-            name={tSports(leg.leg)}
-            distanceLabel={label(leg.leg, leg.distance)}
-            targetPace={
-              formatSportPace(leg.leg, leg.distance, leg.target, units) ?? ""
-            }
+            key={leg}
+            leg={leg}
+            name={tSports(leg)}
+            distance={race.legs[leg]}
+            distanceLabel={label(leg, race.legs[leg])}
+            target={goal.splits[leg]}
+            fresh={freshTimeNeeded(goal.race, leg, goal.splits[leg])}
+            units={units}
           />
         ))}
         {goal.splits.transitions > 0 && (
@@ -146,68 +88,54 @@ export function TriathlonGoalCard({
           </li>
         )}
       </ul>
-      <p className="text-xs text-muted-foreground">
-        {t("raceDayNote", {
-          bike: Math.round((factor.bike - 1) * 100),
-          run: Math.round((factor.run - 1) * 100),
-        })}
-      </p>
-
-      <GoalTips tips={triathlonTips(goal.race, legs, stats)} units={units} />
-      <GoalWorkouts workouts={workouts} trainingBase={trainingBase} />
+      {tips.length > 0 && <TipList tips={tips} units={units} />}
     </article>
   );
 }
 
 function LegRow({
-  status,
+  leg,
   name,
+  distance,
   distanceLabel,
-  targetPace,
+  target,
+  fresh,
+  units,
 }: {
-  status: LegStatus;
+  leg: Leg;
   name: string;
+  distance: number;
   distanceLabel: string;
-  targetPace: string;
+  target: number;
+  fresh: number;
+  units: Units;
 }) {
   const t = useTranslations("Goals.triathlon");
-  const gapText = useTimeGap();
-  const reached = status.share !== null && status.share <= 0;
+  const pace = (seconds: number) =>
+    formatSportPace(leg, distance, seconds, units) ?? "";
   return (
     <li className="flex flex-col gap-0.5 px-3 py-2 text-sm">
       <span className="flex items-baseline justify-between gap-3">
         <span className="flex items-center gap-2 font-medium">
-          <span className={cn("size-2 rounded-full", SPORT_BG[status.leg])} />
+          <span className={cn("size-2 rounded-full", SPORT_BG[leg])} />
           {name}
           <span className="font-normal text-muted-foreground">
             {distanceLabel}
           </span>
         </span>
         <span className="text-right tabular-nums">
-          <span className="font-semibold">{formatClock(status.target)}</span>
-          <span className="text-muted-foreground"> · {targetPace}</span>
+          <span className="font-semibold">{formatClock(target)}</span>
+          <span className="text-muted-foreground"> · {pace(target)}</span>
         </span>
       </span>
-      <span className="flex items-baseline justify-between gap-3 pl-4 text-xs text-muted-foreground tabular-nums">
-        <span>
-          {status.best === undefined || status.raceDay === undefined
-            ? t("noBest")
-            : t(status.predicted ? "raceDayPredicted" : "raceDay", {
-                best: formatClock(status.best),
-                raceDay: formatClock(status.raceDay),
-              })}
-        </span>
-        {status.raceDay !== undefined &&
-          (reached ? (
-            <span className="flex items-center gap-1 text-foreground">
-              <CircleCheck className="size-3.5 text-zone-2" />
-              {t("reached")}
-            </span>
-          ) : (
-            <span>
-              {t("toGo", { time: gapText(status.raceDay - status.target) })}
-            </span>
-          ))}
+      <span className="pl-4 text-xs text-muted-foreground tabular-nums">
+        {Math.round(fresh) < Math.round(target)
+          ? t("fresh", {
+              time: formatClock(fresh),
+              distance: distanceLabel,
+              pace: pace(fresh),
+            })
+          : t("freshSame")}
       </span>
     </li>
   );

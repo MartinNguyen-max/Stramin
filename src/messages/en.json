@@ -319,7 +319,8 @@
         "unavailable": "It can't be saved right now. Please try again later.",
         "generic": "Something went wrong. Please try again."
       },
-      "estimate": "Estimate"
+      "estimate": "estimated",
+      "estimateHint": "Not Strava's own best effort: Stramin worked out the time from the activity (pauses count)."
     },
     "level": {
       "vdot": "VDOT {value}",
@@ -561,14 +562,11 @@
       "full": "Ironman",
       "transitions": "Transitions (T1 + T2)",
       "total": "Total: {time}",
-      "noBest": "No best effort at this distance yet.",
-      "toGo": "{time} to go",
-      "reached": "Already there",
       "transitionsField": "Transitions (T1 + T2, optional)",
-      "raceDay": "Best {best} ≈ {raceDay} on race day",
-      "raceDayNote": "Race day counts with fatigue, because it's all on the same day: about +{bike} % on the bike and +{run} % on the run.",
       "quarter": "Quarter Ironman",
-      "raceDayPredicted": "Predicted {best} ≈ {raceDay} on race day"
+      "fresh": "When fresh, you should manage about {time} over {distance} ({pace})",
+      "freshSame": "The swim comes first, so you're fresh: same time",
+      "noBest": "No best effort at this distance yet."
     },
     "tips": {
       "volume": {
@@ -619,11 +617,6 @@
       "gapBig": "A big step. Aim for {time} first.",
       "easy": "Keep about 80 % of your training easy, so you can go hard when it counts.",
       "recoveryWeek": "Add at most about 10 % a week, and take an easier week every 3–4 weeks.",
-      "needFresh": "{sport}: to manage {target} on race day, you need about {fresh} over {distance} when fresh.",
-      "allReached": "Your bests hold up on race day too. Now it's about putting it together.",
-      "noBests": "Add best efforts for swim, bike and run on your profile to compare each discipline.",
-      "brick": "Once a week, run 15–20 minutes straight after a ride (a brick).",
-      "nutrition": "Practise eating and drinking on long sessions. On race day it matters as much as fitness.",
       "workoutBikeShortWatts": "Key session: 2 × 20 minutes at about {low}–{high} W (close to your threshold). Goal speed: {speed}.",
       "workoutBikeLongWatts": "Key session: one long ride a week at about {low}–{high} W (zone 2)."
     },
@@ -638,18 +631,28 @@
       "pace": "Pace",
       "speed": "Speed",
       "finish": "Finish time",
-      "best": "Your best: {time}",
-      "predicted": "Predicted from your bests: {time}",
-      "raceDay": "Your bests on race day: {time}",
+      "best": "Your best: {time} · {pace}",
+      "predicted": "Predicted from your bests: {time} · {pace}",
+      "raceDay": "Your best on race day: {time} · {pace}",
       "noBest": "No best effort to compare with yet.",
       "same": "Same as your time",
       "fasterBest": "{diff} faster than your best",
       "slowerBest": "{diff} slower than your best",
       "fasterPredicted": "{diff} faster than predicted",
       "slowerPredicted": "{diff} slower than predicted",
-      "fasterRaceDay": "{diff} faster than your bests on race day",
-      "slowerRaceDay": "{diff} slower than your bests on race day",
-      "setGoal": "Set as goal"
+      "fasterRaceDay": "{diff} faster than your best on race day",
+      "slowerRaceDay": "{diff} slower than your best on race day",
+      "setGoal": "Set as goal",
+      "raceDayPredicted": "Predicted on race day: {time} · {pace}",
+      "fasterRaceDayPredicted": "{diff} faster than predicted on race day",
+      "slowerRaceDayPredicted": "{diff} slower than predicted on race day",
+      "fasterPace": "{diff} faster",
+      "slowerPace": "{diff} slower",
+      "howCalculated": "How this time is calculated",
+      "infoBest": "Your best over {distance} is {time}.",
+      "infoPredicted": "You don't have a best over {distance} yet, so we use your predicted time ({time}) from your other bests. It's less accurate.",
+      "infoFatigue": "About {percent} % fatigue is added, because it's all on the same day.",
+      "infoNoFatigue": "The swim comes first, so no fatigue is added."
     },
     "tabs": {
       "goals": "My goals",
@@ -704,11 +707,6 @@
       "gapBig": "In-between goal first: {time}",
       "easy": "Keep 80 % easy",
       "recoveryWeek": "An easier week every 3–4 weeks",
-      "needFresh": "{sport}: needs about {fresh} fresh",
-      "allReached": "Your bests hold up on race day",
-      "noBests": "Add your best efforts",
-      "brick": "A brick session every week",
-      "nutrition": "Practise eating and drinking",
       "workoutBikeShortWatts": "Key: 2 × 20 min at {low}–{high} W",
       "workoutBikeLongWatts": "Key: long ride at {low}–{high} W"
     },

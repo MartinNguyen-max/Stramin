@@ -4,6 +4,7 @@ import type { CalendarActivity } from "@/lib/analytics/calendar";
 import {
   goalTips,
   longSessionFor,
+  nextVolume,
   type SportStats,
   type TrainingStats,
   targetVolume,
@@ -140,38 +141,32 @@ describe("goalTips", () => {
 });
 
 describe("triathlonTips", () => {
-  test("Ironman: the leg with most to gain, then the weakest training, nutrition and bricks", () => {
+  test("Ironman: only a volume line per discipline that trains too little, in race order", () => {
     const tips = triathlonTips(
       "full",
-      [
-        { leg: "swim", distance: 3800, target: 4200, best: 4000, share: -0.05 },
-        {
-          leg: "bike",
-          distance: 180_000,
-          target: 21_600,
-          best: 21_000,
-          share: 0,
-        },
-        {
-          leg: "run",
-          distance: 42_195,
-          target: 12_600,
-          best: 12_420,
-          share: 0.12,
-        },
-      ],
       stats({
-        swim: sport({ metersPerWeek: 3000, sessionsPerWeek: 1, longest: 2000 }),
-        bike: sport({ metersPerWeek: 200_000, longest: 150_000 }),
-        run: sport({ metersPerWeek: 40_000, longest: 32_000 }),
+        swim: sport({ metersPerWeek: 3000 }),
+        bike: sport({ metersPerWeek: 200_000 }),
+        run: sport({ metersPerWeek: 20_000 }),
       }),
     );
-    expect(keys(tips).slice(0, 3)).toEqual([
-      "needFresh",
-      "volume.swim",
-      "longSession.swim",
-    ]);
-    expect(keys(tips)).toContain("nutrition");
-    expect(keys(tips)).toContain("brick");
+    expect(keys(tips)).toEqual(["volume.swim", "volume.run"]);
+    // A step of about 20 %, not the full target at once.
+    expect(tips[0].values?.target).toMatchObject({ meters: 3600 });
+    expect(tips[1].values?.target).toMatchObject({ meters: 24_000 });
+  });
+
+  test("no tips without Strava data", () => {
+    expect(triathlonTips("half", null)).toEqual([]);
+  });
+});
+
+describe("nextVolume", () => {
+  test("about 20 % more, at least 40 % of the target, at most the target", () => {
+    expect(nextVolume(10_000, 40_000)).toBe(16_000);
+    expect(nextVolume(30_000, 40_000)).toBe(36_000);
+    expect(nextVolume(33_000, 40_000)).toBe(39_600);
+    expect(nextVolume(34_000, 40_000)).toBeNull();
+    expect(nextVolume(0, 6000)).toBe(2400);
   });
 });
