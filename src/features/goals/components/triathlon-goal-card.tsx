@@ -6,16 +6,16 @@ import type { Units } from "@/lib/preferences";
 import { cn } from "@/lib/utils";
 import type { TriathlonGoal } from "../data";
 import { triathlonTips } from "../tips";
-import { freshTimeNeeded, LEGS, type Leg, TRIATHLONS } from "../triathlon";
+import { LEGS, type Leg, TRIATHLONS } from "../triathlon";
 import { DeleteGoalButton } from "./delete-goal-button";
 import type { GoalCardProps } from "./goal-card";
 import { TipList } from "./goal-parts";
 
 /**
  * A triathlon goal (G1), kept minimal (owner feedback 2026-11-12, batch 6): a row per discipline with
- * its target and pace, and the time you should manage over that distance when fresh, because race day
- * comes with fatigue ("3:30 in an Ironman ≈ a 3:03 marathon"). Below it, one weekly volume line per
- * discipline that trains too little. No predicted times, no "already reached": a prediction isn't a
+ * its target and pace. Below it, the tips: the time each leg needs when fresh, because race day comes
+ * with fatigue ("3:30 in an Ironman ≈ a 3:03 marathon"), then one weekly volume line per discipline
+ * that trains too little. No predicted times, no "already reached": a prediction isn't a
  * result.
  */
 export function TriathlonGoalCard({
@@ -36,7 +36,7 @@ export function TriathlonGoalCard({
   const label = (leg: Leg, meters: number) =>
     effortDistanceLabel(leg, meters, locale, names);
   const race = TRIATHLONS[goal.race];
-  const tips = triathlonTips(goal.race, stats);
+  const tips = triathlonTips(goal.race, goal.splits, stats);
 
   return (
     <article className="flex flex-col gap-3 rounded-2xl border bg-card p-4">
@@ -75,7 +75,6 @@ export function TriathlonGoalCard({
             distance={race.legs[leg]}
             distanceLabel={label(leg, race.legs[leg])}
             target={goal.splits[leg]}
-            fresh={freshTimeNeeded(goal.race, leg, goal.splits[leg])}
             units={units}
           />
         ))}
@@ -99,7 +98,6 @@ function LegRow({
   distance,
   distanceLabel,
   target,
-  fresh,
   units,
 }: {
   leg: Leg;
@@ -107,10 +105,8 @@ function LegRow({
   distance: number;
   distanceLabel: string;
   target: number;
-  fresh: number;
   units: Units;
 }) {
-  const t = useTranslations("Goals.triathlon");
   const pace = (seconds: number) =>
     formatSportPace(leg, distance, seconds, units) ?? "";
   return (
@@ -127,15 +123,6 @@ function LegRow({
           <span className="font-semibold">{formatClock(target)}</span>
           <span className="text-muted-foreground"> · {pace(target)}</span>
         </span>
-      </span>
-      <span className="pl-4 text-xs text-muted-foreground tabular-nums">
-        {Math.round(fresh) < Math.round(target)
-          ? t("fresh", {
-              time: formatClock(fresh),
-              distance: distanceLabel,
-              pace: pace(fresh),
-            })
-          : t("freshSame")}
       </span>
     </li>
   );

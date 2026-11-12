@@ -141,23 +141,36 @@ describe("goalTips", () => {
 });
 
 describe("triathlonTips", () => {
-  test("Ironman: only a volume line per discipline that trains too little, in race order", () => {
+  test("Ironman: the fresh time per leg after the swim, then a volume line per discipline that trains too little", () => {
     const tips = triathlonTips(
       "full",
+      { swim: 4200, bike: 21_600, run: 12_600 },
       stats({
         swim: sport({ metersPerWeek: 3000 }),
         bike: sport({ metersPerWeek: 200_000 }),
         run: sport({ metersPerWeek: 20_000 }),
       }),
     );
-    expect(keys(tips)).toEqual(["volume.swim", "volume.run"]);
+    expect(keys(tips)).toEqual([
+      "freshNeeded",
+      "freshNeeded",
+      "volume.swim",
+      "volume.run",
+    ]);
+    // 3:30 on race day needs about 3:03 fresh (+15 %).
+    expect(tips[1].values?.time).toMatchObject({ seconds: 12_600 / 1.15 });
     // A step of about 20 %, not the full target at once.
-    expect(tips[0].values?.target).toMatchObject({ meters: 3600 });
-    expect(tips[1].values?.target).toMatchObject({ meters: 24_000 });
+    expect(tips[2].values?.target).toMatchObject({ meters: 3600 });
+    expect(tips[3].values?.target).toMatchObject({ meters: 24_000 });
   });
 
-  test("no tips without Strava data", () => {
-    expect(triathlonTips("half", null)).toEqual([]);
+  test("without Strava data only the fresh times", () => {
+    const tips = triathlonTips(
+      "half",
+      { swim: 2400, bike: 9000, run: 5400 },
+      null,
+    );
+    expect(keys(tips)).toEqual(["freshNeeded", "freshNeeded"]);
   });
 });
 

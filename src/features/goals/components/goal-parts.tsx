@@ -104,8 +104,10 @@ export function TipList({
         short ? "gap-1 font-medium" : "gap-1.5 text-muted-foreground",
       )}
     >
-      {tips.map((tip) => (
-        <li key={tip.key} className="flex gap-2">
+      {tips.map((tip, index) => (
+        // A triathlon has a "freshNeeded" tip per leg, so the key alone isn't unique.
+        // biome-ignore lint/suspicious/noArrayIndexKey: tips are computed and never reordered.
+        <li key={`${tip.key}-${index}`} className="flex gap-2">
           <Lightbulb className="mt-0.5 size-4 shrink-0 text-zone-3" />
           <span>{text(tip)}</span>
         </li>

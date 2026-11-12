@@ -564,8 +564,6 @@
       "total": "Total: {time}",
       "transitionsField": "Transitions (T1 + T2, optional)",
       "quarter": "Quarter Ironman",
-      "fresh": "When fresh, you should manage about {time} over {distance} ({pace})",
-      "freshSame": "The swim comes first, so you're fresh: same time",
       "noBest": "No best effort at this distance yet."
     },
     "tips": {
@@ -618,7 +616,8 @@
       "easy": "Keep about 80 % of your training easy, so you can go hard when it counts.",
       "recoveryWeek": "Add at most about 10 % a week, and take an easier week every 3–4 weeks.",
       "workoutBikeShortWatts": "Key session: 2 × 20 minutes at about {low}–{high} W (close to your threshold). Goal speed: {speed}.",
-      "workoutBikeLongWatts": "Key session: one long ride a week at about {low}–{high} W (zone 2)."
+      "workoutBikeLongWatts": "Key session: one long ride a week at about {low}–{high} W (zone 2).",
+      "freshNeeded": "{sport}: when fresh, you should manage about {time} over {distance} ({pace})."
     },
     "calculator": {
       "title": "Pace calculator",
@@ -708,7 +707,8 @@
       "easy": "Keep 80 % easy",
       "recoveryWeek": "An easier week every 3–4 weeks",
       "workoutBikeShortWatts": "Key: 2 × 20 min at {low}–{high} W",
-      "workoutBikeLongWatts": "Key: long ride at {low}–{high} W"
+      "workoutBikeLongWatts": "Key: long ride at {low}–{high} W",
+      "freshNeeded": "{sport}: about {time} fresh"
     },
     "readMore": "Read more",
     "readLess": "Show less"

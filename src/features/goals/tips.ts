@@ -8,7 +8,13 @@ import { trainingPaces, vdot } from "@/lib/analytics/running";
 import { type WeekStartDay, weekStartOf } from "@/lib/analytics/weekly";
 import { addDays, daysBetween } from "@/lib/dates";
 import { gapFor, recommendedVolume, speedCheck } from "./feedback";
-import { LEGS, type Leg, type TriathlonRace } from "./triathlon";
+import {
+  freshTimeNeeded,
+  LEGS,
+  type Leg,
+  TRIATHLONS,
+  type TriathlonRace,
+} from "./triathlon";
 
 /**
  * Training tips for a goal (owner feedback 2026-11-12: "only 1–3 good, relevant and specific tips,
@@ -187,7 +193,8 @@ export type TipKey =
   | "gapSeason"
   | "gapBig"
   | "easy"
-  | "recoveryWeek";
+  | "recoveryWeek"
+  | "freshNeeded";
 
 export type Tip = {
   key: TipKey;
@@ -448,21 +455,44 @@ export function goalTips(
  */
 export function triathlonTips(
   race: TriathlonRace,
+  splits: Record<Leg, number>,
   stats: TrainingStats | null,
 ): Tip[] {
-  if (!stats) return [];
-  return LEGS.flatMap((leg): Tip[] => {
-    const perWeek = stats[leg].metersPerWeek;
-    const next = nextVolume(perWeek, TRIATHLON_VOLUME[race][leg]);
-    if (next === null) return [];
+  // What each leg's target needs when fresh (owner feedback 2026-11-12: a tip, not part of the row).
+  // The swim comes first, so it needs no fresher time.
+  const fresh = LEGS.flatMap((leg): Tip[] => {
+    const meters = TRIATHLONS[race].legs[leg];
+    const seconds = freshTimeNeeded(race, leg, splits[leg]);
+    if (Math.round(seconds) >= Math.round(splits[leg])) return [];
     return [
       {
-        key: `volume.${leg}`,
-        score: 1,
-        values: { perWeek: dist(leg, perWeek), target: dist(leg, next) },
+        key: "freshNeeded",
+        score: 0.5,
+        values: {
+          sport: { kind: "sport", sport: leg },
+          time: { kind: "time", seconds },
+          distance: { kind: "label", sport: leg, meters },
+          pace: { kind: "pace", sport: leg, meters, seconds },
+        },
       },
     ];
   });
+  if (!stats) return fresh;
+  return [
+    ...fresh,
+    ...LEGS.flatMap((leg): Tip[] => {
+      const perWeek = stats[leg].metersPerWeek;
+      const next = nextVolume(perWeek, TRIATHLON_VOLUME[race][leg]);
+      if (next === null) return [];
+      return [
+        {
+          key: `volume.${leg}`,
+          score: 1,
+          values: { perWeek: dist(leg, perWeek), target: dist(leg, next) },
+        },
+      ];
+    }),
+  ];
 }
 
 /**

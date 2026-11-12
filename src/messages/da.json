@@ -564,8 +564,6 @@
       "total": "Samlet: {time}",
       "transitionsField": "Skift (T1 + T2, valgfrit)",
       "quarter": "Kvart Ironman",
-      "fresh": "Udhvilet skal du kunne klare ca. {time} på {distance} ({pace})",
-      "freshSame": "Svømningen er først, så du er udhvilet: samme tid",
       "noBest": "Ingen bedste præstation på denne distance endnu."
     },
     "tips": {
@@ -618,7 +616,8 @@
       "easy": "Hold ca. 80 % af træningen rolig, så du kan give den gas, når det tæller.",
       "recoveryWeek": "Øg højst ca. 10 % om ugen, og tag en lettere uge hver 3.–4. uge.",
       "workoutBikeShortWatts": "Nøgletræning: 2 × 20 minutter ved ca. {low}–{high} W (tæt på din tærskel). Målfart: {speed}.",
-      "workoutBikeLongWatts": "Nøgletræning: en lang tur om ugen ved ca. {low}–{high} W (zone 2)."
+      "workoutBikeLongWatts": "Nøgletræning: en lang tur om ugen ved ca. {low}–{high} W (zone 2).",
+      "freshNeeded": "{sport}: udhvilet skal du kunne klare ca. {time} på {distance} ({pace})."
     },
     "calculator": {
       "title": "Tempoberegner",
@@ -708,7 +707,8 @@
       "easy": "Hold 80 % roligt",
       "recoveryWeek": "En lettere uge hver 3.–4. uge",
       "workoutBikeShortWatts": "Nøgle: 2 × 20 min ved {low}–{high} W",
-      "workoutBikeLongWatts": "Nøgle: lang tur ved {low}–{high} W"
+      "workoutBikeLongWatts": "Nøgle: lang tur ved {low}–{high} W",
+      "freshNeeded": "{sport}: ca. {time} udhvilet"
     },
     "readMore": "Læs mere",
     "readLess": "Vis mindre"
