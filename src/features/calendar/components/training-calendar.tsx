@@ -6,6 +6,7 @@ import { useHours } from "@/i18n/use-hours";
 import type {
   Calendar,
   CalendarDay,
+  CalendarView,
   CalendarWeek,
   MonthGroup,
   Totals,
@@ -24,6 +25,7 @@ import {
   totalDistance,
   trainedSports,
 } from "./sport-lines";
+import { ThisWeekToggle } from "./this-week-toggle";
 
 type CalendarProps = { calendar: Calendar; units: Units };
 
@@ -35,14 +37,30 @@ const GRID = "grid grid-cols-[3.25rem_repeat(7,minmax(0,1fr))_11rem]";
  * Up to ~3 months: a real calendar (a grid on desktop, a tappable month grid on phones). Longer
  * periods: a card per month with its average week and a bar per week (owner feedback 2026-11-12).
  */
-export function TrainingCalendar({ calendar, units }: CalendarProps) {
+export function TrainingCalendar({
+  calendar,
+  units,
+  thisWeekOpen,
+  rememberThisWeek = false,
+}: CalendarProps & {
+  /** Whether "This week" starts open (the saved choice, else open on 1M/3M). */
+  thisWeekOpen?: boolean;
+  /** Save when the user opens or closes "This week" (not on the landing page). */
+  rememberThisWeek?: boolean;
+}) {
+  const { view } = calendar.period;
   return (
     <div className="flex flex-col gap-4">
       <PeriodSummary calendar={calendar} units={units} />
-      {/* "This week" only on 1 month (owner feedback 2026-11-12, batch 6). */}
-      {calendar.period.view === "1m" && (
-        <ThisWeekCard calendar={calendar} units={units} />
-      )}
+      {/* "This week" on every period, folding: open on 1M/3M by default (owner feedback 2026-11-15,
+          replacing "1M only" from batch 6). */}
+      <ThisWeekCard
+        key={view}
+        calendar={calendar}
+        units={units}
+        defaultOpen={thisWeekOpen ?? (view === "1m" || view === "3m")}
+        view={rememberThisWeek ? view : undefined}
+      />
       {calendar.density === "weeks" ? (
         <MonthCards calendar={calendar} units={units} />
       ) : (
@@ -443,8 +461,14 @@ function PeriodSummary({ calendar, units }: CalendarProps) {
  * This week so far, in its own card between the average box and the calendar (owner feedback
  * 2026-11-12, idea B): its hours against the average week as a progress bar in sport colors, a mark
  * where the finished weeks usually were by the same day, and whether this week is ahead or behind.
+ * It folds; the header with the hours stays visible (owner feedback 2026-11-15).
  */
-function ThisWeekCard({ calendar, units }: CalendarProps) {
+function ThisWeekCard({
+  calendar,
+  units,
+  defaultOpen,
+  view,
+}: CalendarProps & { defaultOpen: boolean; view?: CalendarView }) {
   const t = useTranslations("Calendar");
   const hours = useHours();
   const { currentWeek, weeklyAverage } = calendar;
@@ -458,22 +482,26 @@ function ThisWeekCard({ calendar, units }: CalendarProps) {
   const Trend = ahead ? TrendingUp : TrendingDown;
 
   return (
-    <section className="flex flex-col gap-3 rounded-2xl border bg-card p-4">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <h3 className="text-sm font-medium text-muted-foreground">
-          {t("thisWeek", { day })}
-        </h3>
-        <p className="text-sm tabular-nums">
-          <span className="text-2xl font-bold">{hours(soFar)}</span>
-          {average !== null && (
-            <span className="text-muted-foreground">
-              {" "}
-              {t("ofAverage", { average: hours(average) })}
-            </span>
-          )}
-        </p>
-      </div>
-
+    <ThisWeekToggle
+      view={view}
+      defaultOpen={defaultOpen}
+      summary={
+        <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <span className="text-sm font-medium text-muted-foreground">
+            {t("thisWeek", { day })}
+          </span>
+          <span className="text-sm tabular-nums">
+            <span className="text-2xl font-bold">{hours(soFar)}</span>
+            {average !== null && (
+              <span className="text-muted-foreground">
+                {" "}
+                {t("ofAverage", { average: hours(average) })}
+              </span>
+            )}
+          </span>
+        </span>
+      }
+    >
       <div className="relative h-3">
         <span className="absolute inset-0 rounded-full bg-muted" />
         {soFar > 0 && (
@@ -518,7 +546,7 @@ function ThisWeekCard({ calendar, units }: CalendarProps) {
           ))}
         </p>
       )}
-    </section>
+    </ThisWeekToggle>
   );
 }
 

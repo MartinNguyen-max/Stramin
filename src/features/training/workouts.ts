@@ -1,7 +1,7 @@
 import type { EffortSport } from "@/lib/analytics/best-efforts";
 import type { PaceTarget } from "@/lib/analytics/running";
 import type messages from "@/messages/en.json";
-import type { Effort, Zone } from "./zones";
+import type { Effort, WorkoutEffort, Zone } from "./zones";
 
 /**
  * The training catalog (TRN-1..5): static content in code (ARCHITECTURE: data model).
@@ -16,7 +16,12 @@ export type Amount = { meters: number } | { seconds: number };
 export type Target = { pace: PaceTarget } | { zone: Zone };
 
 export type Step =
-  | { type: "warmup" | "cooldown" | "main"; amount: Amount; target: Target }
+  | {
+      /** "easy": easy time between hard parts, or to fill a long session (created workouts). */
+      type: "warmup" | "cooldown" | "main" | "easy";
+      amount: Amount;
+      target: Target;
+    }
   | {
       type: "repeat";
       reps: number;
@@ -24,15 +29,25 @@ export type Step =
       rest?: { amount: Amount; target: Target };
     };
 
-/** Every workout has a name and description in the messages (Training.workouts). */
+/** Every catalog workout has a name and description in the messages (Training.workouts). */
 export type WorkoutId = keyof (typeof messages)["Training"]["workouts"];
 
+/** Every template of the workout builder has a name and description in the messages (Training.templates). */
+export type TemplateId = keyof (typeof messages)["Training"]["templates"];
+
+/** A catalog workout or one the user created (owner feedback 2026-11-15). */
 export type Workout = {
-  id: WorkoutId;
+  /** Catalog: its id ("intervals-400"). Created: "sport.template.minutes" ("run.vo2.60"). */
+  id: string;
   sport: EffortSport;
-  effort: Effort;
+  effort: WorkoutEffort;
   steps: Step[];
+  /** Where its name and description are in the messages (under Training). */
+  text: `workouts.${WorkoutId}` | `templates.${TemplateId}`;
 };
+
+/** A workout of the classic catalog. */
+export type CatalogWorkout = Workout & { id: WorkoutId; effort: Effort };
 
 const min = (minutes: number): Amount => ({ seconds: minutes * 60 });
 const sec = (seconds: number): Amount => ({ seconds });
@@ -50,7 +65,7 @@ const easyCooldown: Step = {
   target: { pace: "easy" },
 };
 
-export const WORKOUTS: Workout[] = [
+const CATALOG: Omit<CatalogWorkout, "text">[] = [
   // Run · easy (Z1–Z2)
   {
     id: "easy-run",
@@ -376,7 +391,15 @@ export const WORKOUTS: Workout[] = [
   },
 ];
 
-export function workoutsFor(sport: EffortSport, effort?: Effort): Workout[] {
+export const WORKOUTS: CatalogWorkout[] = CATALOG.map((workout) => ({
+  ...workout,
+  text: `workouts.${workout.id}` as const,
+}));
+
+export function workoutsFor(
+  sport: EffortSport,
+  effort?: Effort,
+): CatalogWorkout[] {
   return WORKOUTS.filter(
     (workout) =>
       workout.sport === sport && (!effort || workout.effort === effort),

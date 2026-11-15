@@ -75,6 +75,11 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 
 ✅ **Done when:** the owner has reviewed the new Home and pages on a preview, and the migrations are applied.
 
+### M3.10 – Owner feedback 2026-11-15 *(see [REVIEW](REVIEW.md) #90–97)*
+- [x] "This week" on every period and folding (open on 1M/3M, remembered per period type); replaces "only on 1M"
+- [x] Training: tabs Classics / Create / Favorites, workout builder (TRN-6), favorites + sport icons (TRN-7)
+- [ ] Owner: `supabase db push --remote` (favorites table), commit, push, review
+
 ### M3.9 – Triathlon tip and performance *(see [REVIEW](REVIEW.md) #81–85)*
 - [x] Fresh time per leg as a tip
 - [x] Reads in parallel, 30 s browser cache, smaller JavaScript
@@ -82,7 +87,7 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 - [ ] Maybe: best efforts stored per user at sync time
 
 ### M3.8 – Owner feedback 2026-11-12, batch 6 *(work mode, straight on main; see [feedback](feedback/2026-11-12-batch6.md), [REVIEW](REVIEW.md) #72–80)*
-- [x] Light app icon, "this week" only on 1M, bigger phone tab bar, average week in one row on phones
+- [x] Light app icon, "this week" only on 1M *(changed by M3.10)*, bigger phone tab bar, average week in one row on phones
 - [x] Triathlon goal: fresh time needed per leg + realistic volume steps only
 - [x] Calculator: pace difference; where the race-day time comes from (ⓘ)
 - [x] Opened sections close when you leave a page

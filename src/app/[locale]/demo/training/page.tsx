@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { demoBestEfforts } from "@/features/demo/demo-efforts";
 import { DemoSpinner } from "@/features/demo/demo-spinner";
 import {
-  readTrainingFilters,
+  readTrainingParams,
   TrainingView,
 } from "@/features/training/components/training-view";
 import { personalPaces } from "@/features/training/plan";
@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${t("title")} · Stramin` };
 }
 
-/** Demo of the training catalog, with paces from the demo history. */
+/** Demo of the training inspiration, with paces from the demo history. Favorites need a login. */
 export default function DemoTrainingPage({
   searchParams,
 }: PageProps<"/[locale]/demo/training">) {
@@ -31,16 +31,17 @@ async function DemoTraining({
 }: {
   searchParams: PageProps<"/[locale]/demo/training">["searchParams"];
 }) {
-  const { sport, effort } = readTrainingFilters(await searchParams);
+  const params = readTrainingParams(await searchParams);
   await connection();
   const { efforts } = await demoBestEfforts();
   return (
     <TrainingView
       base="/demo/training"
-      sport={sport}
-      effort={effort}
+      params={params}
       paces={personalPaces(efforts)}
       units="metric"
+      favorites={null}
+      favoritesNote="demo"
     />
   );
 }
