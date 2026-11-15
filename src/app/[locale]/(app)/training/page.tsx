@@ -2,17 +2,16 @@ import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { ZoneSpinner } from "@/components/brand/zone-spinner";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { getCurrentUser } from "@/features/auth/current-user";
 import { loadBestEfforts } from "@/features/profile/best-efforts-data";
-import { getOrCreateProfile } from "@/features/profile/data";
+import { getPreferences } from "@/features/profile/data";
 import {
   readTrainingParams,
   TrainingView,
 } from "@/features/training/components/training-view";
 import { listFavoriteIds } from "@/features/training/favorites-data";
 import { personalPaces } from "@/features/training/plan";
-import type { Units } from "@/lib/preferences";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Training");
@@ -39,13 +38,8 @@ async function TrainingContent({
   const locale = (await getLocale()) as "en" | "da";
   const params = readTrainingParams(await searchParams);
 
-  let units: Units = "metric";
-  try {
-    units = (await getOrCreateProfile(user, locale)).units;
-  } catch (error) {
-    console.error("[training] profile unavailable", error);
-  }
-  const [{ efforts }, favorites] = await Promise.all([
+  const [{ units }, { efforts }, favorites] = await Promise.all([
+    getPreferences(user, locale),
     loadBestEfforts(user),
     listFavoriteIds(user).catch((error) => {
       // E.g. before the favorites migration is applied: the rest of the page still works.
@@ -68,9 +62,5 @@ async function TrainingContent({
 
 function TrainingSkeleton() {
   const t = useTranslations("Calendar");
-  return (
-    <div className="flex flex-1 items-center justify-center py-24">
-      <ZoneSpinner size={72} label={t("loading")} />
-    </div>
-  );
+  return <PageSkeleton layout="training" label={t("loading")} />;
 }

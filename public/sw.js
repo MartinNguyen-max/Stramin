@@ -1,7 +1,7 @@
 // Stramin's service worker (M11, owner feedback 2026-11-12). Kept small on purpose: the app needs the
 // network for its data, so pages always come from the network; only when that fails does a page
 // navigation get the offline page. Bump VERSION when the offline page or icons change.
-const VERSION = "stramin-v1";
+const VERSION = "stramin-v2";
 const OFFLINE_URL = "/offline.html";
 const PRECACHE = [OFFLINE_URL, "/icons/icon-192.png"];
 

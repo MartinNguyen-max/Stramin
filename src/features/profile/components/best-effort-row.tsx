@@ -126,13 +126,17 @@ export function BestEffortRow({
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 font-medium text-[#FC4C02] hover:underline"
             >
-              {effort.exact ? t("strava") : t("estimate")}
+              {t("strava")}
               <ExternalLink className="size-3" />
             </a>
           ) : (
             <span className="rounded-full bg-muted px-1.5 py-0.5 font-medium text-foreground">
               {t("manual")}
             </span>
+          )}
+          {/* Not Strava's own best effort: Stramin worked it out from the activity (batch 6: "Skøn" was unclear). */}
+          {effort.source === "strava" && effort.activityId && !effort.exact && (
+            <span title={t("estimateHint")}>{t("estimate")}</span>
           )}
           {effort.source === "manual" && effort.estimateSeconds && (
             <span className="tabular-nums">

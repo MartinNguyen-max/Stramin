@@ -8,9 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { deleteEvent, saveEvent } from "../actions";
-import { ACCEPTED_IMAGE_TYPES, uploadEventImage } from "../image";
 import type { EventFormState } from "../schemas";
-import { EVENT_TYPES, type EventView, MAX_EVENT_TITLE } from "../types";
+import {
+  ACCEPTED_IMAGE_TYPES,
+  EVENT_TYPES,
+  type EventView,
+  MAX_EVENT_TITLE,
+} from "../types";
 
 const selectClass =
   "h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
@@ -56,6 +60,9 @@ export function EventDialog({
       let imagePath = removeImage ? "" : (event?.imagePath ?? "");
       if (file) {
         try {
+          // Loaded only when an image is uploaded: it brings the Supabase client (~300 KB), which
+          // every page would otherwise download (performance, 2026-11-12).
+          const { uploadEventImage } = await import("../image");
           imagePath = await uploadEventImage(file, userId);
         } catch (error) {
           console.warn("[events] image upload failed", error);

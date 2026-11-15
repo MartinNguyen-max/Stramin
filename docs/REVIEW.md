@@ -3,6 +3,56 @@
 > Decisions Claude made in **work mode** while the owner was away (CLAUDE.md → Work mode).
 > Each one can be discussed and changed. When a point is settled, move it out of this list (or delete it).
 
+## Batch 8 – 2026-11-15: "This week" folds, create workouts, favorites
+
+| # | Decision | Why | Alternatives |
+|---|---|---|---|
+| 90 | *(Owner, replaces #73 "only on 1M")* **"This week" on every period that contains today** (1M, 3M, 6M, 1Y, All, custom). Past months (‹) have no current week, so no card there. | That's the only week it can describe. | Show this week also on past periods (needs an extra query). |
+| 91 | **"This week" folds; the header with the hours stays visible.** Open by default on 1M/3M, closed on 6M/1Y/All/custom. The choice is remembered **per period type**, per device (cookie `stramin-this-week`), so it renders right on the first load. Unlike other sections (#78) it does **not** close when you leave the page, because closing would overwrite your choice. | Owner request; the closed card still says the most important number. | One choice for all periods; store in the database. |
+| 92 | **Training = three tabs: Classics · Create · Favorites**, everything in the URL. | Keeps the classics simple; back button and links work. | Create as a dialog; a separate page. |
+| 93 | **Create: three steps that appear one after the other** (sport → duration → effort), chips instead of a slider. Durations from **30 min** (15 min is too short for warm-up + work), every 15 min to 2:30 h, then every 30 min to 5:30 h. **Swims stop at 2 h.** | Big tap targets on phones; owner's steps. | A slider; 15 min sessions. |
+| 94 | **Efforts: easy, moderate, hard and "Mixed · Z2–Z5"** (tempo + hard parts in one session). | Owner: "a mix if it makes sense": it does for long sessions. | Only the three. |
+| 95 | **18 templates** (4 easy, 5 moderate, 5 hard, 4 mixed) fill exactly the chosen time: warm-up, the main part, **easy endurance for the rest**, cool-down. The hard part has a maximum (e.g. 6 × 8 min threshold), so a 5:30 h ride is a long ride with intervals, not 5 h of intervals. 3–5 suggestions per choice (3 only for some 30 min sessions). Swims are converted to meters with your swim pace. **Written by Claude** (common sessions); please review. | Realistic sessions at every length. | AI-generated workouts; fixed workouts per length. |
+| 96 | **Favorites in the database** (`favorite_workouts`: user, workout id, date; RLS). Only the **id** is stored ("intervals-400", "run.vo2.60"); the workout is rebuilt with your current paces. | Same on phone and PC; small; your paces stay up to date. If a template changes later, its favorites change with it. | Store the whole workout (snapshot); browser storage. |
+| 97 | **The star is on every card** (classics, suggestions, favorites), changes at once and goes back if saving fails. **Every card shows its sport icon** in a tinted circle. Demo: no stars. | Owner request. | Star only on created workouts. |
+
+### Things only you can do (batch 8)
+
+- [ ] **Apply the database change** (new table `favorite_workouts`). Without it the Training page works, but stars are hidden and Favorites says "not available yet". In PowerShell:
+  ```
+  pnpm exec supabase db push --remote
+  ```
+- [ ] Commit, push, and look at Home (1M open, 6M closed; open/close and reload) and Training (Create, star a few, Favorites).
+- [ ] Review the templates (#95).
+
+## Batch 2026-11-12 (batch 7): triathlon tip and performance
+
+| # | Decision | Why | Alternatives |
+|---|---|---|---|
+| 81 | *(Owner)* **The fresh time per leg is a tip**, first under the legs ("Cykel: udhvilet skal du kunne klare ca. 4:45:43 på 180 km (37,8 km/t)"), for bike and run; the leg rows only show target · pace. | Owner request. | – |
+| 82 | **Page reads in parallel** (`Promise.all`) on Home, Goals, calculator, Training and Profile. | Each read waited for the one before (profile → goals → Strava status → workouts). | One combined database transaction per page (more code, small extra gain). |
+| 83 | **30 s browser cache for pages** (`staleTimes.dynamic: 30`): switching back to a tab within 30 s needs no server call. Saving settings now calls `refresh()`. | Every tab switch asked the server again (measured on the demo). | No cache (before); 5 minutes (stale Strava data). *A sync in the background shows up within 30 s.* |
+| 84 | **Smaller JavaScript:** zod and the Supabase browser client no longer ship with every page (–32 %, 1.18 → 0.8 MB uncompressed). | Faster first load on phones. | – |
+| 86 | *(Owner)* **Browser tab icon follows the theme** (light icon, the dark one in dark mode, one SVG with a media query); the **home screen icons stay light**. Changed by #88: it now follows the theme chosen in Settings. | iOS can't switch a web app's home screen icon by theme; the owner wants it light. | – |
+| 87 | *(Owner)* **Skeleton loading with the spinner on top:** while a page loads, grey boxes in its shape (Home, Goals, calculator, Training, Profile, also the demo) pulse softly, and the zone spinner sits on a small card above them. | The layout shows at once; the owner keeps the spinner. | Skeleton only; spinner only (before). |
+| 88 | *(Owner)* **Theme switch in Settings:** Device / Light / Dark, applied at once, saved on this device (next-themes, localStorage). The browser tab icon follows the chosen theme; the home screen icon stays light. | "A button to switch between dark and light." | Saved in the profile (same theme on every device; needs a migration). |
+| 89 | *(Owner)* **Settings apply at once, no Save button:** units, week start, language and theme as pill buttons (label left, choices right; stacked on phones). Units and week start are saved right away (a "Saved ✓" line; on failure the old value comes back). The language is saved (the action also sets next-intl's language cookie), then the whole app reloads in it with the zone spinner ("Switching language…"), so every part changes; the button always shows the page's own language (`useLocale`). The form starts fresh when Next.js shows a kept page again (it showed "Dansk" on an English page). | "Changing language and units doesn't work; no saving, just change instantly." | Auto-submitting the old form. |
+| 85 | **Not done (yet): best efforts stored in the database** at sync time. | Needs a migration, hooks in 8 sync paths and the 7-day rule (ADR 0009); the gain can't be measured without production data. Proposed as the next step if Profile/Goals still feel slow. | Do it now. |
+
+## Batch 2026-11-12 (batch 6): owner feedback from the installed app ([feedback/2026-11-12-batch6.md](feedback/2026-11-12-batch6.md))
+
+| # | Decision | Why | Alternatives |
+|---|---|---|---|
+| 72 | **Light app icon** everywhere it's installed (home screen 192/512, maskable, Apple 180, favicon): white background, dark needle, the light logo. Splash background white; service worker cache bumped to v2. *iPhone: remove and re-add the home screen app to see the new icon.* | Owner: "it should have been the light logo". | Follow the phone's theme (not possible for home screen icons). |
+| 73 | ~~**"This week" card only on 1M.**~~ *Replaced by #90–91 (2026-11-15).* | Owner request. | – |
+| 74 | *(Owner, changed 2026-11-12)* **Triathlon goal card, minimal:** per leg the target and its pace; the time needed **fresh** over that distance is the first tip under the legs ("Bike: when fresh, you should manage about 4:45:43 over 180 km (37.8 km/h)"), for bike and run (the swim comes first, no fatigue). Gone: best / predicted race-day times, "Already there", "to go", the fatigue note, the scored tips and the workout chips. | A predicted time said "already reached" for a 3.8 km swim never done. "Keep it minimal". | Keep the race-day comparison but only for real bests. |
+| 75 | **Triathlon volume line per discipline, a realistic next step:** "Over the last 3 months you've swum 2.2 km a week … aim for about 2.6 km": +20 % on what you do now (at least 40 % of the target, at most the target), only for disciplines under 85 % of the target. Targets lowered for amateurs: full 6 km swim / 180 km bike / 40 km run a week; half 4.5 / 130 / 30; quarter 3 / 80 / 25. | "9 km swim per week is not good"; the owner liked "you did X, try Y". | The full target at once (before); +10 % (feels like no change). |
+| 76 | **Calculator: the pace difference** next to the time difference ("9 s slower · 0:02 /km slower"; bike in km/h, swim per 100 m), and the reference's pace ("Your best: 20:41 · 4:08 /km"). | Owner request. | Only the pace. |
+| 77 | **Calculator, triathlon: "Your best on race day" vs "Predicted on race day"**, with an ⓘ that explains it: the best over that distance (or "no best yet, we use your predicted time … less accurate") plus the fatigue added (+5 % bike / +15 % run in a full). | The user must see when a number is only a prediction. | A warning color; hide predicted legs. |
+| 78 | **Opened sections close when you leave a page** (Read more, Show steps, training paces, the calculator's ⓘ): a small `Details` component that closes on hide. Sliders and chosen distances are kept. | Next.js (Cache Components) keeps the last pages alive, so opened things stayed open. The Next docs recommend this per-element reset. | Reset whole pages on every navigation (`bfcacheId`): also resets the calculator. |
+| 79 | **Phone tab bar bigger and higher:** 64 px tall, bigger icons and labels, above the iPhone home bar (`viewport-fit=cover` so the safe area is known, plus at least 8 px). | "Hard to hit" in the installed app. | A floating pill bar. |
+| 80 | **Average week on the phone:** total on its own line, the 4 sport cards in one row (icon, name, distance, hours), like on PC. "Skøn" → **"Strava · anslået"** with a hover text: the time is Stramin's estimate from the Strava activity, not Strava's exact best effort. | Owner feedback. | 2 × 2 grid (before). |
+
 ## Batch 2026-11-10: new Home, Goals, Training, Profile (M2.5)
 
 ### Product and design
@@ -27,28 +77,6 @@
 | 16 | **Profile shows the three sports side by side** (stacked on phones) instead of tabs. | Everything visible at once; only 4–5 rows per sport. | Tabs. |
 | 17 | **Week numbers:** ISO 8601 with a Monday start, US style with a Sunday start. | The standard in Denmark/Europe. | – |
 | 18 | **Settings, Goals and Profile keep a readable width**; Home and the training catalog use the full width (max 1280 px). | The calendar needs room for 7 days + totals. | – |
-
-## Batch 5 – 2026-11-15: "This week" folds, create workouts, favorites
-
-| # | Decision | Why | Alternatives |
-|---|---|---|---|
-| 72 | **"This week" already shows on every period that contains today** (1M, 3M, 6M, 1Y, All, custom). Past months (‹) have no current week, so no card there. | That's the only week it can describe. | Show this week also on past periods (needs an extra query). |
-| 73 | **"This week" folds; the header with the hours stays visible.** Open by default on 1M/3M, closed on 6M/1Y/All/custom. The choice is remembered **per period type**, per device (cookie `stramin-this-week`), so it renders right on the first load. | Owner request; the closed card still says the most important number. | One choice for all periods; store in the database. |
-| 74 | **Training = three tabs: Classics · Create · Favorites**, everything in the URL. | Keeps the classics simple; back button and links work. | Create as a dialog; a separate page. |
-| 75 | **Create: three steps that appear one after the other** (sport → duration → effort), chips instead of a slider. Durations from **30 min** (15 min is too short for warm-up + work), every 15 min to 2:30 h, then every 30 min to 5:30 h. **Swims stop at 2 h.** | Big tap targets on phones; owner's steps. | A slider; 15 min sessions. |
-| 76 | **Efforts: easy, moderate, hard and "Mixed · Z2–Z5"** (tempo + hard parts in one session). | Owner: "a mix if it makes sense": it does for long sessions. | Only the three. |
-| 77 | **18 templates** (4 easy, 5 moderate, 5 hard, 4 mixed) fill exactly the chosen time: warm-up, the main part, **easy endurance for the rest**, cool-down. The hard part has a maximum (e.g. 6 × 8 min threshold), so a 5:30 h ride is a long ride with intervals, not 5 h of intervals. 3–5 suggestions per choice (3 only for some 30 min sessions). Swims are converted to meters with your swim pace. **Written by Claude** (common sessions); please review. | Realistic sessions at every length. | AI-generated workouts; fixed workouts per length. |
-| 78 | **Favorites in the database** (`favorite_workouts`: user, workout id, date; RLS). Only the **id** is stored ("intervals-400", "run.vo2.60"); the workout is rebuilt with your current paces. | Same on phone and PC; small; your paces stay up to date. If a template changes later, its favorites change with it. | Store the whole workout (snapshot); browser storage. |
-| 79 | **The star is on every card** (classics, suggestions, favorites), changes at once and goes back if saving fails. **Every card shows its sport icon** in a tinted circle. Demo: no stars. | Owner request. | Star only on created workouts. |
-
-### Things only you can do (batch 5)
-
-- [ ] **Apply the database change** (new table `favorite_workouts`). Without it the Training page works, but stars are hidden and Favorites says "not available yet". In PowerShell:
-  ```
-  pnpm exec supabase db push --remote
-  ```
-- [ ] Commit, push, and look at Home (1M open, 6M closed; open/close and reload) and Training (Create, star a few, Favorites).
-- [ ] Review the templates (#77).
 
 ## Batch 4 – 2026-11-11: owner feedback ([feedback/2026-11-11.md](feedback/2026-11-11.md))
 

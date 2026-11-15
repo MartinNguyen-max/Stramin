@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import type { CurrentUser } from "@/features/auth/current-user";
 import { withRls } from "@/lib/db/rls";
 import { type Profile, profiles } from "@/lib/db/schema";
+import type { Units, WeekStart } from "@/lib/preferences";
 import type { Settings } from "./schemas";
 
 /**
@@ -31,17 +32,32 @@ export async function getOrCreateProfile(
   });
 }
 
-export async function saveSettings(
+/** Saves one or more settings at once; the profile exists (Settings creates it). Runs as the user (RLS). */
+export async function updatePreferences(
   user: CurrentUser,
-  settings: Settings,
+  patch: Partial<Settings>,
 ): Promise<void> {
   await withRls(user.claims, (tx) =>
     tx
-      .insert(profiles)
-      .values({ userId: user.id, ...settings })
-      .onConflictDoUpdate({
-        target: profiles.userId,
-        set: { ...settings, updatedAt: new Date() },
-      }),
+      .update(profiles)
+      .set({ ...patch, updatedAt: new Date() })
+      .where(eq(profiles.userId, user.id)),
   );
+}
+
+/**
+ * Units and week start for a page, with defaults when the database can't be read, so a page still
+ * renders. Pages start it alongside their other reads (`Promise.all`) instead of before them.
+ */
+export async function getPreferences(
+  user: CurrentUser,
+  locale: Settings["locale"],
+): Promise<{ units: Units; weekStart: WeekStart }> {
+  try {
+    const profile = await getOrCreateProfile(user, locale);
+    return { units: profile.units, weekStart: profile.weekStart };
+  } catch (error) {
+    console.error("[profile] profile unavailable, using defaults", error);
+    return { units: "metric", weekStart: "monday" };
+  }
 }

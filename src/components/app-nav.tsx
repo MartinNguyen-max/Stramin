@@ -71,14 +71,18 @@ export function HeaderNav() {
   );
 }
 
-/** Phones: a fixed tab bar at the bottom, like an installed app. */
+/**
+ * Phones: a fixed tab bar at the bottom, like an installed app. Big tap targets, and lifted above the
+ * iPhone's home bar (safe area, plus a little extra) so it's easy to hit in the installed app too
+ * (owner feedback 2026-11-12, batch 6).
+ */
 export function BottomNav() {
   const t = useTranslations("App.nav");
   const isActive = useIsActive();
   return (
     <nav
       aria-label={t("label")}
-      className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 pb-[max(env(safe-area-inset-bottom),0.5rem)] backdrop-blur md:hidden"
     >
       <ul className="mx-auto grid max-w-md grid-cols-4">
         {SECTIONS.map(({ href, key, icon: Icon }) => (
@@ -87,12 +91,12 @@ export function BottomNav() {
               href={href}
               aria-current={isActive(href) ? "page" : undefined}
               className={cn(
-                "flex flex-col items-center gap-0.5 py-2 text-[11px] font-medium transition-colors",
+                "flex min-h-16 flex-col items-center justify-center gap-1 py-2.5 text-xs font-medium transition-colors",
                 isActive(href) ? "text-foreground" : "text-muted-foreground",
               )}
             >
               <Icon
-                className={cn("size-5", isActive(href) && "stroke-[2.5]")}
+                className={cn("size-6", isActive(href) && "stroke-[2.5]")}
               />
               {t(key)}
             </Link>

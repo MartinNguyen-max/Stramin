@@ -1,12 +1,10 @@
 import { createBrowserSupabase } from "@/lib/supabase/client";
-import { EVENT_IMAGE_BUCKET } from "./types";
+import { ACCEPTED_IMAGE_TYPES, EVENT_IMAGE_BUCKET } from "./types";
 
 /** Longest side of an uploaded event image, in pixels. Enough for a card, small to store. */
 const MAX_SIZE = 1600;
 /** The original may be big (phone photos); it's resized before upload. */
 const MAX_ORIGINAL_BYTES = 25 * 1024 * 1024;
-
-export const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/png,image/webp";
 
 /**
  * Resizes the image in the browser and uploads it as WebP to the user's folder (EVT-2).

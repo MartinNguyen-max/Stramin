@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
+import { Details } from "@/components/ui/details";
 import {
   SPORT_ICON,
   SPORT_TEXT,
@@ -69,7 +70,7 @@ export function WorkoutCard({ workout, paces, units, favorite }: Props) {
         });
 
   return (
-    <details
+    <Details
       id={workout.id}
       className={cn(
         "group scroll-mt-24 rounded-2xl border border-t-4 bg-card",
@@ -138,7 +139,7 @@ export function WorkoutCard({ workout, paces, units, favorite }: Props) {
           />
         ))}
       </ol>
-    </details>
+    </Details>
   );
 }
 

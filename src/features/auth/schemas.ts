@@ -1,7 +1,13 @@
 import { z } from "zod";
+import {
+  type AuthErrorKey,
+  MAX_NAME_LENGTH,
+  MIN_PASSWORD_LENGTH,
+  NAME_PATTERN,
+} from "./form-state";
 
-/** Minimum password length. Supabase's own minimum is 6; we require more. */
-export const MIN_PASSWORD_LENGTH = 8;
+// The constants and form states live in form-state.ts (no zod, so client forms stay small).
+export * from "./form-state";
 
 // Trim and lowercase first, then validate, so " Martin@Example.com " is accepted.
 const email = z
@@ -13,15 +19,6 @@ const password = z
   .string()
   .min(MIN_PASSWORD_LENGTH, { error: "passwordTooShort" })
   .max(72, { error: "passwordTooLong" });
-
-/** Max length of the name ("What should we call you?", ACC-5). */
-export const MAX_NAME_LENGTH = 30;
-
-/** Starts with a letter, then letters from any language, spaces, `-`, `'`, `’` and `.`. */
-const NAME_PATTERN = /^\p{L}[\p{L}\p{M} .'’-]*$/u;
-
-/** The same rule for the browser's `pattern` attribute (compiled with the `v` flag). */
-export const NAME_HTML_PATTERN = "\\p{L}[\\p{L}\\p{M} .'’\\-]*";
 
 /** Trims and collapses spaces, then validates. A dot followed by letters (".com") is rejected, so no links. */
 export const nameSchema = z
@@ -48,36 +45,6 @@ export const signupSchema = z.object({ name: nameSchema, email, password });
 export const forgotPasswordSchema = z.object({ email });
 
 export const resetPasswordSchema = z.object({ password });
-
-/** Error keys shown to the user. Each one has a translation in `Auth.errors`. */
-export type AuthErrorKey =
-  | "invalidEmail"
-  | "passwordTooShort"
-  | "passwordTooLong"
-  | "passwordRequired"
-  | "nameRequired"
-  | "nameTooLong"
-  | "nameInvalid"
-  | "invalidCredentials"
-  | "emailNotConfirmed"
-  | "emailTaken"
-  | "rateLimited"
-  | "notConfigured"
-  | "generic";
-
-export type AuthFormState =
-  | { status: "idle" }
-  /** `email` and `name` are sent back so the form can keep them after a failed attempt. */
-  | { status: "error"; error: AuthErrorKey; email?: string; name?: string }
-  | { status: "success"; message: "checkEmail" | "resetSent" };
-
-export const initialAuthState: AuthFormState = { status: "idle" };
-
-/** The "Name" form in Settings (ACC-5). */
-export type NameFormState =
-  | { status: "idle" }
-  | { status: "saved" }
-  | { status: "error"; error: AuthErrorKey };
 
 /** Returns the first validation error as a translatable key. */
 export function firstErrorKey(error: z.ZodError): AuthErrorKey {

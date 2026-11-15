@@ -1,31 +1,37 @@
 "use server";
 
+import { refresh } from "next/cache";
+import { cookies } from "next/headers";
 import { getCurrentUser } from "@/features/auth/current-user";
-import { localeFromForm } from "@/i18n/form-locale";
-import { redirect } from "@/i18n/navigation";
-import { saveSettings } from "./data";
-import { type SettingsFormState, settingsSchema } from "./schemas";
+import { updatePreferences } from "./data";
+import { type Settings, settingsSchema } from "./schemas";
 
-/** Saves units, week start and language (SET-1..3). Switching language reloads the page in that language. */
-export async function updateSettings(
-  _prev: SettingsFormState,
-  formData: FormData,
-): Promise<SettingsFormState> {
-  const parsed = settingsSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) {
-    return { status: "error" };
+/**
+ * Saves a setting the moment it's picked (SET-1..3, owner feedback 2026-11-12: no Save button).
+ * For the language it also sets next-intl's language cookie (as its own switch does), so the next
+ * page load stays in the new language; the browser then reloads the app in it.
+ */
+export async function savePreference(
+  patch: Partial<Settings>,
+): Promise<{ ok: boolean }> {
+  const parsed = settingsSchema.partial().safeParse(patch);
+  if (!parsed.success || Object.keys(parsed.data).length === 0) {
+    return { ok: false };
   }
-
   const user = await getCurrentUser();
   try {
-    await saveSettings(user, parsed.data);
+    await updatePreferences(user, parsed.data);
   } catch (error) {
     console.error("[settings] save failed", error);
-    return { status: "error" };
+    return { ok: false };
   }
-
-  if (parsed.data.locale !== localeFromForm(formData, "currentLocale")) {
-    redirect({ href: "/settings", locale: parsed.data.locale });
+  if (parsed.data.locale) {
+    (await cookies()).set("NEXT_LOCALE", parsed.data.locale, {
+      path: "/",
+      sameSite: "lax",
+    });
   }
-  return { status: "saved" };
+  // Pages kept in the browser (30 s, staleTimes) must show the new units and week start.
+  refresh();
+  return { ok: true };
 }

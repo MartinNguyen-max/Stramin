@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { ZoneSpinner } from "@/components/brand/zone-spinner";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { getCurrentUser } from "@/features/auth/current-user";
 import { Calculator } from "@/features/goals/components/calculator";
 import { GoalsTabs } from "@/features/goals/components/goals-tabs";
 import { goalDistanceLabels, plainBests } from "@/features/goals/form-data";
 import { loadBestEfforts } from "@/features/profile/best-efforts-data";
-import { getOrCreateProfile } from "@/features/profile/data";
-import type { Units } from "@/lib/preferences";
+import { getPreferences } from "@/features/profile/data";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Goals.tabs");
@@ -31,13 +30,10 @@ async function CalculatorContent() {
   const user = await getCurrentUser();
   const locale = (await getLocale()) as "en" | "da";
 
-  let units: Units = "metric";
-  try {
-    units = (await getOrCreateProfile(user, locale)).units;
-  } catch (error) {
-    console.error("[calculator] profile unavailable", error);
-  }
-  const { efforts } = await loadBestEfforts(user);
+  const [{ units }, { efforts }] = await Promise.all([
+    getPreferences(user, locale),
+    loadBestEfforts(user),
+  ]);
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
@@ -63,9 +59,5 @@ async function CalculatorContent() {
 
 function CalculatorSkeleton() {
   const t = useTranslations("Goals");
-  return (
-    <div className="flex flex-1 items-center justify-center py-24">
-      <ZoneSpinner size={72} label={t("loading")} />
-    </div>
-  );
+  return <PageSkeleton layout="calculator" label={t("loading")} />;
 }

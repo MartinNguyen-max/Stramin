@@ -10,7 +10,7 @@ import {
   MAX_NAME_LENGTH,
   MIN_PASSWORD_LENGTH,
   NAME_HTML_PATTERN,
-} from "../schemas";
+} from "../form-state";
 
 type Field = "name" | "email" | "password" | "newPassword";
 

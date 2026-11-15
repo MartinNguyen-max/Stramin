@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
 /** Demo of goals with feedback, based on the demo history (read-only). */
 export default function DemoGoalsPage() {
   return (
-    <Suspense fallback={<DemoSpinner />}>
+    <Suspense fallback={<DemoSpinner layout="goals" />}>
       <DemoGoals />
     </Suspense>
   );

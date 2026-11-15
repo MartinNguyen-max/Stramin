@@ -1,7 +1,8 @@
 "use client";
 
+import { Info } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { type ReactNode, useId, useState } from "react";
+import { type ReactNode, useId, useLayoutEffect, useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Link } from "@/i18n/navigation";
@@ -19,6 +20,8 @@ import {
   LEGS,
   type Leg,
   legBasis,
+  RACE_DAY_FACTOR,
+  raceDayTime,
   TRIATHLON_RACES,
   TRIATHLONS,
   type TriathlonRace,
@@ -241,7 +244,7 @@ function SportCalculator({
         </div>
       </div>
 
-      <Comparison time={time} fresh={fresh} />
+      <Comparison time={time} fresh={fresh} scale={scale} meters={distance} />
 
       {goalsBase && tracked && (
         <Link
@@ -295,12 +298,14 @@ function TriathlonCalculator({
   const legs = LEGS.map((leg) => {
     const meters = TRIATHLONS[race].legs[leg];
     const scale = scaleFor(leg, units);
+    const fresh = freshTime(leg, meters, bests);
     return {
       leg,
       meters,
       scale,
       time: scale.time(values[leg], meters),
-      raceDay: legBasis(race, leg, meters, bests),
+      fresh,
+      raceDay: fresh ? raceDayTime(race, leg, fresh.seconds) : null,
     };
   });
   const total = legs.reduce((sum, leg) => sum + leg.time, 0) + transitions;
@@ -344,11 +349,23 @@ function TriathlonCalculator({
             <Comparison
               time={leg.time}
               fresh={
-                leg.raceDay === null
+                leg.raceDay === null || leg.fresh === null
                   ? null
-                  : { seconds: leg.raceDay, predicted: false }
+                  : { seconds: leg.raceDay, predicted: leg.fresh.predicted }
               }
-              raceDay
+              scale={leg.scale}
+              meters={leg.meters}
+              raceDay={
+                leg.fresh === null
+                  ? undefined
+                  : {
+                      distance: formatDistanceLabel(leg.leg, leg.meters),
+                      fresh: leg.fresh.seconds,
+                      fatigue: Math.round(
+                        (RACE_DAY_FACTOR[race][leg.leg] - 1) * 100,
+                      ),
+                    }
+              }
             />
           </li>
         ))}
@@ -379,7 +396,12 @@ function TriathlonCalculator({
           </span>
         </div>
         {raceDayTotal !== null && (
-          <Difference time={total} reference={raceDayTotal} raceDay />
+          <Difference
+            time={total}
+            reference={raceDayTotal}
+            raceDay
+            predicted={legs.some((leg) => leg.fresh?.predicted)}
+          />
         )}
       </div>
 
@@ -412,33 +434,115 @@ function formatDistanceLabel(leg: Leg, meters: number): string {
     : `${Number((meters / 1000).toFixed(2))} km`;
 }
 
-/** The best (or predicted) time at the distance and how far the chosen time is from it. */
+/**
+ * The best (or predicted) time at the distance and how far the chosen time is from it, in time and in
+ * pace (owner feedback 2026-11-12, batch 6). In the triathlon calculator it's the time on race day,
+ * and an info button explains where it comes from: a real best or a predicted one, plus fatigue.
+ */
 function Comparison({
   time,
   fresh,
-  raceDay = false,
+  scale,
+  meters,
+  raceDay,
 }: {
   time: number;
   fresh: { seconds: number; predicted: boolean } | null;
-  raceDay?: boolean;
+  scale: Scale;
+  meters: number;
+  /** Triathlon only: the fresh time behind the race-day time, and the fatigue added in %. */
+  raceDay?: { distance: string; fresh: number; fatigue: number };
 }) {
   const t = useTranslations("Goals.calculator");
+  const [info, setInfo] = useState(false);
+  // Closed again when you leave the page (owner feedback 2026-11-12, batch 6).
+  useLayoutEffect(() => () => setInfo(false), []);
   if (!fresh) {
     return <p className="text-sm text-muted-foreground">{t("noBest")}</p>;
   }
-  const key = raceDay ? "raceDay" : fresh.predicted ? "predicted" : "best";
+  const key = raceDay
+    ? fresh.predicted
+      ? "raceDayPredicted"
+      : "raceDay"
+    : fresh.predicted
+      ? "predicted"
+      : "best";
+  const pace = scale.value(fresh.seconds, meters);
   return (
-    <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm tabular-nums">
-      <span className="text-muted-foreground">
-        {t(key, { time: formatClock(fresh.seconds) })}
-      </span>
-      <Difference
-        time={time}
-        reference={fresh.seconds}
-        raceDay={raceDay}
-        predicted={fresh.predicted}
-      />
-    </p>
+    <div className="flex flex-col gap-1 text-sm tabular-nums">
+      <p className="flex flex-wrap items-center gap-x-1.5 text-muted-foreground">
+        {t(key, {
+          time: formatClock(fresh.seconds),
+          pace: scale.label(pace),
+        })}
+        {raceDay && (
+          <button
+            type="button"
+            onClick={() => setInfo(!info)}
+            aria-expanded={info}
+            aria-label={t("howCalculated")}
+            className="rounded-full p-0.5 hover:bg-muted hover:text-foreground"
+          >
+            <Info className="size-4" />
+          </button>
+        )}
+      </p>
+      {raceDay && info && (
+        <p className="rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
+          {t(fresh.predicted ? "infoPredicted" : "infoBest", {
+            distance: raceDay.distance,
+            time: formatClock(raceDay.fresh),
+          })}{" "}
+          {raceDay.fatigue > 0
+            ? t("infoFatigue", { percent: raceDay.fatigue })
+            : t("infoNoFatigue")}
+        </p>
+      )}
+      <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <Difference
+          time={time}
+          reference={fresh.seconds}
+          raceDay={raceDay !== undefined}
+          predicted={fresh.predicted}
+        />
+        <PaceDifference
+          value={scale.value(time, meters)}
+          reference={pace}
+          scale={scale}
+          faster={time < fresh.seconds}
+        />
+      </p>
+    </div>
+  );
+}
+
+/** "0:14 /km faster", "1.5 km/h slower": the same gap as the time, per km (or 100 m, or as speed). */
+function PaceDifference({
+  value,
+  reference,
+  scale,
+  faster,
+}: {
+  value: number;
+  reference: number;
+  scale: Scale;
+  faster: boolean;
+}) {
+  const t = useTranslations("Goals.calculator");
+  const diff = Math.abs(value - reference);
+  // Below the precision we show ("0:00 /km", "0.0 km/h"), there's nothing to say.
+  if (scale.label(diff) === scale.label(0)) return null;
+  return (
+    <span
+      className={cn(
+        "font-medium",
+        faster
+          ? "text-green-600 dark:text-green-400"
+          : "text-red-600 dark:text-red-400",
+      )}
+    >
+      {t(faster ? "fasterPace" : "slowerPace", { diff: scale.label(diff) })}
+    </span>
   );
 }
 
@@ -457,7 +561,13 @@ function Difference({
   const t = useTranslations("Goals.calculator");
   const tUnits = useTranslations("Units");
   const diff = Math.round(time - reference);
-  const compared = raceDay ? "RaceDay" : predicted ? "Predicted" : "Best";
+  const compared = raceDay
+    ? predicted
+      ? "RaceDayPredicted"
+      : "RaceDay"
+    : predicted
+      ? "Predicted"
+      : "Best";
   if (diff === 0) {
     return <span className="font-medium">{t("same")}</span>;
   }
