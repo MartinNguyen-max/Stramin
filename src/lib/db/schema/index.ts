@@ -3,3 +3,4 @@ export * from "./events";
 export * from "./goals";
 export * from "./profiles";
 export * from "./strava";
+export * from "./training";

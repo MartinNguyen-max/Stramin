@@ -22,6 +22,10 @@ export const ZONE_TEXT: Record<Zone, string> = {
 export const EFFORTS = ["easy", "moderate", "hard"] as const;
 export type Effort = (typeof EFFORTS)[number];
 
+/** Created workouts can also mix easy and hard parts (owner feedback 2026-11-15). */
+export const WORKOUT_EFFORTS = [...EFFORTS, "mixed"] as const;
+export type WorkoutEffort = (typeof WORKOUT_EFFORTS)[number];
+
 export const EFFORT_ZONES: Record<Effort, Zone[]> = {
   easy: [1, 2],
   moderate: [3],
@@ -29,14 +33,16 @@ export const EFFORT_ZONES: Record<Effort, Zone[]> = {
 };
 
 /** The color of an effort group: its highest zone. */
-export const EFFORT_BG: Record<Effort, string> = {
+export const EFFORT_BG: Record<WorkoutEffort, string> = {
   easy: "bg-zone-2",
   moderate: "bg-zone-3",
   hard: "bg-zone-5",
+  mixed: "bg-zone-4",
 };
 
-export const EFFORT_BORDER: Record<Effort, string> = {
+export const EFFORT_BORDER: Record<WorkoutEffort, string> = {
   easy: "border-t-zone-2",
   moderate: "border-t-zone-3",
   hard: "border-t-zone-5",
+  mixed: "border-t-zone-4",
 };

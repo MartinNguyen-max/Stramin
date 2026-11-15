@@ -1,5 +1,10 @@
 import { ChevronDown } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
+import {
+  SPORT_ICON,
+  SPORT_TEXT,
+  SPORT_TINT,
+} from "@/features/activities/sport-style";
 import { useHours } from "@/i18n/use-hours";
 import {
   formatClock,
@@ -23,15 +28,25 @@ import {
 } from "../plan";
 import type { Amount, Step, Target, Workout } from "../workouts";
 import { EFFORT_BORDER, ZONE_BG, type Zone } from "../zones";
+import { FavoriteButton } from "./favorite-button";
 
-type Props = { workout: Workout; paces: PersonalPaces; units: Units };
+type Props = {
+  workout: Workout;
+  paces: PersonalPaces;
+  units: Units;
+  /** Whether it's a favorite; undefined hides the star (demo, or favorites unavailable). */
+  favorite?: boolean;
+};
 
 /**
- * One workout of the catalog (TRN-1..4): name, a graph of its blocks (owner feedback T1), time and
- * distance (T3). Tap it to see the steps with personal paces (T2).
+ * One workout (TRN-1..4): its sport icon, name, a graph of its blocks (owner feedback T1), time and
+ * distance (T3). Tap it to see the steps with personal paces (T2); the star keeps it in the
+ * favorites (owner feedback 2026-11-15).
  */
-export function WorkoutCard({ workout, paces, units }: Props) {
+export function WorkoutCard({ workout, paces, units, favorite }: Props) {
   const t = useTranslations("Training");
+  const tSports = useTranslations("Activities.sports");
+  const SportGlyph = SPORT_ICON[workout.sport];
   const tZones = useTranslations("Zones");
   const hours = useHours();
   const zone = maxZone(workout);
@@ -62,24 +77,41 @@ export function WorkoutCard({ workout, paces, units }: Props) {
       )}
     >
       <summary className="flex cursor-pointer list-none flex-col gap-3 p-4 [&::-webkit-details-marker]:hidden">
-        <span className="flex items-start justify-between gap-3">
-          <span className="flex min-w-0 flex-col gap-0.5">
-            <span className="font-semibold">
-              {t(`workouts.${workout.id}.name`)}
-            </span>
-            <span className="text-sm text-muted-foreground">
-              {t(`workouts.${workout.id}.description`)}
-            </span>
-          </span>
+        <span className="flex items-start gap-3">
           <span
             className={cn(
-              "shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold text-black/80",
-              ZONE_BG[zone],
+              "flex size-9 shrink-0 items-center justify-center rounded-full",
+              SPORT_TINT[workout.sport],
             )}
           >
-            {lowest === zone
-              ? tZones("short", { zone })
-              : `${tZones("short", { zone: lowest })}–${zone}`}
+            <SportGlyph
+              role="img"
+              aria-label={tSports(workout.sport)}
+              className={cn("size-[18px]", SPORT_TEXT[workout.sport])}
+            />
+          </span>
+          <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+            <span className="font-semibold">
+              {t(`${workout.text}.name`, { sport: workout.sport })}
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {t(`${workout.text}.description`)}
+            </span>
+          </span>
+          <span className="flex shrink-0 items-center gap-2">
+            <span
+              className={cn(
+                "rounded-full px-2 py-0.5 text-[11px] font-bold text-black/80",
+                ZONE_BG[zone],
+              )}
+            >
+              {lowest === zone
+                ? tZones("short", { zone })
+                : `${tZones("short", { zone: lowest })}–${zone}`}
+            </span>
+            {favorite !== undefined && (
+              <FavoriteButton workoutId={workout.id} favorite={favorite} />
+            )}
           </span>
         </span>
         <WorkoutProfile segments={workoutSegments(workout, paces)} />

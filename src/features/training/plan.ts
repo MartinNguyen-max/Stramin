@@ -58,7 +58,7 @@ export function personalPaces(efforts: BestEffort[]): PersonalPaces {
 }
 
 /** Paces used to estimate how long a workout takes when the user has no best efforts yet. */
-const DEFAULT_PACES: PersonalPaces = {
+export const DEFAULT_PACES: PersonalPaces = {
   run: trainingPaces(40),
   runBasis: null,
   swimPer100: 130,
@@ -203,7 +203,8 @@ export function workoutMeters(
   return total;
 }
 
-function withDefaults(paces: PersonalPaces): PersonalPaces {
+/** The user's paces, with default paces where they have no best effort yet. */
+export function withDefaults(paces: PersonalPaces): PersonalPaces {
   return {
     ...paces,
     run: paces.run ?? DEFAULT_PACES.run,

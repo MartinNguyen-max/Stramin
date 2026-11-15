@@ -2,7 +2,7 @@ import { ChevronDown, Lightbulb } from "lucide-react";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { effortDistanceLabel } from "@/features/profile/distance-label";
 import type { TrainingBase } from "@/features/training/components/training-view";
-import type { Workout } from "@/features/training/workouts";
+import type { CatalogWorkout } from "@/features/training/workouts";
 import { EFFORT_BG } from "@/features/training/zones";
 import { Link } from "@/i18n/navigation";
 import {
@@ -116,7 +116,7 @@ export function GoalWorkouts({
   workouts,
   trainingBase,
 }: {
-  workouts: Workout[];
+  workouts: CatalogWorkout[];
   trainingBase: TrainingBase;
 }) {
   const t = useTranslations("Goals");

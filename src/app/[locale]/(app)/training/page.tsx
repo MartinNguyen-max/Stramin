@@ -7,9 +7,10 @@ import { getCurrentUser } from "@/features/auth/current-user";
 import { loadBestEfforts } from "@/features/profile/best-efforts-data";
 import { getOrCreateProfile } from "@/features/profile/data";
 import {
-  readTrainingFilters,
+  readTrainingParams,
   TrainingView,
 } from "@/features/training/components/training-view";
+import { listFavoriteIds } from "@/features/training/favorites-data";
 import { personalPaces } from "@/features/training/plan";
 import type { Units } from "@/lib/preferences";
 
@@ -18,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${t("title")} · Stramin` };
 }
 
-/** Training inspiration (UI_SPEC §5): the catalog with personal paces. */
+/** Training inspiration (UI_SPEC §5): classics, the workout builder and favorites, with personal paces. */
 export default function TrainingPage({
   searchParams,
 }: PageProps<"/[locale]/training">) {
@@ -36,7 +37,7 @@ async function TrainingContent({
 }) {
   const user = await getCurrentUser();
   const locale = (await getLocale()) as "en" | "da";
-  const { sport, effort } = readTrainingFilters(await searchParams);
+  const params = readTrainingParams(await searchParams);
 
   let units: Units = "metric";
   try {
@@ -44,15 +45,23 @@ async function TrainingContent({
   } catch (error) {
     console.error("[training] profile unavailable", error);
   }
-  const { efforts } = await loadBestEfforts(user);
+  const [{ efforts }, favorites] = await Promise.all([
+    loadBestEfforts(user),
+    listFavoriteIds(user).catch((error) => {
+      // E.g. before the favorites migration is applied: the rest of the page still works.
+      console.error("[training] favorites unavailable", error);
+      return null;
+    }),
+  ]);
 
   return (
     <TrainingView
       base="/training"
-      sport={sport}
-      effort={effort}
+      params={params}
       paces={personalPaces(efforts)}
       units={units}
+      favorites={favorites}
+      favoritesNote="unavailable"
     />
   );
 }
