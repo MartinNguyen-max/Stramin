@@ -28,6 +28,28 @@
 | 17 | **Week numbers:** ISO 8601 with a Monday start, US style with a Sunday start. | The standard in Denmark/Europe. | – |
 | 18 | **Settings, Goals and Profile keep a readable width**; Home and the training catalog use the full width (max 1280 px). | The calendar needs room for 7 days + totals. | – |
 
+## Batch 5 – 2026-11-15: "This week" folds, create workouts, favorites
+
+| # | Decision | Why | Alternatives |
+|---|---|---|---|
+| 72 | **"This week" already shows on every period that contains today** (1M, 3M, 6M, 1Y, All, custom). Past months (‹) have no current week, so no card there. | That's the only week it can describe. | Show this week also on past periods (needs an extra query). |
+| 73 | **"This week" folds; the header with the hours stays visible.** Open by default on 1M/3M, closed on 6M/1Y/All/custom. The choice is remembered **per period type**, per device (cookie `stramin-this-week`), so it renders right on the first load. | Owner request; the closed card still says the most important number. | One choice for all periods; store in the database. |
+| 74 | **Training = three tabs: Classics · Create · Favorites**, everything in the URL. | Keeps the classics simple; back button and links work. | Create as a dialog; a separate page. |
+| 75 | **Create: three steps that appear one after the other** (sport → duration → effort), chips instead of a slider. Durations from **30 min** (15 min is too short for warm-up + work), every 15 min to 2:30 h, then every 30 min to 5:30 h. **Swims stop at 2 h.** | Big tap targets on phones; owner's steps. | A slider; 15 min sessions. |
+| 76 | **Efforts: easy, moderate, hard and "Mixed · Z2–Z5"** (tempo + hard parts in one session). | Owner: "a mix if it makes sense": it does for long sessions. | Only the three. |
+| 77 | **18 templates** (4 easy, 5 moderate, 5 hard, 4 mixed) fill exactly the chosen time: warm-up, the main part, **easy endurance for the rest**, cool-down. The hard part has a maximum (e.g. 6 × 8 min threshold), so a 5:30 h ride is a long ride with intervals, not 5 h of intervals. 3–5 suggestions per choice (3 only for some 30 min sessions). Swims are converted to meters with your swim pace. **Written by Claude** (common sessions); please review. | Realistic sessions at every length. | AI-generated workouts; fixed workouts per length. |
+| 78 | **Favorites in the database** (`favorite_workouts`: user, workout id, date; RLS). Only the **id** is stored ("intervals-400", "run.vo2.60"); the workout is rebuilt with your current paces. | Same on phone and PC; small; your paces stay up to date. If a template changes later, its favorites change with it. | Store the whole workout (snapshot); browser storage. |
+| 79 | **The star is on every card** (classics, suggestions, favorites), changes at once and goes back if saving fails. **Every card shows its sport icon** in a tinted circle. Demo: no stars. | Owner request. | Star only on created workouts. |
+
+### Things only you can do (batch 5)
+
+- [ ] **Apply the database change** (new table `favorite_workouts`). Without it the Training page works, but stars are hidden and Favorites says "not available yet". In PowerShell:
+  ```
+  pnpm exec supabase db push --remote
+  ```
+- [ ] Commit, push, and look at Home (1M open, 6M closed; open/close and reload) and Training (Create, star a few, Favorites).
+- [ ] Review the templates (#77).
+
 ## Batch 4 – 2026-11-11: owner feedback ([feedback/2026-11-11.md](feedback/2026-11-11.md))
 
 | # | Decision | Why | Alternatives |

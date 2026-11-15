@@ -75,6 +75,11 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 
 ✅ **Done when:** the owner has reviewed the new Home and pages on a preview, and the migrations are applied.
 
+### M3.8 – Owner feedback 2026-11-15 *(see [REVIEW](REVIEW.md) #72–79)*
+- [x] "This week" folds (open on 1M/3M, remembered per period type)
+- [x] Training: tabs Classics / Create / Favorites, workout builder (TRN-6), favorites + sport icons (TRN-7)
+- [ ] Owner: `supabase db push --remote` (favorites table), commit, push, review
+
 ### M3.7 – Owner feedback 2026-11-12 *(local, one change at a time; see [REVIEW](REVIEW.md) #49–67)*
 - [x] Average week on top, month cards for 6M/1Y/All, "this week so far", phone week total on the right
 - [x] Goals: plausible times, time fields that format themselves, triathlon with race-day fatigue, quarter Ironman, short tips with "Read more"
