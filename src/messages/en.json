@@ -406,7 +406,8 @@
       "warmup": "Warm-up",
       "cooldown": "Cool-down",
       "main": "Main set",
-      "between": "between: {amount}"
+      "between": "between: {amount}",
+      "easy": "Easy"
     },
     "amount": {
       "minutes": "{value} min",
@@ -513,7 +514,109 @@
     "showSteps": "Show the steps",
     "hideSteps": "Hide the steps",
     "distance": "about {distance}",
-    "profileLabel": "The workout's blocks: the higher, the harder"
+    "profileLabel": "The workout's blocks: the higher, the harder",
+    "tabs": {
+      "classics": "Classics",
+      "create": "Create",
+      "favorites": "Favorites"
+    },
+    "create": {
+      "intro": "Pick a sport, how long and how hard. We suggest workouts that fit.",
+      "sportStep": "1. Sport",
+      "durationStep": "2. How long?",
+      "effortStep": "3. How hard?",
+      "suggestions": "{count, plural, =0 {No suggestions} one {# suggestion} other {# suggestions}}",
+      "none": "Nothing fits this choice. Try a longer session.",
+      "startOver": "Start over"
+    },
+    "createEfforts": {
+      "easy": "Easy · Z1–Z2",
+      "moderate": "Moderate · Z3",
+      "hard": "Hard · Z4–Z5",
+      "mixed": "Mixed · Z2–Z5"
+    },
+    "favorites": {
+      "add": "Add to favorites",
+      "remove": "Remove from favorites",
+      "empty": "No favorites yet. Tap the star on any workout to keep it here.",
+      "unavailable": "Favorites aren't available yet.",
+      "demo": "Log in to keep your favorite workouts here.",
+      "error": "Couldn't save. Try again."
+    },
+    "templates": {
+      "steady": {
+        "name": "{sport, select, run {Easy run} bike {Endurance ride} other {Steady swim}}",
+        "description": "One relaxed, even effort. Builds your base."
+      },
+      "strides": {
+        "name": "{sport, select, run {Easy run with strides} bike {Endurance with spin-ups} other {Easy swim with fast 25s}}",
+        "description": "Easy, then a few short, fast bursts to stay sharp."
+      },
+      "gentle-build": {
+        "name": "Gentle build",
+        "description": "Start very easy and settle into a comfortable endurance pace."
+      },
+      "easy-blocks": {
+        "name": "{sport, select, run {Run–walk blocks} bike {Endurance blocks} other {Steady repeats}}",
+        "description": "Easy blocks with short breaks. Good for long or tired days."
+      },
+      "tempo": {
+        "name": "Tempo block",
+        "description": "One long, steady block at a comfortably hard pace."
+      },
+      "tempo-intervals": {
+        "name": "Tempo intervals",
+        "description": "Repeats at a comfortably hard pace with short breaks."
+      },
+      "progression": {
+        "name": "Progression",
+        "description": "Easy first, then step up to tempo for the last part."
+      },
+      "fartlek": {
+        "name": "Fartlek",
+        "description": "Play with the pace: tempo pieces with easy in between."
+      },
+      "long-blocks": {
+        "name": "Long tempo blocks",
+        "description": "Two to four long blocks at tempo. Race-specific endurance."
+      },
+      "threshold": {
+        "name": "Threshold intervals",
+        "description": "Hard but controlled repeats that raise your threshold."
+      },
+      "vo2": {
+        "name": "VO2max intervals",
+        "description": "Hard repeats of a few minutes. Builds your top end."
+      },
+      "one-one": {
+        "name": "1 min on, 1 min off",
+        "description": "Short, hard minutes with equal rest. Fast and fun."
+      },
+      "thirty-thirty": {
+        "name": "30/30s",
+        "description": "30 seconds hard, 30 seconds easy, many times."
+      },
+      "pyramid": {
+        "name": "Pyramid",
+        "description": "1-2-3-4-3-2-1 minutes hard, with easy in between."
+      },
+      "tempo-fast-finish": {
+        "name": "Tempo + fast finish",
+        "description": "A tempo block, then short, fast repeats."
+      },
+      "surges": {
+        "name": "Endurance with surges",
+        "description": "Easy, with a hard minute every ten minutes."
+      },
+      "build-to-hard": {
+        "name": "Build to hard",
+        "description": "Easy, then tempo, then a threshold finish."
+      },
+      "tempo-vo2": {
+        "name": "Tempo + VO2max",
+        "description": "A tempo block, then a few hard 3-minute repeats."
+      }
+    }
   },
   "Goals": {
     "title": "Goals",

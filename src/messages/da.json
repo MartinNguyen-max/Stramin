@@ -406,7 +406,8 @@
       "warmup": "Opvarmning",
       "cooldown": "Nedkøling",
       "main": "Hoveddel",
-      "between": "imellem: {amount}"
+      "between": "imellem: {amount}",
+      "easy": "Roligt"
     },
     "amount": {
       "minutes": "{value} min",
@@ -513,7 +514,109 @@
     "showSteps": "Vis trinnene",
     "hideSteps": "Skjul trinnene",
     "distance": "ca. {distance}",
-    "profileLabel": "Træningens blokke: jo højere, jo hårdere"
+    "profileLabel": "Træningens blokke: jo højere, jo hårdere",
+    "tabs": {
+      "classics": "Klassikere",
+      "create": "Lav selv",
+      "favorites": "Favoritter"
+    },
+    "create": {
+      "intro": "Vælg sport, hvor længe og hvor hårdt. Vi foreslår træninger, der passer.",
+      "sportStep": "1. Sport",
+      "durationStep": "2. Hvor længe?",
+      "effortStep": "3. Hvor hårdt?",
+      "suggestions": "{count, plural, =0 {Ingen forslag} one {# forslag} other {# forslag}}",
+      "none": "Intet passer til det valg. Prøv en længere træning.",
+      "startOver": "Start forfra"
+    },
+    "createEfforts": {
+      "easy": "Roligt · Z1–Z2",
+      "moderate": "Moderat · Z3",
+      "hard": "Hårdt · Z4–Z5",
+      "mixed": "Blandet · Z2–Z5"
+    },
+    "favorites": {
+      "add": "Føj til favoritter",
+      "remove": "Fjern fra favoritter",
+      "empty": "Ingen favoritter endnu. Tryk på stjernen på en træning for at gemme den her.",
+      "unavailable": "Favoritter er ikke tilgængelige endnu.",
+      "demo": "Log ind for at gemme dine favorittræninger her.",
+      "error": "Kunne ikke gemme. Prøv igen."
+    },
+    "templates": {
+      "steady": {
+        "name": "{sport, select, run {Rolig tur} bike {Udholdenhedstur} other {Jævn svømning}}",
+        "description": "Én rolig, jævn indsats. Bygger din base."
+      },
+      "strides": {
+        "name": "{sport, select, run {Rolig tur med stigningsløb} bike {Udholdenhed med kadence-spurter} other {Rolig svømning med hurtige 25'ere}}",
+        "description": "Roligt, og så et par korte, hurtige spurter for at holde dig skarp."
+      },
+      "gentle-build": {
+        "name": "Blid opbygning",
+        "description": "Start meget roligt, og find et behageligt udholdenhedstempo."
+      },
+      "easy-blocks": {
+        "name": "{sport, select, run {Løb–gå-blokke} bike {Udholdenhedsblokke} other {Jævne gentagelser}}",
+        "description": "Rolige blokke med korte pauser. God til lange eller trætte dage."
+      },
+      "tempo": {
+        "name": "Tempoblok",
+        "description": "Én lang, jævn blok i et behageligt hårdt tempo."
+      },
+      "tempo-intervals": {
+        "name": "Tempointervaller",
+        "description": "Gentagelser i et behageligt hårdt tempo med korte pauser."
+      },
+      "progression": {
+        "name": "Progressiv tur",
+        "description": "Roligt først, og så op i tempo til sidst."
+      },
+      "fartlek": {
+        "name": "Fartleg",
+        "description": "Leg med tempoet: tempostykker med roligt imellem."
+      },
+      "long-blocks": {
+        "name": "Lange tempoblokke",
+        "description": "To til fire lange blokke i tempo. Konkurrencespecifik udholdenhed."
+      },
+      "threshold": {
+        "name": "Tærskelintervaller",
+        "description": "Hårde, men kontrollerede gentagelser, der løfter din tærskel."
+      },
+      "vo2": {
+        "name": "VO2max-intervaller",
+        "description": "Hårde gentagelser på et par minutter. Bygger din topfart."
+      },
+      "one-one": {
+        "name": "1 min hårdt, 1 min roligt",
+        "description": "Korte, hårde minutter med lige så lang pause. Hurtigt og sjovt."
+      },
+      "thirty-thirty": {
+        "name": "30/30",
+        "description": "30 sekunder hårdt, 30 sekunder roligt, mange gange."
+      },
+      "pyramid": {
+        "name": "Pyramide",
+        "description": "1-2-3-4-3-2-1 minutter hårdt, med roligt imellem."
+      },
+      "tempo-fast-finish": {
+        "name": "Tempo + hurtig afslutning",
+        "description": "En tempoblok og så korte, hurtige gentagelser."
+      },
+      "surges": {
+        "name": "Udholdenhed med ryk",
+        "description": "Roligt, med ét hårdt minut hvert tiende minut."
+      },
+      "build-to-hard": {
+        "name": "Op til hårdt",
+        "description": "Roligt, så tempo, og en afslutning ved tærsklen."
+      },
+      "tempo-vo2": {
+        "name": "Tempo + VO2max",
+        "description": "En tempoblok og så et par hårde 3-minutters gentagelser."
+      }
+    }
   },
   "Goals": {
     "title": "Mål",

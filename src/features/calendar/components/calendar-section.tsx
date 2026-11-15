@@ -16,7 +16,13 @@ import {
 import type { WeekStartDay } from "@/lib/analytics/weekly";
 import { toDisplayDate, today as todayDate } from "@/lib/dates";
 import type { Units } from "@/lib/preferences";
-import { CALENDAR_COOKIE, parsePreference } from "../preference";
+import {
+  CALENDAR_COOKIE,
+  parsePreference,
+  parseThisWeekChoices,
+  THIS_WEEK_COOKIE,
+  thisWeekOpen,
+} from "../preference";
 import { type CalendarBase, CalendarShell } from "./calendar-shell";
 import { CalendarToolbar } from "./calendar-toolbar";
 import { TrainingCalendar } from "./training-calendar";
@@ -85,6 +91,12 @@ export async function CalendarSection({
   if (activities.length === 0 && whenEmpty) return whenEmpty;
 
   const calendar = buildCalendar(activities, period, weekStart, today);
+  const openThisWeek = thisWeekOpen(
+    parseThisWeekChoices(
+      safeDecode((await cookies()).get(THIS_WEEK_COOKIE)?.value),
+    ),
+    period.view,
+  );
   const label = await periodLabel(period);
   const prev = shiftPeriod(period, -1, today);
   const next = shiftPeriod(period, 1, today);
@@ -110,9 +122,22 @@ export async function CalendarSection({
         />
       }
     >
-      <TrainingCalendar calendar={calendar} units={units} />
+      <TrainingCalendar
+        calendar={calendar}
+        units={units}
+        thisWeekOpen={openThisWeek}
+        rememberThisWeek
+      />
     </CalendarShell>
   );
+}
+
+function safeDecode(raw: string | undefined): string | undefined {
+  try {
+    return raw ? decodeURIComponent(raw) : raw;
+  } catch {
+    return undefined;
+  }
 }
 
 /** "November 2026", "Sep – Nov 2026", "5 Mar – 20 Apr 2026" or "All time (since Jun 2023)". */
