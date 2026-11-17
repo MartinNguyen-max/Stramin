@@ -241,12 +241,9 @@
     "infoSet": "Set a weekly goal",
     "infoChange": "Change your weekly goal",
     "sportProgress": {
-      "ofGoal": "of {target} goal",
-      "ofAverage": "of {target} avg.",
-      "left": "{amount} to go",
-      "reached": "Goal reached",
-      "overAverage": "{amount} over avg.",
-      "underAverage": "{amount} under avg."
+      "left": "{amount} left",
+      "reached": "✓ goal reached",
+      "overAverage": "over avg."
     }
   },
   "Events": {
@@ -422,7 +419,7 @@
     "basisSwim": "Swim paces from your {distance} best ({time}).",
     "noPaces": "Add a best effort on your profile to see your personal paces.",
     "toProfile": "Go to profile",
-    "bikeNote": "Bike targets are in % of FTP (power zones).",
+    "bikeNote": "Bike targets are in % of your FTP.",
     "placeholder": "These workouts are placeholders for now.",
     "duration": "about {time}",
     "empty": "No workouts here yet.",
@@ -641,8 +638,8 @@
         "description": "A tempo block, then a few hard 3-minute repeats."
       }
     },
-    "basisBike": "Watts from your FTP of {ftp} W (95 % of your best 20 min, {watts} W).",
-    "noFtp": "No FTP yet: ride with a power meter (or on a smart trainer) to see watts. The % of FTP still works by feel or heart rate."
+    "basisBike": "Your FTP: {ftp} W.",
+    "noFtp": "No FTP yet: ride with a power meter to get one."
   },
   "Goals": {
     "title": "Goals",

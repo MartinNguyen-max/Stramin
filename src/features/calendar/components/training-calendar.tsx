@@ -1,4 +1,4 @@
-import { Check, TrendingDown, TrendingUp } from "lucide-react";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { InfoTip } from "@/components/ui/info-tip";
@@ -478,8 +478,8 @@ function PeriodSummary({ calendar, units }: CalendarProps) {
  * 2026-11-12, idea B): its hours against a target as a progress bar in sport colors, a mark where the
  * week should be by today, and whether it's ahead or behind. The target is the weekly goal when the
  * user set one, else the average week of the shown period (owner feedback 2026-11-17); the info button
- * in the corner says which, and where to change it. Below, one line per sport: how much is left, and
- * how it compares with the average week. It folds; the header with the hours stays visible (2026-11-15).
+ * in the corner says which, and where to change it. Below, the sports done, then per sport what's left and
+ * whether it's over the average week, on one short line. It folds; the header with the hours stays visible (2026-11-15).
  */
 function ThisWeekCard({
   calendar,
@@ -585,99 +585,60 @@ function ThisWeekCard({
         </p>
       )}
 
-      {sports.length > 0 && (
-        <ul className="flex flex-col gap-2.5 border-t pt-3 text-sm">
-          {sports.map((progress) => (
-            <SportProgressLine
-              key={progress.sport}
-              progress={progress}
+      {soFar > 0 && (
+        <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+          {trainedSports(week.totals).map((sport) => (
+            <SportLine
+              key={sport}
+              sport={sport}
+              totals={week.totals}
               units={units}
             />
           ))}
-        </ul>
+        </p>
       )}
+      <SportsLeft sports={sports} units={units} />
     </ThisWeekToggle>
   );
 }
 
 /**
- * One sport this week (owner feedback 2026-11-17): "[icon] 12.0 km of 30 km goal", what's left, and
- * whether it's over or under the average week, with a thin bar in the sport's color.
+ * One short line under the week's sports (owner feedback 2026-11-17, made compact the same day):
+ * per sport what's left to the goal or the average week ("[icon] 16.1 km left"), "✓" when a goal is
+ * reached, and "over avg." when it's above the average week.
  */
-function SportProgressLine({
-  progress,
+function SportsLeft({
+  sports,
   units,
 }: {
-  progress: SportProgress;
+  sports: SportProgress[];
   units: Units;
 }) {
   const t = useTranslations("Calendar.sportProgress");
   const hours = useHours();
-  const { sport, unit, done, target, source, average } = progress;
-  const amount = (value: number) =>
-    unit === "meters" ? formatTotalDistance(value, units) : hours(value);
-
-  const left = target !== null && done < target ? target - done : null;
-  const reached = target !== null && done >= target;
-  const vsAverage = average === null ? null : done - average;
-  // With the average as the target, "left" already says it's under; only "over" adds something.
-  const showAverage =
-    vsAverage !== null && (source === "goal" || vsAverage >= 0);
-
+  const items = sports.flatMap((progress) => {
+    const { sport, unit, done, target, source, average } = progress;
+    const amount = (value: number) =>
+      unit === "meters" ? formatTotalDistance(value, units) : hours(value);
+    const parts: string[] = [];
+    if (target !== null && done < target) {
+      parts.push(t("left", { amount: amount(target - done) }));
+    } else if (target !== null && source === "goal") {
+      parts.push(t("reached"));
+    }
+    if (average !== null && done > average) parts.push(t("overAverage"));
+    return parts.length > 0 ? [{ sport, text: parts.join(" · ") }] : [];
+  });
+  if (items.length === 0) return null;
   return (
-    <li className="flex flex-col gap-1">
-      <span className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 tabular-nums">
-        <span className="flex items-center gap-1.5">
-          <SportIcon sport={sport} />
-          <span className="font-semibold">{amount(done)}</span>
-          {target !== null && (
-            <span className="text-muted-foreground">
-              {t(source === "goal" ? "ofGoal" : "ofAverage", {
-                target: amount(target),
-              })}
-            </span>
-          )}
+    <p className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground tabular-nums">
+      {items.map(({ sport, text }) => (
+        <span key={sport} className="flex items-center gap-1.5">
+          <SportIcon sport={sport} className="size-3" />
+          {text}
         </span>
-        <span className="flex flex-wrap items-center gap-x-2 text-xs">
-          {left !== null && (
-            <span className="font-medium">
-              {t("left", { amount: amount(left) })}
-            </span>
-          )}
-          {reached && source === "goal" && (
-            <span className="flex items-center gap-0.5 font-medium text-zone-2">
-              <Check className="size-3.5" />
-              {t("reached")}
-            </span>
-          )}
-          {showAverage && vsAverage !== null && (
-            <span
-              className={cn(
-                "flex items-center gap-0.5",
-                vsAverage >= 0 ? "text-zone-2" : "text-muted-foreground",
-              )}
-            >
-              {vsAverage >= 0 ? (
-                <TrendingUp className="size-3.5" />
-              ) : (
-                <TrendingDown className="size-3.5" />
-              )}
-              {t(vsAverage >= 0 ? "overAverage" : "underAverage", {
-                amount: amount(Math.abs(vsAverage)),
-              })}
-            </span>
-          )}
-        </span>
-      </span>
-      {target !== null && (
-        <span className="h-1 overflow-hidden rounded-full bg-muted">
-          <span
-            className={cn("block h-full rounded-full", SPORT_BG[sport])}
-            style={{ width: `${Math.min(100, (done / target) * 100)}%` }}
-          />
-        </span>
-      )}
-    </li>
+      ))}
+    </p>
   );
 }
 
