@@ -639,7 +639,11 @@
       }
     },
     "basisBike": "Your FTP: {ftp} W.",
-    "noFtp": "No FTP yet: ride with a power meter to get one."
+    "noFtp": "No FTP yet: ride with a power meter to get one.",
+    "power": {
+      "percent": "about {percent} % FTP",
+      "watts": "about {percent} % = {watts} W"
+    }
   },
   "Goals": {
     "title": "Goals",
