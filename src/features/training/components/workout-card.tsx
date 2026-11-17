@@ -186,8 +186,8 @@ function useAmountLabel() {
 }
 
 /**
- * "1:28 (3:40 /km)", "5:07–5:38 /km", "1:52 /100m", for bikes "56–75 % FTP · 149–200 W" (owner
- * feedback 2026-11-17: watts even without a power meter outdoors), or nothing without a best effort.
+ * "1:28 (3:40 /km)", "5:07–5:38 /km", "1:52 /100m", for bikes "56–75 % FTP" (owner feedback
+ * 2026-11-17; the FTP in watts is in the note above the cards), or nothing without a best effort.
  */
 function usePaceLabel(
   sport: Workout["sport"],
@@ -196,12 +196,7 @@ function usePaceLabel(
 ) {
   return (amount: Amount, target: Target): string | null => {
     const power = stepPower(sport, target, paces);
-    if (power) {
-      const percent = `${powerRange(power.percent)} % FTP`;
-      return power.watts
-        ? `${percent} · ${powerRange(power.watts)} W`
-        : percent;
-    }
+    if (power) return `${powerRange(power.percent)} % FTP`;
     const range = stepPaceRange(sport, target, paces);
     if (range) {
       return `${formatClock(range[0])}–${formatPacePerKm(1000, range[1], units)}`;

@@ -419,9 +419,7 @@ function PaceBasis({
     return (
       <p>
         {t("bikeNote")}{" "}
-        {paces.ftp !== null && paces.ftpBasis
-          ? t("basisBike", { ftp: paces.ftp, watts: paces.ftpBasis.watts })
-          : t("noFtp")}
+        {paces.ftp !== null ? t("basisBike", { ftp: paces.ftp }) : t("noFtp")}
       </p>
     );
   }

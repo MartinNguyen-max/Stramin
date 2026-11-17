@@ -241,12 +241,9 @@
     "infoSet": "Sæt et ugentligt mål",
     "infoChange": "Ret dit ugentlige mål",
     "sportProgress": {
-      "ofGoal": "af {target} mål",
-      "ofAverage": "af {target} gns.",
       "left": "mangler {amount}",
-      "reached": "Mål nået",
-      "overAverage": "{amount} over gns.",
-      "underAverage": "{amount} under gns."
+      "reached": "✓ mål nået",
+      "overAverage": "over gns."
     }
   },
   "Events": {
@@ -422,7 +419,7 @@
     "basisSwim": "Svømmetempoer ud fra din bedste {distance} ({time}).",
     "noPaces": "Tilføj en bedste præstation på din profil for at se dine personlige tempoer.",
     "toProfile": "Gå til profil",
-    "bikeNote": "Cykelmål er i % af FTP (wattzoner).",
+    "bikeNote": "Cykelmål står i % af din FTP.",
     "placeholder": "Træningerne er pladsholdere indtil videre.",
     "duration": "ca. {time}",
     "empty": "Ingen træninger her endnu.",
@@ -641,8 +638,8 @@
         "description": "En tempoblok og så et par hårde 3-minutters gentagelser."
       }
     },
-    "basisBike": "Watt ud fra din FTP på {ftp} W (95 % af dine bedste 20 min, {watts} W).",
-    "noFtp": "Ingen FTP endnu: kør med wattmåler (eller på en smart trainer) for at se watt. % af FTP kan stadig bruges efter fornemmelse eller puls."
+    "basisBike": "Din FTP: {ftp} W.",
+    "noFtp": "Ingen FTP endnu: kør med wattmåler for at få den."
   },
   "Goals": {
     "title": "Mål",
