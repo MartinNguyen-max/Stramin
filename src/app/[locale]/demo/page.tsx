@@ -7,6 +7,7 @@ import {
   readCalendarRequest,
 } from "@/features/calendar/components/calendar-section";
 import { loadDemoActivities } from "@/features/demo/demo-activities";
+import { DEMO_WEEKLY_GOAL } from "@/features/demo/demo-efforts";
 import { demoEvents } from "@/features/demo/demo-events";
 import { DemoSpinner } from "@/features/demo/demo-spinner";
 import { EventsStrip } from "@/features/events/components/events-strip";
@@ -50,6 +51,7 @@ async function DemoHome({
         weekStart="monday"
         load={loadDemoActivities}
         notConnected={null}
+        weeklyGoal={DEMO_WEEKLY_GOAL}
       />
     </>
   );

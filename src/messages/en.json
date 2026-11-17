@@ -229,10 +229,25 @@
     "averageWeekPeriod": "Average week for the period",
     "total": "Total",
     "thisWeek": "This week · day {day} of 7",
-    "ofAverage": "of {average}",
+    "ofAverage": "of {target} avg.",
     "ahead": "{diff} ahead",
     "behind": "{diff} behind",
-    "usualByDay": "Usually by day {day}: {time}"
+    "usualByDay": "Usually by day {day}: {time}",
+    "ofGoal": "of {target} goal",
+    "goalByDay": "Goal by day {day}: {time}",
+    "infoLabel": "What this week is compared with",
+    "infoAverage": "This week is compared with your average week in the period you chose above. To change this, set your own weekly goal under Goals.",
+    "infoGoal": "This week is compared with your weekly goal. Sports without a goal are compared with your average week in the period you chose above.",
+    "infoSet": "Set a weekly goal",
+    "infoChange": "Change your weekly goal",
+    "sportProgress": {
+      "ofGoal": "of {target} goal",
+      "ofAverage": "of {target} avg.",
+      "left": "{amount} to go",
+      "reached": "Goal reached",
+      "overAverage": "{amount} over avg.",
+      "underAverage": "{amount} under avg."
+    }
   },
   "Events": {
     "title": "Events",
@@ -407,7 +422,7 @@
     "basisSwim": "Swim paces from your {distance} best ({time}).",
     "noPaces": "Add a best effort on your profile to see your personal paces.",
     "toProfile": "Go to profile",
-    "bikeNote": "Bike workouts use heart-rate zones for now. Power targets come later.",
+    "bikeNote": "Bike targets are in % of FTP (power zones).",
     "placeholder": "These workouts are placeholders for now.",
     "duration": "about {time}",
     "empty": "No workouts here yet.",
@@ -625,7 +640,9 @@
         "name": "Tempo + VO2max",
         "description": "A tempo block, then a few hard 3-minute repeats."
       }
-    }
+    },
+    "basisBike": "Watts from your FTP of {ftp} W (95 % of your best 20 min, {watts} W).",
+    "noFtp": "No FTP yet: ride with a power meter (or on a smart trainer) to see watts. The % of FTP still works by feel or heart rate."
   },
   "Goals": {
     "title": "Goals",
@@ -766,7 +783,8 @@
     },
     "tabs": {
       "goals": "My goals",
-      "calculator": "Pace calculator"
+      "calculator": "Pace calculator",
+      "weekly": "Weekly goal"
     },
     "tipsShort": {
       "volume": {
@@ -822,7 +840,27 @@
       "freshNeeded": "{sport}: about {time} fresh"
     },
     "readMore": "Read more",
-    "readLess": "Show less"
+    "readLess": "Show less",
+    "weekly": {
+      "intro": "How much you want to train each week. \"This week\" on Home compares with it.",
+      "hours": "Hours per week",
+      "perWeek": "{unit} per week",
+      "hoursHint": "E.g. 8, 7.5 or 7:30. Leave it empty to compare with your average week.",
+      "sportsTitle": "Per sport (optional)",
+      "sportsHint": "A distance or a time per sport. Sports without a goal are compared with your average week.",
+      "kindLabel": "Goal for {sport}",
+      "valueLabel": "Weekly goal for {sport}",
+      "none": "None",
+      "time": "Time",
+      "save": "Save weekly goal",
+      "saved": "Saved.",
+      "demo": "This is an example. Log in to set your own weekly goal.",
+      "errors": {
+        "invalid": "Enter a number like 30, 12.5 or a time like 7:30.",
+        "outOfRange": "That's more than a week can hold. Pick a smaller goal.",
+        "unavailable": "Couldn't save right now. Please try again later."
+      }
+    }
   },
   "Strava": {
     "connect": "Connect with Strava",

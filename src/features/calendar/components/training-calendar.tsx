@@ -1,7 +1,10 @@
-import { TrendingDown, TrendingUp } from "lucide-react";
+import { Check, TrendingDown, TrendingUp } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { InfoTip } from "@/components/ui/info-tip";
 import { SPORT_BG, SPORT_TEXT } from "@/features/activities/sport-style";
+import type { WeeklyGoal } from "@/features/goals/weekly";
+import { Link } from "@/i18n/navigation";
 import { useHours } from "@/i18n/use-hours";
 import type {
   Calendar,
@@ -13,8 +16,10 @@ import type {
 } from "@/lib/analytics/calendar";
 import { SPORTS, type Sport } from "@/lib/analytics/sports";
 import { toDisplayDate } from "@/lib/dates";
+import { formatTotalDistance } from "@/lib/format";
 import type { Units } from "@/lib/preferences";
 import { cn } from "@/lib/utils";
+import { type SportProgress, weekProgress } from "../week-progress";
 import { DetailedChip } from "./activity-chip";
 import { CalendarLink } from "./calendar-shell";
 import { MobileCalendar } from "./mobile-calendar";
@@ -26,6 +31,9 @@ import {
   trainedSports,
 } from "./sport-lines";
 import { ThisWeekToggle } from "./this-week-toggle";
+
+/** Where the weekly goal is set. */
+export type GoalsHref = "/goals/weekly" | "/demo/goals/weekly";
 
 type CalendarProps = { calendar: Calendar; units: Units };
 
@@ -42,7 +50,13 @@ export function TrainingCalendar({
   units,
   thisWeekOpen,
   rememberThisWeek = false,
+  weeklyGoal = null,
+  goalsHref,
 }: CalendarProps & {
+  /** The user's weekly goal; without it "This week" compares with the average week. */
+  weeklyGoal?: WeeklyGoal | null;
+  /** Where the weekly goal is set (the info button links there); none on the landing page. */
+  goalsHref?: GoalsHref;
   /** Whether "This week" starts open (the saved choice, else open on 1M/3M). */
   thisWeekOpen?: boolean;
   /** Save when the user opens or closes "This week" (not on the landing page). */
@@ -60,6 +74,8 @@ export function TrainingCalendar({
         units={units}
         defaultOpen={thisWeekOpen ?? (view === "1m" || view === "3m")}
         view={rememberThisWeek ? view : undefined}
+        weeklyGoal={weeklyGoal}
+        goalsHref={goalsHref}
       />
       {calendar.density === "weeks" ? (
         <MonthCards calendar={calendar} units={units} />
@@ -459,32 +475,60 @@ function PeriodSummary({ calendar, units }: CalendarProps) {
 
 /**
  * This week so far, in its own card between the average box and the calendar (owner feedback
- * 2026-11-12, idea B): its hours against the average week as a progress bar in sport colors, a mark
- * where the finished weeks usually were by the same day, and whether this week is ahead or behind.
- * It folds; the header with the hours stays visible (owner feedback 2026-11-15).
+ * 2026-11-12, idea B): its hours against a target as a progress bar in sport colors, a mark where the
+ * week should be by today, and whether it's ahead or behind. The target is the weekly goal when the
+ * user set one, else the average week of the shown period (owner feedback 2026-11-17); the info button
+ * in the corner says which, and where to change it. Below, one line per sport: how much is left, and
+ * how it compares with the average week. It folds; the header with the hours stays visible (2026-11-15).
  */
 function ThisWeekCard({
   calendar,
   units,
   defaultOpen,
   view,
-}: CalendarProps & { defaultOpen: boolean; view?: CalendarView }) {
+  weeklyGoal,
+  goalsHref,
+}: CalendarProps & {
+  defaultOpen: boolean;
+  view?: CalendarView;
+  weeklyGoal: WeeklyGoal | null;
+  goalsHref?: GoalsHref;
+}) {
   const t = useTranslations("Calendar");
   const hours = useHours();
   const { currentWeek, weeklyAverage } = calendar;
   if (!currentWeek) return null;
 
-  const { week, day, averageSoFar } = currentWeek;
-  const soFar = week.totals.totalSeconds;
-  const average = weeklyAverage?.totalSeconds ?? null;
-  const scale = Math.max(1, soFar, average ?? 0);
-  const ahead = averageSoFar !== null && soFar >= averageSoFar;
+  const { week, day } = currentWeek;
+  const { total, sports } = weekProgress(
+    currentWeek,
+    weeklyAverage,
+    weeklyGoal,
+  );
+  const soFar = total.done;
+  const scale = Math.max(1, soFar, total.target ?? 0);
+  const expected = total.expectedSoFar;
+  const ahead = expected !== null && soFar >= expected;
   const Trend = ahead ? TrendingUp : TrendingDown;
+  const hasGoal = weeklyGoal !== null;
 
   return (
     <ThisWeekToggle
       view={view}
       defaultOpen={defaultOpen}
+      corner={
+        <InfoTip label={t("infoLabel")}>
+          <p>{t(hasGoal ? "infoGoal" : "infoAverage")}</p>
+          {goalsHref && (
+            <Link
+              href={goalsHref}
+              className="mt-2 inline-block font-medium underline underline-offset-4"
+            >
+              {t(hasGoal ? "infoChange" : "infoSet")}
+            </Link>
+          )}
+        </InfoTip>
+      }
       summary={
         <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <span className="text-sm font-medium text-muted-foreground">
@@ -492,10 +536,12 @@ function ThisWeekCard({
           </span>
           <span className="text-sm tabular-nums">
             <span className="text-2xl font-bold">{hours(soFar)}</span>
-            {average !== null && (
+            {total.target !== null && (
               <span className="text-muted-foreground">
                 {" "}
-                {t("ofAverage", { average: hours(average) })}
+                {t(total.source === "goal" ? "ofGoal" : "ofAverage", {
+                  target: hours(total.target),
+                })}
               </span>
             )}
           </span>
@@ -511,42 +557,127 @@ function ThisWeekCard({
             widthPercent={(soFar / scale) * 100}
           />
         )}
-        {averageSoFar !== null && (
+        {expected !== null && (
           <span
             aria-hidden
             className="absolute -inset-y-1 w-0.5 rounded-full bg-foreground"
-            style={{ left: `${Math.min(100, (averageSoFar / scale) * 100)}%` }}
+            style={{ left: `${Math.min(100, (expected / scale) * 100)}%` }}
           />
         )}
       </div>
 
-      {averageSoFar !== null && (
+      {expected !== null && (
         <p className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-xs text-muted-foreground tabular-nums">
-          <span>{t("usualByDay", { day, time: hours(averageSoFar) })}</span>
+          <span>
+            {t(total.source === "goal" ? "goalByDay" : "usualByDay", {
+              day,
+              time: hours(expected),
+            })}
+          </span>
           <span className="flex items-center gap-1 font-medium text-foreground">
             <Trend
               className={cn("size-3.5", ahead ? "text-zone-2" : "text-zone-4")}
             />
             {t(ahead ? "ahead" : "behind", {
-              diff: hours(Math.abs(soFar - averageSoFar)),
+              diff: hours(Math.abs(soFar - expected)),
             })}
           </span>
         </p>
       )}
 
-      {soFar > 0 && (
-        <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-          {trainedSports(week.totals).map((sport) => (
-            <SportLine
-              key={sport}
-              sport={sport}
-              totals={week.totals}
+      {sports.length > 0 && (
+        <ul className="flex flex-col gap-2.5 border-t pt-3 text-sm">
+          {sports.map((progress) => (
+            <SportProgressLine
+              key={progress.sport}
+              progress={progress}
               units={units}
             />
           ))}
-        </p>
+        </ul>
       )}
     </ThisWeekToggle>
+  );
+}
+
+/**
+ * One sport this week (owner feedback 2026-11-17): "[icon] 12.0 km of 30 km goal", what's left, and
+ * whether it's over or under the average week, with a thin bar in the sport's color.
+ */
+function SportProgressLine({
+  progress,
+  units,
+}: {
+  progress: SportProgress;
+  units: Units;
+}) {
+  const t = useTranslations("Calendar.sportProgress");
+  const hours = useHours();
+  const { sport, unit, done, target, source, average } = progress;
+  const amount = (value: number) =>
+    unit === "meters" ? formatTotalDistance(value, units) : hours(value);
+
+  const left = target !== null && done < target ? target - done : null;
+  const reached = target !== null && done >= target;
+  const vsAverage = average === null ? null : done - average;
+  // With the average as the target, "left" already says it's under; only "over" adds something.
+  const showAverage =
+    vsAverage !== null && (source === "goal" || vsAverage >= 0);
+
+  return (
+    <li className="flex flex-col gap-1">
+      <span className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 tabular-nums">
+        <span className="flex items-center gap-1.5">
+          <SportIcon sport={sport} />
+          <span className="font-semibold">{amount(done)}</span>
+          {target !== null && (
+            <span className="text-muted-foreground">
+              {t(source === "goal" ? "ofGoal" : "ofAverage", {
+                target: amount(target),
+              })}
+            </span>
+          )}
+        </span>
+        <span className="flex flex-wrap items-center gap-x-2 text-xs">
+          {left !== null && (
+            <span className="font-medium">
+              {t("left", { amount: amount(left) })}
+            </span>
+          )}
+          {reached && source === "goal" && (
+            <span className="flex items-center gap-0.5 font-medium text-zone-2">
+              <Check className="size-3.5" />
+              {t("reached")}
+            </span>
+          )}
+          {showAverage && vsAverage !== null && (
+            <span
+              className={cn(
+                "flex items-center gap-0.5",
+                vsAverage >= 0 ? "text-zone-2" : "text-muted-foreground",
+              )}
+            >
+              {vsAverage >= 0 ? (
+                <TrendingUp className="size-3.5" />
+              ) : (
+                <TrendingDown className="size-3.5" />
+              )}
+              {t(vsAverage >= 0 ? "overAverage" : "underAverage", {
+                amount: amount(Math.abs(vsAverage)),
+              })}
+            </span>
+          )}
+        </span>
+      </span>
+      {target !== null && (
+        <span className="h-1 overflow-hidden rounded-full bg-muted">
+          <span
+            className={cn("block h-full rounded-full", SPORT_BG[sport])}
+            style={{ width: `${Math.min(100, (done / target) * 100)}%` }}
+          />
+        </span>
+      )}
+    </li>
   );
 }
 
