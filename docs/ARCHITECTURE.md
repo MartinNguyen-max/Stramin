@@ -98,6 +98,7 @@ All values are stored in **SI units** (meters, seconds, watts). Units are conver
 | `events` | id, user_id, title, event_date, type, image_path, image_x, image_y (image position %), created_at | EVT. **Built 2026-11-10.** |
 | *(Storage)* bucket `event-images`, path `{user_id}/{file}` | Event background images (WebP, resized in the browser) | Private bucket; RLS: users only reach their own folder. Shown with short-lived signed URLs. |
 | `goals` | id, user_id, sport (run/bike/swim/triathlon), distance_m, target_seconds, swim/bike/run/transition_seconds (triathlon splits, null otherwise), created_at | GOAL. **Built 2026-11-10;** triathlon splits 2026-11-11. |
+| `weekly_goals` | user_id (key), total_seconds, swim/bike/run_meters, swim/bike/run_seconds, updated_at | The weekly goal (WEEK-1, owner feedback 2026-11-17). Every column optional; a sport has a distance **or** a time (check constraints). An empty goal is deleted. RLS: own row only. **Built 2026-11-17.** |
 | `personal_bests` | user_id, sport, distance_m (together the key), seconds, achieved_on, updated_at | **Manual** best efforts only (BE-7, [ADR 0011](decisions/0011-best-efforts-v1.md)). **Built 2026-11-10.** |
 | `webhook_events` | id, payload, received_at, processed_at | Audit and debugging *(not built: Vercel logs are enough for now)* |
 | `api_usage` | provider, window, used, limit | Rate-limit tracking *(not built: usage headers are checked per run, ADR 0012)* |

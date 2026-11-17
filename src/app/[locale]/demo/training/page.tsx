@@ -33,12 +33,12 @@ async function DemoTraining({
 }) {
   const params = readTrainingParams(await searchParams);
   await connection();
-  const { efforts } = await demoBestEfforts();
+  const { efforts, power } = await demoBestEfforts();
   return (
     <TrainingView
       base="/demo/training"
       params={params}
-      paces={personalPaces(efforts)}
+      paces={personalPaces(efforts, power)}
       units="metric"
       favorites={null}
       favoritesNote="demo"

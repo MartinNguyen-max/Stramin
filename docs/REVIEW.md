@@ -3,6 +3,26 @@
 > Decisions Claude made in **work mode** while the owner was away (CLAUDE.md → Work mode).
 > Each one can be discussed and changed. When a point is settled, move it out of this list (or delete it).
 
+## Batch 9 – 2026-11-17: weekly goal, "This week" against it, bike in % of FTP
+
+| # | Decision | Why | Alternatives |
+|---|---|---|---|
+| 98 | **Weekly goal = a third Goals tab** (`/goals/weekly`): hours per week, and per sport (swim, bike, run) **None · km · Time**. **Everything is optional**, also the hours; an empty form deletes the goal. Hours can be typed as "8", "7.5", "7,5" or "7:30". Limits: at most 40 h a week; swim ≤ 50 km, bike ≤ 2000 km, run ≤ 300 km. | Owner request; optional so a goal for just running is possible. | Hours required; a slider. |
+| 99 | **Stored in its own table `weekly_goals`** (one row per user, a column per sport and unit, a check that a sport has a distance *or* a time). | Clear columns, RLS like the other tables. | Columns on `profiles`; one JSON column. |
+| 100 | **"This week" compares with the goal where set, else with the average week** of the shown period, per number: the hours with the hours goal, each sport with its own goal. With a goal, the mark on the bar is the goal **spread evenly over the 7 days** ("Goal by day 3: 3:26 h"). | Owner: "maybe set your own goal for what you want to hit per week". | Always the average; a goal mark by your usual training days. |
+| 101 | **The info box is an ⓘ button in the top-right corner** that opens the text on tap (and closes on tap outside / Escape), with a link to the weekly goal. Two texts: "compared with your average week in the period you chose…" or "compared with your weekly goal…". It sits **outside** the folding header, so tapping it doesn't fold the card. | Small, works on phones (no hover); always visible, also when the card is folded. | A text line always shown in the card (takes space). |
+| 102 | **A line per sport in "This week", always** (with or without a goal): "13.9 km of 30 km goal · 16.1 km to go · ↓ 20.9 km under avg.", or "56.3 km of 195 km avg. · 138 km to go". With the average as the target only "↑ over avg." is added (under is already said by "to go"). Distance sports count km unless their goal is a time; strength/other count time. It replaces the old "distance · time" line, and it shows when the card is open. | Owner: show how many km you're missing and whether you're over the average, always. | Show the lines also when folded; only for sports with a goal. |
+| 103 | **Bike steps in % of FTP with watts**: classic power zones mapped on our 5 zones (Z1 < 55 %, Z2 56–75 %, Z3 76–90 %, Z4 91–105 %, Z5 106–120 %). FTP = 95 % of the best 20-minute power (as on Profile). Without power data only the % shows, plus a hint. Sprints (Z5) also show 106–120 %, although they're really "all out". | Owner: "show it in FTP, that's what you normally train by". | Heart rate (before); a manual FTP field (could come later, e.g. on Profile). |
+| 104 | **Demo:** an example weekly goal (8 h, run 30 km, swim 1:30 h, bike left to the average), read-only on the demo's Weekly goal tab and used by the demo Home. | Shows both cases (goal and average) at once. | No goal in the demo. |
+
+### Things only you can do (batch 9)
+
+- [ ] **Apply the database change** (new table `weekly_goals`). Without it, Home and the rest work (compared with the average), but the Weekly goal tab says "not available yet". In PowerShell:
+  ```
+  pnpm exec supabase db push --remote
+  ```
+- [ ] Commit, push and look at Home (the ⓘ, the sport lines), Goals → Weekly goal (save one, then Home again) and Training → Bike (steps).
+
 ## Batch 8 – 2026-11-15: "This week" folds, create workouts, favorites
 
 | # | Decision | Why | Alternatives |

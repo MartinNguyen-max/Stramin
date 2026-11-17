@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { connection } from "next/server";
 import { getFormatter, getTranslations } from "next-intl/server";
+import type { WeeklyGoal } from "@/features/goals/weekly";
 import {
   buildCalendar,
   type CalendarActivity,
@@ -61,6 +62,7 @@ export async function CalendarSection({
   load,
   notConnected,
   whenEmpty,
+  weeklyGoal = null,
 }: {
   base: CalendarBase;
   request: CalendarRequest;
@@ -70,6 +72,8 @@ export async function CalendarSection({
   notConnected: React.ReactNode;
   /** Shown instead of an empty calendar, e.g. while the first import runs (owner feedback H3). */
   whenEmpty?: React.ReactNode;
+  /** The user's weekly goal, for "This week" (owner feedback 2026-11-17). */
+  weeklyGoal?: WeeklyGoal | null;
 }) {
   // The calendar depends on today's date, so it's always rendered per request.
   await connection();
@@ -127,6 +131,8 @@ export async function CalendarSection({
         units={units}
         thisWeekOpen={openThisWeek}
         rememberThisWeek
+        weeklyGoal={weeklyGoal}
+        goalsHref={base === "/demo" ? "/demo/goals/weekly" : "/goals/weekly"}
       />
     </CalendarShell>
   );

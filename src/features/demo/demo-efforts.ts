@@ -1,5 +1,6 @@
 import type { Goal } from "@/features/goals/data";
 import { totalTime } from "@/features/goals/triathlon";
+import type { WeeklyGoal } from "@/features/goals/weekly";
 import {
   type BestEffort,
   type EffortActivity,
@@ -67,3 +68,9 @@ export const DEMO_GOALS: Goal[] = [
     splits: HALF_SPLITS,
   },
 ];
+
+/** The demo's weekly goal: hours and running set, swim as a time, bike left to the average week. */
+export const DEMO_WEEKLY_GOAL: WeeklyGoal = {
+  totalSeconds: 8 * 3600,
+  sports: { run: { meters: 30_000 }, swim: { seconds: 90 * 60 } },
+};

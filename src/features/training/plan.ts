@@ -1,4 +1,5 @@
 import { type BestEffort, findEffort } from "@/lib/analytics/best-efforts";
+import { FTP_SHARE, type PowerBest } from "@/lib/analytics/power";
 import {
   bestVdot,
   PACE_ZONES,
@@ -18,6 +19,23 @@ export type PersonalPaces = {
   /** Swim threshold pace in seconds per 100 m, or null without a swim best effort. */
   swimPer100: number | null;
   swimBasis: { distance: number; seconds: number } | null;
+  /** Bike FTP in watts (95 % of the best 20 min), or null without power data (owner feedback 2026-11-17). */
+  ftp: number | null;
+  /** The best 20-minute power the FTP comes from. */
+  ftpBasis: { watts: number } | null;
+};
+
+/**
+ * Bike targets in % of FTP per zone (owner feedback 2026-11-17), the classic power zones: Z1 recovery
+ * under 55 %, Z2 endurance 56–75 %, Z3 tempo 76–90 %, Z4 threshold 91–105 %, Z5 VO2max 106–120 %.
+ * [low, high]; a null low means "up to".
+ */
+export const BIKE_FTP_ZONES: Record<Zone, [number | null, number]> = {
+  1: [null, 55],
+  2: [56, 75],
+  3: [76, 90],
+  4: [91, 105],
+  5: [106, 120],
 };
 
 /** Swim distances used for the base pace, with a correction to roughly threshold pace (s/100 m). */
@@ -37,7 +55,11 @@ const SWIM_ZONE_OFFSET: Record<Zone, number> = {
   5: -2,
 };
 
-export function personalPaces(efforts: BestEffort[]): PersonalPaces {
+/** The user's paces from their best efforts, and their FTP from their best 20-minute power. */
+export function personalPaces(
+  efforts: BestEffort[],
+  power: PowerBest[] = [],
+): PersonalPaces {
   const runBasis = bestVdot(efforts.filter((e) => e.sport === "run"));
   let swimPer100: number | null = null;
   let swimBasis: PersonalPaces["swimBasis"] = null;
@@ -54,7 +76,39 @@ export function personalPaces(efforts: BestEffort[]): PersonalPaces {
     runBasis,
     swimPer100,
     swimBasis,
+    ...ftpFrom(power),
   };
+}
+
+function ftpFrom(power: PowerBest[]): Pick<PersonalPaces, "ftp" | "ftpBasis"> {
+  const twenty = power.find((entry) => entry.duration === 1200);
+  if (!twenty) return { ftp: null, ftpBasis: null };
+  return {
+    ftp: Math.round(twenty.watts * FTP_SHARE),
+    ftpBasis: { watts: twenty.watts },
+  };
+}
+
+/** A bike step's target: % of FTP, and watts when the FTP is known. Null for other sports. */
+export function stepPower(
+  sport: Workout["sport"],
+  target: Target,
+  paces: PersonalPaces,
+): {
+  percent: [number | null, number];
+  watts: [number | null, number] | null;
+} | null {
+  if (sport !== "bike") return null;
+  const percent = BIKE_FTP_ZONES[zoneOf(target)];
+  const ftp = paces.ftp;
+  const watts =
+    ftp === null
+      ? null
+      : ([
+          percent[0] === null ? null : Math.round((ftp * percent[0]) / 100),
+          Math.round((ftp * percent[1]) / 100),
+        ] as [number | null, number]);
+  return { percent, watts };
 }
 
 /** Paces used to estimate how long a workout takes when the user has no best efforts yet. */
@@ -63,6 +117,8 @@ export const DEFAULT_PACES: PersonalPaces = {
   runBasis: null,
   swimPer100: 130,
   swimBasis: null,
+  ftp: null,
+  ftpBasis: null,
 };
 
 export function zoneOf(target: Target): Zone {

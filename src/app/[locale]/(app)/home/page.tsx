@@ -15,6 +15,7 @@ import {
   readCalendarRequest,
 } from "@/features/calendar/components/calendar-section";
 import { EventsSection } from "@/features/events/components/events-section";
+import { getWeeklyGoalSafe } from "@/features/goals/weekly-data";
 import { Onboarding } from "@/features/onboarding/onboarding";
 import { getPreferences } from "@/features/profile/data";
 import { StravaNotice } from "@/features/strava/components/strava-notice";
@@ -47,11 +48,14 @@ async function HomeContent({
 
   const params = await searchParams;
   // Independent reads run at the same time (performance, 2026-11-12).
-  const [{ units, weekStart }, request, strava] = await Promise.all([
-    getPreferences(user, locale),
-    readCalendarRequest(params),
-    getStravaStatus(user.id),
-  ]);
+  const [{ units, weekStart }, request, strava, weeklyGoal] = await Promise.all(
+    [
+      getPreferences(user, locale),
+      readCalendarRequest(params),
+      getStravaStatus(user.id),
+      getWeeklyGoalSafe(user),
+    ],
+  );
   const importing =
     strava.connected &&
     (strava.importState === "pending" || strava.importState === "running");
@@ -78,6 +82,7 @@ async function HomeContent({
           load={(range) => loadActivitiesIfConnected(user, range)}
           notConnected={<ConnectCard />}
           whenEmpty={importing ? <ImportWaiting /> : undefined}
+          weeklyGoal={weeklyGoal}
         />
       )}
     </>

@@ -4,3 +4,4 @@ export * from "./goals";
 export * from "./profiles";
 export * from "./strava";
 export * from "./training";
+export * from "./weekly-goals";

@@ -229,10 +229,25 @@
     "averageWeekPeriod": "Gennemsnitlig uge for perioden",
     "total": "I alt",
     "thisWeek": "Denne uge · dag {day} af 7",
-    "ofAverage": "af {average}",
+    "ofAverage": "af {target} gns.",
     "ahead": "{diff} foran",
     "behind": "{diff} bagud",
-    "usualByDay": "Normalt på dag {day}: {time}"
+    "usualByDay": "Normalt på dag {day}: {time}",
+    "ofGoal": "af {target} mål",
+    "goalByDay": "Ifølge målet på dag {day}: {time}",
+    "infoLabel": "Hvad denne uge sammenlignes med",
+    "infoAverage": "Denne uge sammenlignes med din gennemsnitlige uge i den periode, du har valgt ovenfor. For at ændre dette kan du sætte dit eget ugentlige mål under Mål.",
+    "infoGoal": "Denne uge sammenlignes med dit ugentlige mål. Sportsgrene uden mål sammenlignes med din gennemsnitlige uge i den periode, du har valgt ovenfor.",
+    "infoSet": "Sæt et ugentligt mål",
+    "infoChange": "Ret dit ugentlige mål",
+    "sportProgress": {
+      "ofGoal": "af {target} mål",
+      "ofAverage": "af {target} gns.",
+      "left": "mangler {amount}",
+      "reached": "Mål nået",
+      "overAverage": "{amount} over gns.",
+      "underAverage": "{amount} under gns."
+    }
   },
   "Events": {
     "title": "Events",
@@ -407,7 +422,7 @@
     "basisSwim": "Svømmetempoer ud fra din bedste {distance} ({time}).",
     "noPaces": "Tilføj en bedste præstation på din profil for at se dine personlige tempoer.",
     "toProfile": "Gå til profil",
-    "bikeNote": "Cykeltræninger bruger pulszoner indtil videre. Watt-mål kommer senere.",
+    "bikeNote": "Cykelmål er i % af FTP (wattzoner).",
     "placeholder": "Træningerne er pladsholdere indtil videre.",
     "duration": "ca. {time}",
     "empty": "Ingen træninger her endnu.",
@@ -625,7 +640,9 @@
         "name": "Tempo + VO2max",
         "description": "En tempoblok og så et par hårde 3-minutters gentagelser."
       }
-    }
+    },
+    "basisBike": "Watt ud fra din FTP på {ftp} W (95 % af dine bedste 20 min, {watts} W).",
+    "noFtp": "Ingen FTP endnu: kør med wattmåler (eller på en smart trainer) for at se watt. % af FTP kan stadig bruges efter fornemmelse eller puls."
   },
   "Goals": {
     "title": "Mål",
@@ -766,7 +783,8 @@
     },
     "tabs": {
       "goals": "Mine mål",
-      "calculator": "Tempoberegner"
+      "calculator": "Tempoberegner",
+      "weekly": "Ugentligt mål"
     },
     "tipsShort": {
       "volume": {
@@ -822,7 +840,27 @@
       "freshNeeded": "{sport}: ca. {time} udhvilet"
     },
     "readMore": "Læs mere",
-    "readLess": "Vis mindre"
+    "readLess": "Vis mindre",
+    "weekly": {
+      "intro": "Hvor meget du vil træne hver uge. \"Denne uge\" på Hjem sammenlignes med det.",
+      "hours": "Timer om ugen",
+      "perWeek": "{unit} om ugen",
+      "hoursHint": "F.eks. 8, 7,5 eller 7:30. Lad feltet være tomt for at sammenligne med din gennemsnitlige uge.",
+      "sportsTitle": "Per sportsgren (valgfrit)",
+      "sportsHint": "En distance eller en tid per sportsgren. Sportsgrene uden mål sammenlignes med din gennemsnitlige uge.",
+      "kindLabel": "Mål for {sport}",
+      "valueLabel": "Ugentligt mål for {sport}",
+      "none": "Intet",
+      "time": "Tid",
+      "save": "Gem ugentligt mål",
+      "saved": "Gemt.",
+      "demo": "Dette er et eksempel. Log ind for at sætte dit eget ugentlige mål.",
+      "errors": {
+        "invalid": "Skriv et tal som 30, 12,5 eller en tid som 7:30.",
+        "outOfRange": "Det er mere, end en uge kan rumme. Vælg et mindre mål.",
+        "unavailable": "Kunne ikke gemme lige nu. Prøv igen senere."
+      }
+    }
   },
   "Strava": {
     "connect": "Forbind med Strava",

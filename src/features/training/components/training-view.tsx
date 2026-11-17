@@ -398,7 +398,7 @@ function WorkoutGrid({
   );
 }
 
-/** Where the paces come from, or how to get them. Bike uses zones only. */
+/** Where the paces come from, or how to get them. Bike: % of FTP, and the FTP the watts come from. */
 function PaceBasis({
   base,
   sport,
@@ -415,7 +415,16 @@ function PaceBasis({
     halfMarathon: tDistances("halfMarathon"),
     marathon: tDistances("marathon"),
   };
-  if (sport === "bike") return <p>{t("bikeNote")}</p>;
+  if (sport === "bike") {
+    return (
+      <p>
+        {t("bikeNote")}{" "}
+        {paces.ftp !== null && paces.ftpBasis
+          ? t("basisBike", { ftp: paces.ftp, watts: paces.ftpBasis.watts })
+          : t("noFtp")}
+      </p>
+    );
+  }
   if (sport === "run" && paces.runBasis) {
     return (
       <p>

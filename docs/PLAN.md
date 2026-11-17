@@ -159,10 +159,12 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 ✅ **Done when:** your records match what you expect from your own history.
 
 ### M8 – Events & goals (rest)
+- [x] Weekly goal tab; "This week" against the goal or the average, with an ⓘ and a line per sport (GOAL-8, HOME-11) *(2026-11-17)*
 - [ ] Link a goal to an event (GOAL-2, Future)
 - [ ] Hide an event without deleting it (EVT-5, Future)
 
 ### M9 – Training library (rest)
+- [x] Bike targets in % of FTP and watts (TRN-8) *(2026-11-17)*
 - [ ] Replace Claude's placeholder workouts with your own *(owner: you)*
 - [ ] Heart-rate zones in bpm (needs max/threshold heart rate)
 
