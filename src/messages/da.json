@@ -639,7 +639,11 @@
       }
     },
     "basisBike": "Din FTP: {ftp} W.",
-    "noFtp": "Ingen FTP endnu: kør med wattmåler for at få den."
+    "noFtp": "Ingen FTP endnu: kør med wattmåler for at få den.",
+    "power": {
+      "percent": "ca. {percent} % FTP",
+      "watts": "ca. {percent} % = {watts} W"
+    }
   },
   "Goals": {
     "title": "Mål",

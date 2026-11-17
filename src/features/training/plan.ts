@@ -26,16 +26,16 @@ export type PersonalPaces = {
 };
 
 /**
- * Bike targets in % of FTP per zone (owner feedback 2026-11-17), the classic power zones: Z1 recovery
- * under 55 %, Z2 endurance 56–75 %, Z3 tempo 76–90 %, Z4 threshold 91–105 %, Z5 VO2max 106–120 %.
- * [low, high]; a null low means "up to".
+ * One bike target per zone, in % of FTP (owner feedback 2026-11-17: "about 50 % = 230 W, that simple").
+ * Roughly the middle of the classic power zones: Z1 recovery (< 55 %), Z2 endurance (56–75 %), Z3 tempo
+ * (76–90 %), Z4 threshold (91–105 %), Z5 VO2max (106–120 %).
  */
-export const BIKE_FTP_ZONES: Record<Zone, [number | null, number]> = {
-  1: [null, 55],
-  2: [56, 75],
-  3: [76, 90],
-  4: [91, 105],
-  5: [106, 120],
+export const BIKE_FTP_PERCENT: Record<Zone, number> = {
+  1: 50,
+  2: 65,
+  3: 85,
+  4: 100,
+  5: 115,
 };
 
 /** Swim distances used for the base pace, with a correction to roughly threshold pace (s/100 m). */
@@ -89,25 +89,16 @@ function ftpFrom(power: PowerBest[]): Pick<PersonalPaces, "ftp" | "ftpBasis"> {
   };
 }
 
-/** A bike step's target: % of FTP, and watts when the FTP is known. Null for other sports. */
+/** A bike step's target: % of FTP, and watts (rounded to 5) when the FTP is known. Null for other sports. */
 export function stepPower(
   sport: Workout["sport"],
   target: Target,
   paces: PersonalPaces,
-): {
-  percent: [number | null, number];
-  watts: [number | null, number] | null;
-} | null {
+): { percent: number; watts: number | null } | null {
   if (sport !== "bike") return null;
-  const percent = BIKE_FTP_ZONES[zoneOf(target)];
-  const ftp = paces.ftp;
+  const percent = BIKE_FTP_PERCENT[zoneOf(target)];
   const watts =
-    ftp === null
-      ? null
-      : ([
-          percent[0] === null ? null : Math.round((ftp * percent[0]) / 100),
-          Math.round((ftp * percent[1]) / 100),
-        ] as [number | null, number]);
+    paces.ftp === null ? null : Math.round((paces.ftp * percent) / 100 / 5) * 5;
   return { percent, watts };
 }
 

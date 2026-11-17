@@ -124,7 +124,7 @@ A catalog of workouts to get ideas from. The first workouts are placeholders wri
 | TRN-4 | If the user has no best efforts yet, the workout is shown without paces and with an explanation. | Must |
 | TRN-5 | The catalog can be filtered by **sport** and by **effort**: Z1–Z2 (easy), Z3 (moderate), Z4–Z5 (hard). | Must |
 | TRN-6 | **Create a workout** (owner feedback 2026-11-15): choose a sport, a duration (every 15 min up to 2:30 h, then every 30 min up to 5:30 h; swims up to 2 h) and an effort (easy, moderate, hard or mixed), and get 3–6 suggestions that fill that time. | Must |
-| TRN-8 | **Bike targets in % of FTP** (owner, 2026-11-17), the classic power zones (Z1 < 55 %, Z2 56–75 %, Z3 76–90 %, Z4 91–105 %, Z5 106–120 %), shown as "56–75 % FTP"; the FTP itself (95 % of the best 20 min) is shown once above the workouts. | Must |
+| TRN-8 | **Bike targets in % of FTP** (owner, 2026-11-17), the classic power zones (Z1 < 55 %, Z2 56–75 %, Z3 76–90 %, Z4 91–105 %, Z5 106–120 %), shown as one value per step, "about 65 % = 175 W" (the middle of the zone: 50/65/85/100/115 %); the FTP itself (95 % of the best 20 min) is shown once above the workouts. | Must |
 | TRN-7 | **Favorites** (owner feedback 2026-11-15): any workout (classic or created) can be starred; all favorites, every sport, are listed together. Every workout card shows its sport icon. | Must |
 
 ## 9. Settings (SET)

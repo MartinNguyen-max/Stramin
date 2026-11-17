@@ -123,18 +123,18 @@ describe("bike power targets", () => {
     expect(personalPaces(efforts).ftp).toBeNull();
   });
 
-  test("a zone gives % of FTP, and watts with an FTP", () => {
+  test("a zone gives one % of FTP, and watts with an FTP", () => {
     const paces = personalPaces(efforts, power);
     expect(stepPower("bike", { zone: 2 }, paces)).toEqual({
-      percent: [56, 75],
-      watts: [149, 200],
+      percent: 65,
+      watts: 175,
     });
     expect(stepPower("bike", { zone: 1 }, paces)).toEqual({
-      percent: [null, 55],
-      watts: [null, 146],
+      percent: 50,
+      watts: 135,
     });
     expect(stepPower("bike", { zone: 4 }, personalPaces(efforts))).toEqual({
-      percent: [91, 105],
+      percent: 100,
       watts: null,
     });
     expect(stepPower("run", { pace: "easy" }, paces)).toBeNull();

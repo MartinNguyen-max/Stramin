@@ -186,17 +186,22 @@ function useAmountLabel() {
 }
 
 /**
- * "1:28 (3:40 /km)", "5:07–5:38 /km", "1:52 /100m", for bikes "56–75 % FTP" (owner feedback
- * 2026-11-17; the FTP in watts is in the note above the cards), or nothing without a best effort.
+ * "1:28 (3:40 /km)", "5:07–5:38 /km", "1:52 /100m", for bikes "about 65 % = 175 W" (owner
+ * feedback 2026-11-17: one value, no range), or nothing without a best effort.
  */
 function usePaceLabel(
   sport: Workout["sport"],
   paces: PersonalPaces,
   units: Units,
 ) {
+  const tPower = useTranslations("Training.power");
   return (amount: Amount, target: Target): string | null => {
     const power = stepPower(sport, target, paces);
-    if (power) return `${powerRange(power.percent)} % FTP`;
+    if (power) {
+      return power.watts === null
+        ? tPower("percent", { percent: power.percent })
+        : tPower("watts", { percent: power.percent, watts: power.watts });
+    }
     const range = stepPaceRange(sport, target, paces);
     if (range) {
       return `${formatClock(range[0])}–${formatPacePerKm(1000, range[1], units)}`;
@@ -211,11 +216,6 @@ function usePaceLabel(
     }
     return perKm;
   };
-}
-
-/** "56–75", or "< 55" when there is no lower end. */
-function powerRange([low, high]: [number | null, number]): string {
-  return low === null ? `< ${high}` : `${low}–${high}`;
 }
 
 function StepLine({
