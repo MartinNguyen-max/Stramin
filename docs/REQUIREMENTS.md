@@ -57,7 +57,7 @@ Each requirement has an ID (e.g. `ACC-1`), so the plan, code and tests can refer
 | HOME-7 | Up to 3 months: the full calendar (H7). Longer periods: the average week first, then a **card per month** with its **average week** (hours and every sport) and a small bar chart of its weeks (owner, 2026-11-12). Each month can be opened in the 1-month view. | Must |
 | HOME-8 | The chosen period type is **remembered** for the next visit (per device). | Must |
 | HOME-9 | On phones, the calendar is a **month grid** too (H10), with the **week total on the right** like on PC: hours and distance per sport (owner, 2026-11-12). Tapping a day lists its workouts below. Longer periods show the month cards in one column. | Must |
-| HOME-11 | **This week against a target** (owner, 2026-11-17): the weekly goal where set, else the average week of the shown period. An ⓘ in the card's corner says which, and links to the weekly goal. One line per sport always shows what's left ("18 km to go") and whether it's over or under the average week. | Must |
+| HOME-11 | **This week against a target** (owner, 2026-11-17): the weekly goal where set, else the average week of the shown period. An ⓘ in the card's corner says which, and links to the weekly goal. Under the line with what's done, **one short line** always shows what's left per sport ("18 km left") or that it's over the average week. | Must |
 | HOME-10 | Only the activities of the shown period are fetched (lazy loading), so the first load is fast. | Must |
 
 ## 4b. Activities (ACT)
@@ -124,7 +124,7 @@ A catalog of workouts to get ideas from. The first workouts are placeholders wri
 | TRN-4 | If the user has no best efforts yet, the workout is shown without paces and with an explanation. | Must |
 | TRN-5 | The catalog can be filtered by **sport** and by **effort**: Z1–Z2 (easy), Z3 (moderate), Z4–Z5 (hard). | Must |
 | TRN-6 | **Create a workout** (owner feedback 2026-11-15): choose a sport, a duration (every 15 min up to 2:30 h, then every 30 min up to 5:30 h; swims up to 2 h) and an effort (easy, moderate, hard or mixed), and get 3–6 suggestions that fill that time. | Must |
-| TRN-8 | **Bike targets in % of FTP** (owner, 2026-11-17), the classic power zones (Z1 < 55 %, Z2 56–75 %, Z3 76–90 %, Z4 91–105 %, Z5 106–120 %), with **watts** from the FTP (95 % of the best 20 min) when there is power data. | Must |
+| TRN-8 | **Bike targets in % of FTP** (owner, 2026-11-17), the classic power zones (Z1 < 55 %, Z2 56–75 %, Z3 76–90 %, Z4 91–105 %, Z5 106–120 %), shown as "56–75 % FTP"; the FTP itself (95 % of the best 20 min) is shown once above the workouts. | Must |
 | TRN-7 | **Favorites** (owner feedback 2026-11-15): any workout (classic or created) can be starred; all favorites, every sport, are listed together. Every workout card shows its sport icon. | Must |
 
 ## 9. Settings (SET)
