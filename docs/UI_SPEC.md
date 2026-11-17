@@ -140,7 +140,7 @@ Paces based on your 5 km best (19:40, VDOT 50.6). Change it on your profile.
 |---|---|---|
 | **Catalog** | Sport tabs and effort chips (zone colors), saved in the URL. A card per workout: name, short description, duration, and the steps with zone dot and personal pace. | TRN-1..5 |
 | **No best effort** | Steps without paces, and a note: "Add a best effort on your profile to see your paces". | TRN-4 |
-| **Bike steps** | Only "56–75 % FTP" (owner feedback 2026-11-17: simple and clean). The note above the cards: "Bike targets are in % of your FTP. Your FTP: 268 W." Without power data: "No FTP yet: ride with a power meter to get one." | TRN-8 |
+| **Bike steps** | One value: "about 65 % = 175 W" (watts rounded to 5), or "about 65 % FTP" without an FTP (owner feedback 2026-11-17: simple, no range). The note above the cards: "Bike targets are in % of your FTP. Your FTP: 268 W." Without power data: "No FTP yet: ride with a power meter to get one." | TRN-8 |
 | **Tabs** | "Classics · Create · ☆ Favorites (count)" at the top (owner feedback 2026-11-15). Classics = the catalog above. All choices live in the URL (`?tab=create&sport=run&minutes=90&effort=hard`). | TRN-6, TRN-7 |
 | **Create** | One card with three steps that appear one after the other: 1. Sport (chips with icons) · 2. How long? (30 min … 2:30 h every 15 min, then 3:00 … 5:30 h every 30 min; swims to 2:00 h) · 3. How hard? (Easy Z1–Z2, Moderate Z3, Hard Z4–Z5, Mixed Z2–Z5). Then "5 suggestions · Start over", the pace basis, and the cards. | TRN-6 |
 | **Workout card** | Sport icon in a tinted circle, name, description, zone badge, ☆ star (logged in only), block graph, time · distance, "Show the steps". The star doesn't open the card. | TRN-7 |
