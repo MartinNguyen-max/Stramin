@@ -4,6 +4,7 @@ import {
   maxZone,
   personalPaces,
   stepPace,
+  stepPower,
   stepSeconds,
   workoutSeconds,
 } from "./plan";
@@ -107,5 +108,35 @@ describe("blocks and distance (owner feedback T1, T3)", () => {
     const meters = workoutMeters(easy, personalPaces(efforts)) ?? 0;
     expect(meters).toBeGreaterThan(7500);
     expect(meters).toBeLessThan(9500);
+  });
+});
+
+describe("bike power targets", () => {
+  const power = [
+    { duration: 1200, watts: 280, activityId: "1", date: "2026-10-01" },
+  ];
+
+  test("FTP is 95 % of the best 20 minutes", () => {
+    const paces = personalPaces(efforts, power);
+    expect(paces.ftp).toBe(266);
+    expect(paces.ftpBasis).toEqual({ watts: 280 });
+    expect(personalPaces(efforts).ftp).toBeNull();
+  });
+
+  test("a zone gives % of FTP, and watts with an FTP", () => {
+    const paces = personalPaces(efforts, power);
+    expect(stepPower("bike", { zone: 2 }, paces)).toEqual({
+      percent: [56, 75],
+      watts: [149, 200],
+    });
+    expect(stepPower("bike", { zone: 1 }, paces)).toEqual({
+      percent: [null, 55],
+      watts: [null, 146],
+    });
+    expect(stepPower("bike", { zone: 4 }, personalPaces(efforts))).toEqual({
+      percent: [91, 105],
+      watts: null,
+    });
+    expect(stepPower("run", { pace: "easy" }, paces)).toBeNull();
   });
 });

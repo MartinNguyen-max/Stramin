@@ -38,7 +38,7 @@ async function TrainingContent({
   const locale = (await getLocale()) as "en" | "da";
   const params = readTrainingParams(await searchParams);
 
-  const [{ units }, { efforts }, favorites] = await Promise.all([
+  const [{ units }, { efforts, power }, favorites] = await Promise.all([
     getPreferences(user, locale),
     loadBestEfforts(user),
     listFavoriteIds(user).catch((error) => {
@@ -52,7 +52,7 @@ async function TrainingContent({
     <TrainingView
       base="/training"
       params={params}
-      paces={personalPaces(efforts)}
+      paces={personalPaces(efforts, power)}
       units={units}
       favorites={favorites}
       favoritesNote="unavailable"
