@@ -7,6 +7,7 @@ import {
   fetchActivity,
   RateTracker,
   type StravaActivity,
+  stravaId,
 } from "@/lib/strava/client";
 import {
   accessTokenFor,
@@ -41,7 +42,7 @@ export function toActivityValues(
   return {
     userId,
     provider: "strava",
-    providerActivityId: String(activity.id),
+    providerActivityId: stravaId(activity),
     name: (activity.name ?? "").slice(0, 200) || activity.sport_type,
     sport: sportFromStrava(activity.sport_type),
     sportType: activity.sport_type,
@@ -129,7 +130,7 @@ export async function syncAll(
   );
 
   // Everything was fetched, so anything we have that Strava didn't return was deleted there.
-  const ids = list.map((activity) => String(activity.id));
+  const ids = list.map(stravaId);
   const missing = and(
     eq(activities.userId, connection.userId),
     eq(activities.provider, "strava"),
@@ -183,7 +184,8 @@ export async function syncOneActivity(
     return;
   }
   // Someone else's public activity must never end up in this user's calendar.
-  if (String(activity.athlete?.id) !== connection.providerAthleteId) return;
+  const owner = activity.athlete ? stravaId(activity.athlete) : null;
+  if (owner !== connection.providerAthleteId) return;
   await upsertActivities(connection.userId, [activity], new Date());
   // A detailed run comes with Strava's own best efforts: keep them (ADR 0013).
   await storeRunEfforts(connection.userId, activity);

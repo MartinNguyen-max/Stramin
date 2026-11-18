@@ -3,6 +3,22 @@
 > Decisions Claude made in **work mode** while the owner was away (CLAUDE.md → Work mode).
 > Each one can be discussed and changed. When a point is settled, move it out of this list (or delete it).
 
+## Batch 10 – 2026-11-18: Strava 64-bit ids (`id_str`)
+
+Strava will return activity and athlete ids as 64-bit integers from 1 June 2027, and says to use the `id_str` text field.
+
+| # | Decision | Why | Alternatives |
+|---|---|---|---|
+| 105 | **Ids are read as `id_str` when Strava sends it**, else `id`, through one helper `stravaId()` (`src/lib/strava/client.ts`). All places that stored or compared an id now use it instead of `String(x.id)`. | Exact text ids; no digits lost above 2^53. Stored values are unchanged for today's ids. | Keep `String(id)` and wait for the deadline; parse the raw JSON text with big-int support (more code). |
+| 106 | **Webhook `object_id` and `owner_id` accept a number or a text value.** | A format change to strings won't make the guard drop events. | Keep numbers only. |
+
+**Not yet covered:** the webhook payload is still parsed as JSON, so a very large numeric `object_id` would lose digits before we read it. Strava's docs don't yet say the webhook ids will change, so this waits until they do.
+
+### Things only you can do (batch 10)
+
+- [ ] Nothing for the database: no schema change.
+- [ ] Commit and push (see the report), then check that the activities still show and that a new Strava activity still appears after a sync.
+
 ## Batch 9 – 2026-11-17: weekly goal, "This week" against it, bike in % of FTP
 
 | # | Decision | Why | Alternatives |

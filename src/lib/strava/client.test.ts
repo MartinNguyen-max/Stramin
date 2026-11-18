@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { parseRateLimit, RateTracker } from "./client";
+import { parseRateLimit, RateTracker, stravaId } from "./client";
 
 describe("rate limits (NFR-4)", () => {
   test("prefers the read limit headers", () => {
@@ -47,5 +47,17 @@ describe("rate limits (NFR-4)", () => {
     );
     expect(tracker.nearLimit()).toBe(true);
     expect(tracker.requests).toBe(2);
+  });
+});
+
+describe("stravaId", () => {
+  test("prefers id_str", () => {
+    expect(stravaId({ id: 1, id_str: "9007199254740993" })).toBe(
+      "9007199254740993",
+    );
+  });
+
+  test("uses id when there is no id_str", () => {
+    expect(stravaId({ id: 42 })).toBe("42");
   });
 });

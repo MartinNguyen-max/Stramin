@@ -12,6 +12,7 @@ import {
   fetchPowerStream,
   type RateTracker,
   type StravaDetailedActivity,
+  stravaId,
 } from "@/lib/strava/client";
 import { accessTokenFor } from "./connection";
 
@@ -55,7 +56,7 @@ export async function storeRunEfforts(
       and(
         eq(activities.userId, userId),
         eq(activities.provider, "strava"),
-        eq(activities.providerActivityId, String(activity.id)),
+        eq(activities.providerActivityId, stravaId(activity)),
       ),
     );
 }
