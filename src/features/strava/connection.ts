@@ -6,6 +6,7 @@ import {
   deauthorize,
   refreshAccessToken,
   type StravaTokenResponse,
+  stravaId,
 } from "@/lib/strava/client";
 
 /**
@@ -66,7 +67,7 @@ export async function saveStravaConnection(
   tokens: StravaTokenResponse,
   scopes: string,
 ): Promise<ConnectionRow> {
-  const athleteId = String(tokens.athlete?.id ?? "");
+  const athleteId = tokens.athlete ? stravaId(tokens.athlete) : "";
   if (!athleteId) throw new Error("Strava didn't return the athlete");
 
   const other = await getConnectionByAthlete(athleteId);

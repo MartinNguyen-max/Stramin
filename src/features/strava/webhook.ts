@@ -16,21 +16,26 @@ export function webhookVerifyToken(): string {
 /** A webhook event from Strava. */
 export type StravaWebhookEvent = {
   object_type: "activity" | "athlete";
-  object_id: number;
+  /** A number today; a text value is also accepted, so a switch to 64-bit ids as strings won't drop events. */
+  object_id: number | string;
   aspect_type: "create" | "update" | "delete";
-  owner_id: number;
+  owner_id: number | string;
   subscription_id: number;
   event_time: number;
   updates?: Record<string, string>;
 };
+
+function isId(value: unknown): value is number | string {
+  return typeof value === "number" || typeof value === "string";
+}
 
 export function isWebhookEvent(value: unknown): value is StravaWebhookEvent {
   if (!value || typeof value !== "object") return false;
   const event = value as Record<string, unknown>;
   return (
     (event.object_type === "activity" || event.object_type === "athlete") &&
-    typeof event.object_id === "number" &&
-    typeof event.owner_id === "number" &&
+    isId(event.object_id) &&
+    isId(event.owner_id) &&
     (event.aspect_type === "create" ||
       event.aspect_type === "update" ||
       event.aspect_type === "delete")

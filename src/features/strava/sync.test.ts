@@ -57,6 +57,33 @@ describe("toActivityValues", () => {
   });
 });
 
+describe("toActivityValues ids", () => {
+  const summary = {
+    name: "Ride",
+    sport_type: "Ride",
+    start_date: "2026-11-10T06:15:00Z",
+    start_date_local: "2026-11-10T07:15:00Z",
+    moving_time: 3600,
+    elapsed_time: 3600,
+    distance: 30_000,
+    trainer: false,
+  };
+
+  test("uses id_str exactly, even above 2^53", () => {
+    const row = toActivityValues(
+      "u",
+      { ...summary, id: 1, id_str: "9007199254740993" },
+      NOW,
+    );
+    expect(row.providerActivityId).toBe("9007199254740993");
+  });
+
+  test("falls back to id when id_str is missing", () => {
+    const row = toActivityValues("u", { ...summary, id: 123 }, NOW);
+    expect(row.providerActivityId).toBe("123");
+  });
+});
+
 describe("nextStep (ADR 0012)", () => {
   test("unfinished imports come first", () => {
     for (const importState of ["pending", "running", "failed"] as const) {

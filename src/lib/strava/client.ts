@@ -48,12 +48,23 @@ export function buildAuthorizeUrl(redirectUri: string, state: string): string {
   return url.toString();
 }
 
+/**
+ * Strava's ids. From June 2027 `id` can be a 64-bit integer that JavaScript numbers can't hold exactly,
+ * so `id_str` (the same value as text) is preferred. Use `stravaId` instead of `String(x.id)`.
+ */
+export type StravaIdentified = { id: number; id_str?: string };
+
+/** The exact id as text: `id_str` when Strava sends it, else `id`. */
+export function stravaId(object: StravaIdentified): string {
+  return object.id_str ?? String(object.id);
+}
+
 export type StravaTokenResponse = {
   access_token: string;
   refresh_token: string;
   /** Unix time in seconds. */
   expires_at: number;
-  athlete?: { id: number; firstname?: string; lastname?: string };
+  athlete?: StravaIdentified & { firstname?: string; lastname?: string };
 };
 
 async function tokenRequest(
@@ -164,8 +175,7 @@ async function apiGet(
 }
 
 /** The fields we use from Strava's "SummaryActivity". */
-export type StravaActivity = {
-  id: number;
+export type StravaActivity = StravaIdentified & {
   name: string;
   sport_type: string;
   /** UTC start time. */
@@ -178,7 +188,7 @@ export type StravaActivity = {
   total_elevation_gain?: number;
   trainer: boolean;
   /** The owner. In summaries only the id. */
-  athlete?: { id: number };
+  athlete?: StravaIdentified;
   average_watts?: number;
   weighted_average_watts?: number;
   /** True when the watts come from a power meter (not estimated by Strava). */
