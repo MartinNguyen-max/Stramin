@@ -4,7 +4,8 @@
 
 A free, privacy-first training dashboard for triathletes. See your swim, bike, run and strength training on one screen: weekly totals, averages and days until race day.
 
-![Stramin landing page](public/video/stramin-poster.png)
+<img width="713" height="543" alt="image" src="https://github.com/user-attachments/assets/c60ffafa-26f3-4a49-b82b-082e6d46a8fd" />
+
 
 **🔗 [stramin.vercel.app](https://stramin.vercel.app)**
 
