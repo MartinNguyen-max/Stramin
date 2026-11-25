@@ -6,7 +6,7 @@
 
 ## Navigation
 
-*Decided 2026-11-10 (work mode, see [REVIEW.md](REVIEW.md)).*
+*Decided 2026-11-10.*
 
 - The main sections are **Home, Goals, Training, Profile**. **Settings** sits behind a gear icon in the header.
 - **Phone:** a fixed **bottom tab bar** with the four sections (icon + label), like most installed apps: 64 px tall, above the iPhone home bar. The header only has the logo and the gear.

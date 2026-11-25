@@ -59,7 +59,7 @@ Goal: prove that Garmin works before building more. Throwaway code, no database.
 ✅ **Done when:** you can sign up, log in, change settings and log out.
 
 ### M2.5 – New Home, Goals, Training, Profile *(work mode, 2026-11-10)*
-The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals, training inspiration). Built before M3/M4 on the temporary Strava connection. Decisions to review: [REVIEW.md](REVIEW.md).
+The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals, training inspiration). Built before M3/M4 on the temporary Strava connection.
 - [x] Docs: requirements, UI spec, ADR 0010 (VDOT), ADR 0011 (best efforts v1), feedback rules
 - [x] Navigation: bottom tabs on phones, header links on desktop (Home, Goals, Training, Profile, Settings ⚙)
 - [x] Home: training calendar with week numbers, dates, workouts, week totals and period totals (HOME-2..5)
@@ -69,31 +69,31 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 - [x] Profile: best efforts (estimate + manual), running level and paces (BE-2, BE-4, BE-6, BE-7) *(manual values need the migrations)*
 - [x] Training inspiration: catalog with zone filter and personal paces (TRN-1..5)
 - [x] Goals: suggestions, gap, equivalent performances, feedback, workouts (GOAL-1, GOAL-3..6) *(needs the migrations)*
-- [x] Database: `events`, `goals`, `personal_bests`, `event-images` bucket (migrations written) *(owner applies them: see REVIEW.md)*
+- [x] Database: `events`, `goals`, `personal_bests`, `event-images` bucket (migrations written)
 - [x] Demo pages with example data (`/demo`, `/demo/goals`, `/demo/training`, `/demo/profile`), also used for screenshots
 - [ ] Owner: push and review on a preview *(migrations applied 2026-11-10)*
 
 ✅ **Done when:** the owner has reviewed the new Home and pages on a preview, and the migrations are applied.
 
-### M3.10 – Owner feedback 2026-11-15 *(see [REVIEW](REVIEW.md) #90–97)*
+### M3.10 – Owner feedback 2026-11-15
 - [x] "This week" on every period and folding (open on 1M/3M, remembered per period type); replaces "only on 1M"
 - [x] Training: tabs Classics / Create / Favorites, workout builder (TRN-6), favorites + sport icons (TRN-7)
 - [ ] Owner: `supabase db push --remote` (favorites table), commit, push, review
 
-### M3.9 – Triathlon tip and performance *(see [REVIEW](REVIEW.md) #81–85)*
+### M3.9 – Triathlon tip and performance
 - [x] Fresh time per leg as a tip
 - [x] Reads in parallel, 30 s browser cache, smaller JavaScript
 - [ ] Owner: check Supabase JWT signing keys (asymmetric keys make every login check local)
 - [ ] Maybe: best efforts stored per user at sync time
 
-### M3.8 – Owner feedback 2026-11-12, batch 6 *(work mode, straight on main; see [feedback](feedback/2026-11-12-batch6.md), [REVIEW](REVIEW.md) #72–80)*
+### M3.8 – Owner feedback 2026-11-12, batch 6
 - [x] Light app icon, "this week" only on 1M *(changed by M3.10)*, bigger phone tab bar, average week in one row on phones
 - [x] Triathlon goal: fresh time needed per leg + realistic volume steps only
 - [x] Calculator: pace difference; where the race-day time comes from (ⓘ)
 - [x] Opened sections close when you leave a page
 - [x] Predicted times from recent training (item 4): not now, too complex (owner)
 
-### M3.7 – Owner feedback 2026-11-12 *(local, one change at a time; see [REVIEW](REVIEW.md) #49–67)*
+### M3.7 – Owner feedback 2026-11-12
 - [x] Average week on top, month cards for 6M/1Y/All, "this week so far", phone week total on the right
 - [x] Goals: plausible times, time fields that format themselves, triathlon with race-day fatigue, quarter Ironman, short tips with "Read more"
 - [x] Pace calculator tab (all sports and triathlon, compared with your bests, "Set as goal")
@@ -101,7 +101,7 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 - [x] PWA (install, offline page), onboarding for new users, landing page with PC and phone screens
 - [ ] Owner: commit, push and merge `feat/feedback-3`; `supabase db push --remote` only if not done for the goal splits
 
-### M3.6 – Owner feedback 2026-11-11 *(work mode; see [feedback](feedback/2026-11-11.md))*
+### M3.6 – Owner feedback 2026-11-11
 - [x] Calendar: hours first with sport icons, swims in km in totals, the average week as the main number, week overview grouped by month with each month's average week, folding months (HOME-4, 5, 7)
 - [x] Phone: hours + distance per week under every week; month cards with averages and icons (HOME-9)
 - [x] "Synced … ago" stays current (CON-5)
@@ -109,7 +109,7 @@ The owner's request of 2026-11-10 (Garmin-style calendar, events, profile, goals
 - [x] Profile: bike and swim predictions (BE-9); Training: "53 min" / "1:20 h"
 - [ ] Owner: `supabase db push --remote` (goal split columns) **before** merging; review
 
-### M3.5 – Owner feedback 2026-11-10 *(work mode; see [feedback](feedback/2026-11-10.md))*
+### M3.5 – Owner feedback 2026-11-10
 - [x] Calendar: week totals with time + distance, weekly averages over finished weeks, 3M in full detail, week overview for longer periods, ‹ › by one month, phone month grid (HOME-4..9)
 - [x] No empty calendar while importing; database connection retry (H3, H11)
 - [x] Profile: runs count pauses, Strava's exact best efforts, bike 100/120 km, best power + FTP, race predictions (BE-2, BE-3, BE-8, BE-9, ADR 0013)

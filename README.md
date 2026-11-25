@@ -7,7 +7,7 @@ A free, privacy-first training dashboard for triathletes. See your swim, bike, r
 <img width="713" height="543" alt="image" src="https://github.com/user-attachments/assets/c60ffafa-26f3-4a49-b82b-082e6d46a8fd" />
 
 
-**🔗 [stramin.vercel.app](https://stramin.vercel.app)**
+**🔗 [stramin.mmaxlab.com](https://stramin.mmaxlab.com)**
 
 ---
 
