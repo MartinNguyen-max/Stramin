@@ -1,5 +1,7 @@
 import { ShieldCheck } from "lucide-react";
+import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
+import { getLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { ZoneSpinner } from "@/components/brand/zone-spinner";
 import { SiteFooter } from "@/components/site-footer";
@@ -7,7 +9,13 @@ import { SiteHeader } from "@/components/site-header";
 import { buttonVariants } from "@/components/ui/button";
 import { HeroDevices, LandingVideo } from "@/features/landing/showcase";
 import { Link } from "@/i18n/navigation";
+import { pageAlternates } from "@/lib/site";
 import { cn } from "@/lib/utils";
+
+/** Home: its own canonical address and language versions (see lib/site.ts). */
+export async function generateMetadata(): Promise<Metadata> {
+  return { alternates: pageAlternates(await getLocale(), "") };
+}
 
 const PRIVACY_POINTS = ["onlyYou", "noAds", "control"] as const;
 

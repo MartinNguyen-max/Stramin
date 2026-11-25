@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { useLocale, useTranslations } from "next-intl";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import {
@@ -8,10 +8,15 @@ import {
   PrivacyDa,
   PrivacyEn,
 } from "@/features/legal/privacy-content";
+import { pageAlternates } from "@/lib/site";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Privacy");
-  return { title: `${t("title")} · Stramin` };
+  const locale = await getLocale();
+  return {
+    title: `${t("title")} · Stramin`,
+    alternates: pageAlternates(locale, "/privacy"),
+  };
 }
 
 /** Privacy policy page (PRIV-5). */

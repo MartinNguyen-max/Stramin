@@ -1,5 +1,6 @@
 {
   "Metadata": {
+    "title": "Stramin: Strava-træningsoverblik til triatleter",
     "description": "Et gratis træningsoverblik til triatleter, med fokus på privatliv. Din træning, endelig overskuelig."
   },
   "Common": {
@@ -198,6 +199,8 @@
   },
   "Calendar": {
     "title": "Træningskalender",
+    "loadFailed": "Kalenderen kunne ikke hentes lige nu. Din Strava-synkronisering påvirkes ikke.",
+    "retry": "Prøv igen",
     "loading": "Henter din træning…",
     "previous": "Forrige periode",
     "next": "Næste periode",
@@ -395,7 +398,7 @@
       "total": "I alt",
       "new": "Ny",
       "noEfforts": "Ingen bedste præstationer endnu.",
-      "note": "Ud fra dine Strava-aktiviteter. Tider, du selv har tastet ind, er ikke med, da de ikke har en historik.",
+      "note": "Ud fra dine Strava-aktiviteter og de bedste tider, du selv har tastet ind. En tid, du har tastet ind, tæller som dengang, hvis datoen er før den dag, vi sammenligner med.",
       "noChange": "Ingen nye bedste tider siden da.",
       "unchanged": "{count, plural, one {# anden distance uændret} other {# andre distancer uændrede}}.",
       "legendBefore": "Dengang ({date})",

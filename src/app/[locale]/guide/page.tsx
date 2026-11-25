@@ -1,14 +1,19 @@
 import type { Metadata } from "next";
 import { useLocale, useTranslations } from "next-intl";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { pageAlternates } from "@/lib/site";
 
 const STEPS = ["open", "request", "wait", "download", "upload"] as const;
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Guide");
-  return { title: `${t("title")} · Stramin` };
+  const locale = await getLocale();
+  return {
+    title: `${t("title")} · Stramin`,
+    alternates: pageAlternates(locale, "/guide"),
+  };
 }
 
 /** Guide: how to get your full Garmin history into Stramin (CON-10). */

@@ -8,6 +8,7 @@ import { ServiceWorker } from "@/components/service-worker";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeTabIcon } from "@/components/theme-tab-icon";
 import { routing } from "@/i18n/routing";
+import { SITE_URL } from "@/lib/site";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -35,8 +36,24 @@ export function generateStaticParams() {
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Metadata");
   return {
-    title: "Stramin",
+    // Base for the absolute social and sitemap URLs. Child pages set their own title.
+    metadataBase: new URL(SITE_URL),
+    title: t("title"),
     description: t("description"),
+    openGraph: {
+      siteName: "Stramin",
+      type: "website",
+      title: t("title"),
+      description: t("description"),
+      images: [
+        { url: "/icons/icon-512.png", width: 512, height: 512, alt: "Stramin" },
+      ],
+    },
+    twitter: {
+      card: "summary",
+      title: t("title"),
+      description: t("description"),
+    },
     // Installed on an iPhone home screen it opens full screen, like an app (M11).
     appleWebApp: { capable: true, title: "Stramin", statusBarStyle: "default" },
   };

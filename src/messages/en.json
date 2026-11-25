@@ -1,5 +1,6 @@
 {
   "Metadata": {
+    "title": "Stramin: Strava training dashboard for triathletes",
     "description": "A free, privacy-first training dashboard for triathletes. Your training, finally clear."
   },
   "Common": {
@@ -198,6 +199,8 @@
   },
   "Calendar": {
     "title": "Training calendar",
+    "loadFailed": "The calendar could not load just now. Your Strava sync is unaffected.",
+    "retry": "Try again",
     "loading": "Loading your training…",
     "previous": "Previous period",
     "next": "Next period",
@@ -395,7 +398,7 @@
       "total": "Total",
       "new": "New",
       "noEfforts": "No best efforts yet.",
-      "note": "From your Strava activities. Your own entered times aren't included, as they have no history.",
+      "note": "From your Strava activities and the best times you entered yourself. An entered time counts as then if its date is on or before the day we compare with.",
       "noChange": "No new bests since then.",
       "unchanged": "{count, plural, one {# other distance unchanged} other {# other distances unchanged}}.",
       "legendBefore": "Then ({date})",

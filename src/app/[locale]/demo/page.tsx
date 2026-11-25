@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import {
   CalendarSection,
@@ -12,10 +12,15 @@ import { demoEvents } from "@/features/demo/demo-events";
 import { DemoSpinner } from "@/features/demo/demo-spinner";
 import { EventsStrip } from "@/features/events/components/events-strip";
 import { today } from "@/lib/dates";
+import { pageAlternates } from "@/lib/site";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Demo");
-  return { title: `${t("title")} · Stramin` };
+  const locale = await getLocale();
+  return {
+    title: `${t("title")} · Stramin`,
+    alternates: pageAlternates(locale, "/demo"),
+  };
 }
 
 /**
