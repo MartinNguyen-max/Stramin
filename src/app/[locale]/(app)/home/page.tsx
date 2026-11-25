@@ -4,6 +4,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { ZoneSpinner } from "@/components/brand/zone-spinner";
 import { PageSkeleton } from "@/components/page-skeleton";
+import { RetryBoundary } from "@/components/retry-boundary";
 import { ConnectCard } from "@/features/activities/components/connect-card";
 import {
   getStravaStatus,
@@ -43,6 +44,7 @@ async function HomeContent({
   searchParams: PageProps<"/[locale]/home">["searchParams"];
 }) {
   const t = await getTranslations("Home");
+  const tCalendar = await getTranslations("Calendar");
   const user = await getCurrentUser();
   const locale = (await getLocale()) as "en" | "da";
 
@@ -74,16 +76,24 @@ async function HomeContent({
           {t("unavailable")}
         </p>
       ) : (
-        <CalendarSection
-          base="/home"
-          request={request}
-          units={units}
-          weekStart={weekStart}
-          load={(range) => loadActivitiesIfConnected(user, range)}
-          notConnected={<ConnectCard />}
-          whenEmpty={importing ? <ImportWaiting /> : undefined}
-          weeklyGoal={weeklyGoal}
-        />
+        // Its own boundary: if the calendar fails, the Strava status bar above stays (owner feedback 2026-11-26).
+        <RetryBoundary
+          message={tCalendar("loadFailed")}
+          retryLabel={tCalendar("retry")}
+        >
+          <Suspense fallback={<ZoneSpinner size={72} label={t("loading")} />}>
+            <CalendarSection
+              base="/home"
+              request={request}
+              units={units}
+              weekStart={weekStart}
+              load={(range) => loadActivitiesIfConnected(user, range)}
+              notConnected={<ConnectCard />}
+              whenEmpty={importing ? <ImportWaiting /> : undefined}
+              weeklyGoal={weeklyGoal}
+            />
+          </Suspense>
+        </RetryBoundary>
       )}
     </>
   );

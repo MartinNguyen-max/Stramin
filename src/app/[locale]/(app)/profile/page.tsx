@@ -10,7 +10,11 @@ import { LevelCard } from "@/features/profile/components/level-card";
 import { PowerCard } from "@/features/profile/components/power-card";
 import { ProgressCard } from "@/features/profile/components/progress-card";
 import { getPreferences } from "@/features/profile/data";
-import { PROGRESS_MONTHS, progressOver } from "@/features/profile/progress";
+import {
+  ownEfforts,
+  PROGRESS_MONTHS,
+  progressOver,
+} from "@/features/profile/progress";
 import { ConnectStravaButton } from "@/features/strava/components/connect-strava-button";
 import { EFFORT_SPORTS } from "@/lib/analytics/best-efforts";
 import { today } from "@/lib/dates";
@@ -101,7 +105,7 @@ async function ProfileContent() {
       {activities && (
         <ProgressCard
           periods={PROGRESS_MONTHS.map((months) =>
-            progressOver(activities, today(), months),
+            progressOver(activities, today(), months, ownEfforts(efforts)),
           )}
           units={units}
         />

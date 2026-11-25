@@ -1,17 +1,19 @@
 import {
-  distanceKey,
-  EFFORT_DISTANCES,
+  type BestEffort,
   EFFORT_SPORTS,
   type EffortActivity,
   type EffortSport,
   estimateBestEfforts,
+  type ManualEffort,
+  mergeBestEfforts,
 } from "@/lib/analytics/best-efforts";
 import { addDays } from "@/lib/dates";
 
 /**
  * "You now vs. you X months ago" (owner feedback 2026-11-12): best efforts and weekly training then and
- * now, from the Strava history only (manual values have no history), so both sides are measured the
- * same way. Pure, unit tested.
+ * now. Best efforts use Strava history and the user's own values (owner feedback 2026-11-26): an own
+ * value counts as "now", and as "then" when its date is on or before the comparison day. Without a date
+ * it counts only as "now". Pure, unit tested.
  */
 
 export const PROGRESS_MONTHS = [3, 6, 12] as const;
@@ -61,6 +63,17 @@ function weekly(
   return { volume, seconds };
 }
 
+/** The same sport and distance in another list of best efforts. */
+function findEffort(
+  list: BestEffort[],
+  target: BestEffort,
+): BestEffort | undefined {
+  return list.find(
+    (effort) =>
+      effort.sport === target.sport && effort.distance === target.distance,
+  );
+}
+
 /** The same day `months` earlier (31 May − 3 months = 3 March, since February is shorter). */
 export function monthsBefore(date: string, months: number): string {
   const [year, month, day] = date.split("-").map(Number);
@@ -74,29 +87,29 @@ export function progressOver(
   activities: EffortActivity[],
   todayDate: string,
   months: ProgressMonths,
+  manual: ManualEffort[] = [],
 ): ProgressPeriod {
   const since = monthsBefore(todayDate, months);
   const earlier = activities.filter(
     (activity) => activity.startLocal.slice(0, 10) <= since,
   );
-  const bestBefore = estimateBestEfforts(earlier);
-  const bestNow = estimateBestEfforts(activities);
+  const ownBefore = manual.filter(
+    (effort) => effort.date !== null && effort.date <= since,
+  );
+  const bestBefore = mergeBestEfforts(estimateBestEfforts(earlier), ownBefore);
+  const bestNow = mergeBestEfforts(estimateBestEfforts(activities), manual);
   const past = weekly(activities, since);
   const present = weekly(activities, todayDate);
 
   const efforts: ProgressPeriod["efforts"] = [];
-  for (const sport of EFFORT_SPORTS) {
-    for (const distance of EFFORT_DISTANCES[sport]) {
-      const find = (list: typeof bestNow) =>
-        list.find(
-          (effort) =>
-            effort.sport === sport &&
-            distanceKey(effort.distance) === distanceKey(distance),
-        )?.seconds;
-      const now = find(bestNow);
-      if (now === undefined) continue;
-      efforts.push({ sport, distance, before: find(bestBefore), now });
-    }
+  for (const now of bestNow) {
+    const before = findEffort(bestBefore, now);
+    efforts.push({
+      sport: now.sport,
+      distance: now.distance,
+      before: before?.seconds,
+      now: now.seconds,
+    });
   }
 
   return {
@@ -111,4 +124,16 @@ export function progressOver(
     hours: { before: past.seconds, now: present.seconds },
     efforts,
   };
+}
+
+/** The user's own values from a merged list of best efforts (manual values win there). */
+export function ownEfforts(efforts: BestEffort[]): ManualEffort[] {
+  return efforts
+    .filter((effort) => effort.source === "manual")
+    .map((effort) => ({
+      sport: effort.sport,
+      distance: effort.distance,
+      seconds: effort.seconds,
+      date: effort.date,
+    }));
 }

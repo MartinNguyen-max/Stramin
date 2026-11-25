@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import type { EffortActivity } from "@/lib/analytics/best-efforts";
-import { progressOver } from "./progress";
+import { ownEfforts, progressOver } from "./progress";
 
 const TODAY = "2026-11-12";
 
@@ -53,5 +53,61 @@ describe("progressOver", () => {
     expect(longer.efforts.every((effort) => effort.before === undefined)).toBe(
       true,
     );
+  });
+  test("the user's own values count as now, and as then when dated before the day", () => {
+    const own = [
+      {
+        sport: "run" as const,
+        distance: 5000,
+        seconds: 20 * 60,
+        date: "2026-04-01",
+      },
+      {
+        sport: "run" as const,
+        distance: 10_000,
+        seconds: 50 * 60,
+        date: "2026-11-05",
+      },
+      {
+        sport: "run" as const,
+        distance: 21_098,
+        seconds: 100 * 60,
+        date: null,
+      },
+    ];
+    const progress = progressOver(activities, TODAY, 6, own);
+    const fiveK = progress.efforts.find((effort) => effort.distance === 5000);
+    expect(fiveK?.before).toBe(20 * 60);
+    expect(fiveK?.now).toBe(20 * 60);
+    const tenK = progress.efforts.find((effort) => effort.distance === 10_000);
+    expect(tenK?.before).toBe(55 * 60);
+    expect(tenK?.now).toBe(50 * 60);
+    const half = progress.efforts.find(
+      (effort) => effort.distance === 21_097.5,
+    );
+    expect(half?.before).toBeUndefined();
+    expect(half?.now).toBe(100 * 60);
+  });
+
+  test("ownEfforts keeps only the manual values of a merged list", () => {
+    const own = ownEfforts([
+      {
+        sport: "run",
+        distance: 5000,
+        seconds: 1200,
+        date: "2026-04-01",
+        source: "manual",
+      },
+      {
+        sport: "run",
+        distance: 10_000,
+        seconds: 3000,
+        date: null,
+        source: "strava",
+      },
+    ]);
+    expect(own).toEqual([
+      { sport: "run", distance: 5000, seconds: 1200, date: "2026-04-01" },
+    ]);
   });
 });
